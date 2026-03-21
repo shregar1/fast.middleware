@@ -55,6 +55,7 @@ python_files = [
     "test_body_limit.py",
     "test_client_ip.py",
     "test_compression_preset.py",
+    "test_jwt_bearer_auth.py",
 ]
 
 [tool.setuptools.packages.find]
