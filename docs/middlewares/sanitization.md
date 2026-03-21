@@ -5,7 +5,7 @@ Sanitize input to prevent XSS and injection attacks.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

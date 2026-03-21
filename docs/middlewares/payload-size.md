@@ -5,7 +5,7 @@ Limit request and response payload sizes.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -9,7 +9,7 @@ Cross-Site Request Forgery protection middleware.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

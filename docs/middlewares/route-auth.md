@@ -5,7 +5,7 @@ Per-route authentication requirements.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

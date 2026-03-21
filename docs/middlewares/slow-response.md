@@ -5,7 +5,7 @@ Add artificial delays for testing (development only).
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Detect and manage user locale for internationalization.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

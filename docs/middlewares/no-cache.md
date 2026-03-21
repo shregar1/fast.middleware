@@ -5,7 +5,7 @@ Disable caching for specific paths or all responses.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

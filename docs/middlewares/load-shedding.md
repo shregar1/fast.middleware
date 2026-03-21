@@ -5,7 +5,7 @@ Shed load during high traffic to maintain system stability.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

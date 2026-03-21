@@ -5,7 +5,7 @@ Prevent replay attacks using timestamps and nonces.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

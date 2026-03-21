@@ -5,7 +5,7 @@ Mask sensitive data in logs and responses.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

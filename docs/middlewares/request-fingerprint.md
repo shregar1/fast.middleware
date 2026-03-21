@@ -5,7 +5,7 @@ Generate unique fingerprints for requests.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

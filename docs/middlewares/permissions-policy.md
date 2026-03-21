@@ -5,7 +5,7 @@ Control browser feature permissions via Permissions-Policy header.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

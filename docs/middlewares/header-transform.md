@@ -5,7 +5,7 @@ Transform request and response headers.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

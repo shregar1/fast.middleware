@@ -5,7 +5,7 @@ Coalesce identical concurrent requests into a single execution.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

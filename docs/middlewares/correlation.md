@@ -9,7 +9,7 @@ Correlation ID middleware for distributed tracing.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

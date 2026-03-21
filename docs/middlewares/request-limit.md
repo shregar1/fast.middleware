@@ -5,7 +5,7 @@ Limit request body size.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

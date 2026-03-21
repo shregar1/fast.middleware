@@ -5,7 +5,7 @@ Handle Content Security Policy violation reports.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

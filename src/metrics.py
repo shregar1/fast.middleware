@@ -130,25 +130,25 @@ class MetricsCollector:
 
         # Uptime
         uptime = time.time() - self._start_time
-        lines.append("# HELP fastmvc_uptime_seconds Time since service start")
-        lines.append("# TYPE fastmvc_uptime_seconds gauge")
-        lines.append(f"fastmvc_uptime_seconds {uptime:.2f}")
+        lines.append("# HELP fast_uptime_seconds Time since service start")
+        lines.append("# TYPE fast_uptime_seconds gauge")
+        lines.append(f"fast_uptime_seconds {uptime:.2f}")
         lines.append("")
 
         # Request count
         if self.config.enable_request_count:
-            lines.append("# HELP fastmvc_http_requests_total Total HTTP requests")
-            lines.append("# TYPE fastmvc_http_requests_total counter")
+            lines.append("# HELP fast_http_requests_total Total HTTP requests")
+            lines.append("# TYPE fast_http_requests_total counter")
             for (method, path, status), count in sorted(self._request_count.items()):
                 lines.append(
-                    f'fastmvc_http_requests_total{{method="{method}",path="{path}",status="{status}"}} {count}'
+                    f'fast_http_requests_total{{method="{method}",path="{path}",status="{status}"}} {count}'
                 )
             lines.append("")
 
         # Latency histogram
         if self.config.enable_latency_histogram and self._latencies:
-            lines.append("# HELP fastmvc_http_request_duration_seconds HTTP request latency")
-            lines.append("# TYPE fastmvc_http_request_duration_seconds histogram")
+            lines.append("# HELP fast_http_request_duration_seconds HTTP request latency")
+            lines.append("# TYPE fast_http_request_duration_seconds histogram")
 
             for (method, path), latencies in sorted(self._latencies.items()):
                 if not latencies:
@@ -160,22 +160,22 @@ class MetricsCollector:
 
                 for bucket, count in buckets.items():
                     lines.append(
-                        f'fastmvc_http_request_duration_seconds_bucket{{method="{method}",path="{path}",le="{bucket}"}} {count}'
+                        f'fast_http_request_duration_seconds_bucket{{method="{method}",path="{path}",le="{bucket}"}} {count}'
                     )
 
                 total = sum(latencies)
                 lines.append(
-                    f'fastmvc_http_request_duration_seconds_sum{{method="{method}",path="{path}"}} {total:.6f}'
+                    f'fast_http_request_duration_seconds_sum{{method="{method}",path="{path}"}} {total:.6f}'
                 )
                 lines.append(
-                    f'fastmvc_http_request_duration_seconds_count{{method="{method}",path="{path}"}} {len(latencies)}'
+                    f'fast_http_request_duration_seconds_count{{method="{method}",path="{path}"}} {len(latencies)}'
                 )
             lines.append("")
 
         # Response size
         if self.config.enable_response_size and self._response_sizes:
-            lines.append("# HELP fastmvc_http_response_size_bytes HTTP response size")
-            lines.append("# TYPE fastmvc_http_response_size_bytes summary")
+            lines.append("# HELP fast_http_response_size_bytes HTTP response size")
+            lines.append("# TYPE fast_http_response_size_bytes summary")
 
             for (method, path), sizes in sorted(self._response_sizes.items()):
                 if not sizes:
@@ -183,20 +183,20 @@ class MetricsCollector:
 
                 total = sum(sizes)
                 lines.append(
-                    f'fastmvc_http_response_size_bytes_sum{{method="{method}",path="{path}"}} {total}'
+                    f'fast_http_response_size_bytes_sum{{method="{method}",path="{path}"}} {total}'
                 )
                 lines.append(
-                    f'fastmvc_http_response_size_bytes_count{{method="{method}",path="{path}"}} {len(sizes)}'
+                    f'fast_http_response_size_bytes_count{{method="{method}",path="{path}"}} {len(sizes)}'
                 )
             lines.append("")
 
         # Error count
         if self._error_count:
-            lines.append("# HELP fastmvc_http_errors_total Total HTTP 5xx errors")
-            lines.append("# TYPE fastmvc_http_errors_total counter")
+            lines.append("# HELP fast_http_errors_total Total HTTP 5xx errors")
+            lines.append("# TYPE fast_http_errors_total counter")
             for (method, path), count in sorted(self._error_count.items()):
                 lines.append(
-                    f'fastmvc_http_errors_total{{method="{method}",path="{path}"}} {count}'
+                    f'fast_http_errors_total{{method="{method}",path="{path}"}} {count}'
                 )
             lines.append("")
 
@@ -228,11 +228,11 @@ class MetricsMiddleware(BaseHTTPMiddleware):
     endpoint compatible with Prometheus scraping.
 
     Metrics Collected:
-        - fastmvc_http_requests_total: Total request count by method/path/status
-        - fastmvc_http_request_duration_seconds: Request latency histogram
-        - fastmvc_http_response_size_bytes: Response size summary
-        - fastmvc_http_errors_total: 5xx error count
-        - fastmvc_uptime_seconds: Service uptime
+        - fast_http_requests_total: Total request count by method/path/status
+        - fast_http_request_duration_seconds: Request latency histogram
+        - fast_http_response_size_bytes: Response size summary
+        - fast_http_errors_total: 5xx error count
+        - fast_uptime_seconds: Service uptime
 
     Example:
         ```python

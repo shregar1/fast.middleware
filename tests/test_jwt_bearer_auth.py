@@ -7,7 +7,7 @@ from starlette.responses import JSONResponse, PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fastmvc_middleware.jwt_bearer_auth import JWTBearerAuthMiddleware
+from fast_middleware.jwt_bearer_auth import JWTBearerAuthMiddleware
 
 
 async def _ok(_request: Request):

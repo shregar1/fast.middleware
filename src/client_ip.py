@@ -8,7 +8,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 
-STATE_CLIENT_IP = "fastmvc_client_ip"
+STATE_CLIENT_IP = "fast_client_ip"
 
 
 def get_client_ip(
@@ -47,7 +47,7 @@ class ClientIPMiddleware(BaseHTTPMiddleware):
     """
     Store :func:`get_client_ip` on ``request.state`` for handlers and downstream middleware.
 
-    Uses attribute name :data:`STATE_CLIENT_IP` (``\"fastmvc_client_ip\"``).
+    Uses attribute name :data:`STATE_CLIENT_IP` (``\"fast_client_ip\"``).
     """
 
     def __init__(
@@ -72,5 +72,5 @@ class ClientIPMiddleware(BaseHTTPMiddleware):
 
 
 def read_client_ip(request: Request) -> str | None:
-    """Return ``request.state.fastmvc_client_ip`` if :class:`ClientIPMiddleware` ran."""
+    """Return ``request.state.fast_client_ip`` if :class:`ClientIPMiddleware` ran."""
     return getattr(request.state, STATE_CLIENT_IP, None)

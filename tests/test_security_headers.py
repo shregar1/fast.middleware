@@ -6,7 +6,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fastmvc_middleware import SecurityHeadersConfig, SecurityHeadersMiddleware
+from fast_middleware import SecurityHeadersConfig, SecurityHeadersMiddleware
 
 
 async def ok(_request: Request):

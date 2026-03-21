@@ -5,7 +5,7 @@ In-memory response caching with TTL support.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

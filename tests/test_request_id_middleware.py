@@ -6,8 +6,8 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fastmvc_core.utils.request_id_context import get_request_id
-from fastmvc_middleware import RequestIDMiddleware
+from fast_core.utils.request_id_context import get_request_id
+from fast_middleware import RequestIDMiddleware
 
 
 async def homepage(_request: Request):

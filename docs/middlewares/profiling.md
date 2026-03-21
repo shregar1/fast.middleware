@@ -5,7 +5,7 @@ Profile request performance for debugging and optimization.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

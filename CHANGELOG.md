@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Pytest is scoped to `fastmvc_middleware` test files only; legacy `fastmiddleware`-based tests are not collected unless you adjust `python_files` in `pyproject.toml`.
+- Pytest is scoped to `fast_middleware` test files only; legacy `fastmiddleware`-based tests are not collected unless you adjust `python_files` in `pyproject.toml`.
 
 ## [0.5.0] - 2026-01-18
 
@@ -284,9 +284,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standard security headers (OWASP recommended)
 - Context variables for async-safe request tracking
 
-[Unreleased]: https://github.com/shregar1/fastmvc-middleware/compare/v0.5.0...HEAD
-[0.5.0]: https://github.com/shregar1/fastmvc-middleware/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/shregar1/fastmvc-middleware/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/shregar1/fastmvc-middleware/compare/v0.2.0...v0.3.0
-[0.2.0]: https://github.com/shregar1/fastmvc-middleware/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/shregar1/fastmvc-middleware/releases/tag/v0.1.0
+[Unreleased]: https://github.com/shregar1/fast-middleware/compare/v0.5.0...HEAD
+[0.5.0]: https://github.com/shregar1/fast-middleware/compare/v0.4.0...v0.5.0
+[0.4.0]: https://github.com/shregar1/fast-middleware/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/shregar1/fast-middleware/compare/v0.2.0...v0.3.0
+[0.2.0]: https://github.com/shregar1/fast-middleware/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/shregar1/fast-middleware/releases/tag/v0.1.0

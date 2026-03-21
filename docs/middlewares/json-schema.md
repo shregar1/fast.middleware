@@ -9,7 +9,7 @@ JSON Schema validation middleware for request bodies.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

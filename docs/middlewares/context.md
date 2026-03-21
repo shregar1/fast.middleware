@@ -5,7 +5,7 @@ Shared async-safe request context for storing and retrieving values.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

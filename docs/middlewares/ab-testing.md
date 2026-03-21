@@ -9,7 +9,7 @@ A/B testing middleware for experiments.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

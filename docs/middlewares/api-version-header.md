@@ -5,7 +5,7 @@ Add API version information to all response headers.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -9,7 +9,7 @@ Multi-tenancy middleware for SaaS applications.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -1,4 +1,4 @@
-# Contributing to fastmvc-middleware
+# Contributing to fast-middleware
 
 Thank you for your interest in contributing.
 
@@ -7,7 +7,7 @@ Thank you for your interest in contributing.
 This package usually lives inside the **FastMVC** monorepo. From the repo root, install in editable mode:
 
 ```bash
-cd fastmvc_middleware
+cd fast_middleware
 pip install -e ".[dev]" || pip install -e .
 pip install -r requirements.txt
 pre-commit install
@@ -17,7 +17,7 @@ Standalone clone (if this package is its own git remote):
 
 ```bash
 git clone https://github.com/shregar1/fastmvc.git
-cd fastmvc-middleware
+cd fast-middleware
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
 pip install -e ".[dev]" || pip install -e .
@@ -27,7 +27,7 @@ pre-commit install
 
 Canonical repository URL from `pyproject.toml`: `https://github.com/shregar1/fastmvc`.
 
-To copy EditorConfig, pre-commit config, and other shared files from `fastmvc_middleware/` into every package:
+To copy EditorConfig, pre-commit config, and other shared files from `fast_middleware/` into every package:
 
 ```bash
 # from monorepo root
@@ -42,7 +42,7 @@ Many FastMVC libraries enforce **≥95% line coverage** via `pytest-cov` (`fail_
 python3 -m pytest tests/ -q --cov=src --cov-fail-under=95
 ```
 
-(`fastmvc_db_models` may use `--cov=fastmvc_db_models`; `fastmvc_dashboards` often uses `--cov=src/fastmvc_dashboards` — see that package’s `pyproject.toml`.)
+(`fast_db_models` may use `--cov=fast_db_models`; `fast_dashboards` often uses `--cov=src/fast_dashboards` — see that package’s `pyproject.toml`.)
 
 Overview: [../docs/COVERAGE.md](../docs/COVERAGE.md).
 

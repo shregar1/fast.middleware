@@ -5,7 +5,7 @@ Access logging in various standard formats.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

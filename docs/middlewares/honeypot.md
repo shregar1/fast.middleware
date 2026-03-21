@@ -9,7 +9,7 @@ Honeypot trap middleware for detecting attackers.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

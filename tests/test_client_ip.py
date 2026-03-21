@@ -6,7 +6,7 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fastmvc_middleware import (
+from fast_middleware import (
     STATE_CLIENT_IP,
     ClientIPMiddleware,
     get_client_ip,

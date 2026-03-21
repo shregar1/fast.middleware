@@ -9,7 +9,7 @@ Server-side session management middleware.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Validate and enforce Content-Type headers on requests.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

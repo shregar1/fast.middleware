@@ -5,7 +5,7 @@ Set Referrer-Policy header for privacy control.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

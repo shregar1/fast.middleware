@@ -5,7 +5,7 @@ URL redirects with permanent and temporary options.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

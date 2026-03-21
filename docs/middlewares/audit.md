@@ -5,7 +5,7 @@ Comprehensive audit logging for compliance and security tracking.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

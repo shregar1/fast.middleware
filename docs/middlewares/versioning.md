@@ -9,7 +9,7 @@ API versioning middleware supporting header, query, and path-based versions.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

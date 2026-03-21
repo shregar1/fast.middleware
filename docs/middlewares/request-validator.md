@@ -5,7 +5,7 @@ Validate request structure and content.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

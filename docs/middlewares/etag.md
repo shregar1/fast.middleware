@@ -5,7 +5,7 @@ Generate and validate ETags for response caching.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

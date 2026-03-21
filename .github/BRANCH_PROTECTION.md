@@ -67,7 +67,7 @@ gh api repos/{owner}/{repo}/branches/main/protection \
 
 ```
 
-Replace `{owner}` with `shregar1` and `{repo}` with `fastmvc-middleware`.
+Replace `{owner}` with `shregar1` and `{repo}` with `fast-middleware`.
 
 ## Using GitHub Rulesets (Recommended for newer repos)
 

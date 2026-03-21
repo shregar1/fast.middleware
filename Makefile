@@ -10,22 +10,22 @@ install-dev:
 	pre-commit install || true
 
 test:
-	pytest tests/ -v --cov=fastmvc_middleware --cov-report=term-missing || pytest -v
+	pytest tests/ -v --cov=fast_middleware --cov-report=term-missing || pytest -v
 
 test-fast:
 	pytest tests/ -v -x --tb=short -q || true
 
 lint:
-	ruff check fastmvc_middleware tests || true
+	ruff check fast_middleware tests || true
 
 format:
-	ruff format fastmvc_middleware tests || true
+	ruff format fast_middleware tests || true
 
 type-check:
-	mypy fastmvc_middleware --ignore-missing-imports || true
+	mypy fast_middleware --ignore-missing-imports || true
 
 security:
-	bandit -r fastmvc_middleware -q || true
+	bandit -r fast_middleware -q || true
 
 clean:
 	rm -rf build dist *.egg-info .pytest_cache .mypy_cache .ruff_cache htmlcov .coverage coverage.xml

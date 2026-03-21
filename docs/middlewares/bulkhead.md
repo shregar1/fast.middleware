@@ -9,7 +9,7 @@ Bulkhead pattern for resource isolation.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Sample requests for analytics and logging.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

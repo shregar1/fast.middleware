@@ -5,7 +5,7 @@ Enforce usage quotas per user or API key.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

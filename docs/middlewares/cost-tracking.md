@@ -5,7 +5,7 @@ Track request costs for billing, quotas, and resource management.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

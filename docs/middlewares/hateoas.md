@@ -9,7 +9,7 @@ Hypermedia as the Engine of Application State middleware.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

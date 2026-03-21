@@ -5,7 +5,7 @@ HTTP 103 Early Hints for preloading resources.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Detect and handle bot traffic based on User-Agent and behavior patterns.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

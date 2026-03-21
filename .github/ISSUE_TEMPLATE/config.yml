@@ -1,9 +1,9 @@
 blank_issues_enabled: false
 contact_links:
   - name: Documentation
-    url: https://github.com/hyyre/fastmvc-middleware#readme
+    url: https://github.com/hyyre/fast-middleware#readme
     about: Check the documentation for usage examples
   - name: Discussions
-    url: https://github.com/hyyre/fastmvc-middleware/discussions
+    url: https://github.com/hyyre/fast-middleware/discussions
     about: Ask questions and share ideas
 

@@ -9,7 +9,7 @@ Extract real client IP from proxy headers.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

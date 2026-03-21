@@ -5,10 +5,10 @@ Complete API reference for FastMVC Middleware v0.5.0.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware           # Core
-pip install fastmvc-middleware[jwt]      # With JWT support
-pip install fastmvc-middleware[proxy]    # With proxy support
-pip install fastmvc-middleware[all]      # All dependencies
+pip install fast-middleware           # Core
+pip install fast-middleware[jwt]      # With JWT support
+pip install fast-middleware[proxy]    # With proxy support
+pip install fast-middleware[all]      # All dependencies
 
 ```
 
@@ -368,6 +368,6 @@ print(fastmiddleware.__version__)  # "0.5.0"
 print(fastmiddleware.__author__)   # "Shiv"
 print(fastmiddleware.__email__)    # "sengarsinghshivansh@gmail.com, sengarsinghshreyansh@gmail.com"
 print(fastmiddleware.__license__)  # "MIT"
-print(fastmiddleware.__url__)      # "https://github.com/shregar1/fastmvc-middleware"
+print(fastmiddleware.__url__)      # "https://github.com/shregar1/fast-middleware"
 
 ```

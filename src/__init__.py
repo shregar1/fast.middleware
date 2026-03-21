@@ -283,7 +283,7 @@ __version__ = "0.6.4"
 __author__ = "Shivansh Sengar, Shreyansh Sengar"
 __email__ = "sengarsinghshivansh@gmail.com, sengarsinghshreyansh@gmail.com"
 __license__ = "MIT"
-__url__ = "https://github.com/shregar1/fastmvc-middleware"
+__url__ = "https://github.com/shregar1/fast-middleware"
 
 __all__ = [
     # Base

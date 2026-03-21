@@ -5,7 +5,7 @@ from starlette.responses import JSONResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fastmvc_middleware import CompressionPreset
+from fast_middleware import CompressionPreset
 
 
 async def large(_):

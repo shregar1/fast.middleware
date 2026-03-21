@@ -5,7 +5,7 @@ Handle If-None-Match and If-Modified-Since for efficient caching.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

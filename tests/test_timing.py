@@ -8,7 +8,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fastmvc_middleware import DEFAULT_RESPONSE_TIME_HEADER, ResponseTimingMiddleware
+from fast_middleware import DEFAULT_RESPONSE_TIME_HEADER, ResponseTimingMiddleware
 
 
 async def slow(_request: Request):

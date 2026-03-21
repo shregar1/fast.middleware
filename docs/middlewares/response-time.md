@@ -5,7 +5,7 @@ Monitor response times against SLAs.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 

@@ -9,7 +9,7 @@ Request timeout enforcement middleware.
 ## Installation
 
 ```bash
-pip install fastmvc-middleware
+pip install fast-middleware
 
 ```
 
