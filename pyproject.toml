@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastmvc-middleware"
-version = "0.7.0"
-description = "HTTP middleware utilities (request ID, etc.) for FastMVC / Starlette apps."
+version = "0.8.0"
+description = "HTTP middleware utilities (request ID, security headers, timing) for FastMVC / Starlette apps."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
@@ -28,6 +28,12 @@ Homepage = "https://github.com/shregar1/fastmvc"
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-v --tb=short"
+# Only the lightweight ``fastmvc_middleware`` tests (other files target the optional ``fastmiddleware`` package).
+python_files = [
+    "test_request_id_middleware.py",
+    "test_security_headers.py",
+    "test_timing.py",
+]
 
 [tool.setuptools.packages.find]
 where = ["src"]

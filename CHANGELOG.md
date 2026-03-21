@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-03-21
+
+### Added
+
+- **`SecurityHeadersMiddleware`** / **`SecurityHeadersConfig`** — `X-Content-Type-Options`, `X-Frame-Options`, optional CSP `frame-ancestors`, opt-in HSTS (`security_headers.py`).
+- **`ResponseTimingMiddleware`** — `X-Response-Time` header using `time.perf_counter()` (`timing.py`).
+
+### Changed
+
+- Pytest is scoped to `fastmvc_middleware` test files only; legacy `fastmiddleware`-based tests are not collected unless you adjust `python_files` in `pyproject.toml`.
+
 ## [0.5.0] - 2026-01-18
 
 ### Added - Major Expansion (90+ Middlewares!)
