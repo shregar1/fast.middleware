@@ -1,24 +1,30 @@
 # fastmvc_middleware
 
-**HTTP middleware utilities** for FastMVC / Starlette applications.
+**HTTP middleware for FastAPI / Starlette** — a large collection of production-oriented middlewares (security, CORS, rate limiting, auth, logging, tracing, caching, compression, health checks, graceful shutdown, and more) exposed from the **`fastmiddleware`** package, plus factories such as **`MiddlewareBuilder`** and **`create_middleware`**.
 
----
+This package is **not** the same as **`fastmvc_tenancy`** (tenant resolution) or **`fastmvc_core`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
 
-## Overview
+## Layout
 
-Cross-cutting concerns live here when they are **shared across many services** but do not belong in `fastmvc_tenancy` (tenant context) or `fastmvc_core` (config-only). Examples might include request ID injection, security headers, or custom logging — **subject to what is actually implemented in this folder**.
+- `fastmiddleware/` — implementation modules (e.g. `cors`, `logging`, `rate_limit`, `security`, `authentication`, …).
+- `tests/` — pytest suites per middleware area.
 
-Install when your scaffold or product depends on it:
+Install path depends on how your environment maps this repo (see `requirements.txt` or your app’s dependency list).
+
+## Install
+
+From the monorepo (if your project vendors this tree):
 
 ```bash
-python -m pip install -e ./fastmvc_middleware
+pip install -e ./fastmvc_middleware
 ```
-
----
 
 ## Related packages
 
-- **`fastmvc_tenancy`** — tenant resolution and JWT-related middleware patterns
-- **`fastmvc_core`** — configuration, not WSGI/ASGI middleware
+- **`fastmvc_tenancy`** — `TenantMiddleware` and tenant context (different concern).
+- **`fastmvc_core`** — app config; not HTTP middleware.
+- Monorepo: [../README.md](../README.md).
 
-See [../README.md](../README.md).
+## Tooling
+
+If this folder includes [CONTRIBUTING.md](CONTRIBUTING.md), [Makefile](Makefile), and [PUBLISHING.md](PUBLISHING.md) (synced from tooling scripts), use them for tests and lint.
