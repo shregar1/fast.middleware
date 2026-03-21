@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-03-21
+
+### Added
+
+- **`CORSPreset`** — Pydantic DTO with SPA-friendly defaults; :meth:`CORSPreset.starlette_kwargs` for Starlette `CORSMiddleware` (`cors_preset.py`).
+- **`BodySizeLimitMiddleware`** — `413` when `Content-Length` exceeds a configurable max (`body_limit.py`).
+- **`get_client_ip`**, **`ClientIPMiddleware`**, **`read_client_ip`**, **`STATE_CLIENT_IP`** — `X-Forwarded-For` / `X-Real-IP` with `trusted_proxy_depth` (`client_ip.py`).
+- **`CompressionPreset`** — wraps Starlette `GZipMiddleware` (gzip only; brotli left to CDN/server) (`compression.py`).
+
 ## [0.8.0] - 2026-03-21
 
 ### Added

@@ -4,14 +4,15 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastmvc-middleware"
-version = "0.8.0"
-description = "HTTP middleware utilities (request ID, security headers, timing) for FastMVC / Starlette apps."
+version = "0.9.0"
+description = "HTTP middleware utilities (request ID, security headers, timing, CORS/body/IP/compression) for FastMVC / Starlette apps."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
 dependencies = [
     "starlette>=0.27.0",
     "fastmvc_core",
+    "pydantic>=2.0.0",
 ]
 
 [project.optional-dependencies]
@@ -33,6 +34,10 @@ python_files = [
     "test_request_id_middleware.py",
     "test_security_headers.py",
     "test_timing.py",
+    "test_cors_preset.py",
+    "test_body_limit.py",
+    "test_client_ip.py",
+    "test_compression_preset.py",
 ]
 
 [tool.setuptools.packages.find]
