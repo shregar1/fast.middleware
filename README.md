@@ -93,3 +93,16 @@ CompressionPreset(minimum_size=500).add_to_app(app)
 ## Tooling
 
 If this folder includes [CONTRIBUTING.md](CONTRIBUTING.md), [Makefile](Makefile), and [PUBLISHING.md](PUBLISHING.md) (synced from tooling scripts), use them for tests and lint.
+
+---
+
+## Documentation
+
+| Document | Purpose |
+|----------|---------|
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Dev setup, tests, monorepo sync |
+| [PUBLISHING.md](PUBLISHING.md) | PyPI and releases |
+| [SECURITY.md](SECURITY.md) | Reporting vulnerabilities |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
+
+**Monorepo:** [../README.md](../README.md) · **Coverage:** [../docs/COVERAGE.md](../docs/COVERAGE.md)
