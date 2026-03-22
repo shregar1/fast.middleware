@@ -25,8 +25,16 @@ from fastmiddleware.factory import (
 # Core Middlewares
 # ============================================================================
 from fastmiddleware.cors import CORSMiddleware
+from fastmiddleware.cors_preset import CORSPreset
 from fastmiddleware.logging import LoggingMiddleware
-from fastmiddleware.timing import TimingMiddleware
+from fastmiddleware.timing import DEFAULT_RESPONSE_TIME_HEADER, ResponseTimingMiddleware
+from fastmiddleware.body_limit import BodySizeLimitMiddleware
+from fastmiddleware.client_ip import (
+    STATE_CLIENT_IP,
+    ClientIPMiddleware,
+    get_client_ip,
+    read_client_ip,
+)
 from fastmiddleware.request_id import RequestIDMiddleware
 
 # ============================================================================
@@ -120,7 +128,7 @@ from fastmiddleware.request_id_propagation import (
 # ============================================================================
 # Response Handling
 # ============================================================================
-from fastmiddleware.compression import CompressionMiddleware, CompressionConfig
+from fastmiddleware.compression import CompressionPreset
 from fastmiddleware.response_format import ResponseFormatMiddleware, ResponseFormatConfig
 from fastmiddleware.cache import CacheMiddleware, CacheConfig
 from fastmiddleware.etag import ETagMiddleware, ETagConfig
@@ -291,8 +299,15 @@ __all__ = [
 
     # Core
     "CORSMiddleware",
+    "CORSPreset",
     "LoggingMiddleware",
-    "TimingMiddleware",
+    "DEFAULT_RESPONSE_TIME_HEADER",
+    "ResponseTimingMiddleware",
+    "BodySizeLimitMiddleware",
+    "STATE_CLIENT_IP",
+    "ClientIPMiddleware",
+    "get_client_ip",
+    "read_client_ip",
     "RequestIDMiddleware",
 
     # Security
@@ -383,8 +398,7 @@ __all__ = [
     "get_trace_header",
 
     # Response Handling
-    "CompressionMiddleware",
-    "CompressionConfig",
+    "CompressionPreset",
     "ResponseFormatMiddleware",
     "ResponseFormatConfig",
     "CacheMiddleware",

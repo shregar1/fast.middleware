@@ -5,7 +5,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fast_middleware import BodySizeLimitMiddleware
+from fastmiddleware import BodySizeLimitMiddleware
 
 
 async def echo(_):

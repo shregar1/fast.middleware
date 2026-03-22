@@ -261,13 +261,23 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
         if self.config.enable_hsts:
             response.headers["Strict-Transport-Security"] = self.config.build_hsts_header()
 
-        # Add Content Security Policy
-        csp = self.config.content_security_policy or self.DEFAULT_CSP
-        response.headers["Content-Security-Policy"] = csp
+        # Add Content Security Policy (empty string disables CSP header)
+        csp = (
+            self.DEFAULT_CSP
+            if self.config.content_security_policy is None
+            else self.config.content_security_policy
+        )
+        if csp:
+            response.headers["Content-Security-Policy"] = csp
 
-        # Add Permissions Policy
-        permissions = self.config.permissions_policy or self.DEFAULT_PERMISSIONS_POLICY
-        response.headers["Permissions-Policy"] = permissions
+        # Add Permissions Policy (empty string disables)
+        permissions = (
+            self.DEFAULT_PERMISSIONS_POLICY
+            if self.config.permissions_policy is None
+            else self.config.permissions_policy
+        )
+        if permissions:
+            response.headers["Permissions-Policy"] = permissions
 
         # Add Cross-Origin policies
         if self.config.cross_origin_opener_policy:

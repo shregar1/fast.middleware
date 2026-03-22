@@ -11,7 +11,7 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fast_platform.utils.request_id_context import reset_request_id, set_request_id
+from utils.request_id_context import reset_request_id, set_request_id
 
 DEFAULT_REQUEST_ID_HEADER = "X-Request-ID"
 

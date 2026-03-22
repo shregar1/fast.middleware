@@ -3,7 +3,7 @@
 from starlette.middleware.cors import CORSMiddleware
 from starlette.testclient import TestClient
 
-from fast_middleware import CORSPreset
+from fastmiddleware import CORSPreset
 
 
 def test_cors_preset_starlette_kwargs():

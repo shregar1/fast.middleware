@@ -6,7 +6,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fast_middleware import SecurityHeadersConfig, SecurityHeadersMiddleware
+from fastmiddleware import SecurityHeadersConfig, SecurityHeadersMiddleware
 
 
 async def ok(_request: Request):
@@ -29,9 +29,10 @@ def test_security_headers_hsts_and_no_csp():
     app.add_middleware(
         SecurityHeadersMiddleware,
         config=SecurityHeadersConfig(
+            enable_hsts=True,
             hsts_max_age=31536000,
             hsts_include_subdomains=True,
-            csp_frame_ancestors=None,
+            content_security_policy="",
             x_frame_options="SAMEORIGIN",
         ),
     )

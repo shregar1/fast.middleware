@@ -51,7 +51,7 @@ Homepage = "https://github.com/shregar1/fastmvc"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = ["src", "../fast_platform/src"]
 addopts = "-v --tb=short"
 # Only the lightweight ``fast_middleware`` tests (other files target the optional ``fastmiddleware`` package).
 python_files = [
