@@ -1,6 +1,6 @@
 # fast_middleware
 
-**HTTP middleware for FastAPI / Starlette** in the FastMVC monorepo: request correlation IDs (via `fast_core`), optional security headers, response timing, CORS presets, body-size limits, client IP extraction, and gzip compression presets. This package is **not** the same as **`fast_tenancy`** (tenant resolution) or **`fast_core`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
+**HTTP middleware for FastAPI / Starlette** in the FastMVC monorepo: request correlation IDs (via `fast_platform`), optional security headers, response timing, CORS presets, body-size limits, client IP extraction, and gzip compression presets. This package is **not** the same as **`fast_tenancy`** (tenant resolution) or **`fast_platform`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
 
 The `tests/` directory also contains legacy suites that target an optional **`fastmiddleware`** package (not installed by default). The default pytest configuration only runs the lightweight **`fast_middleware`** tests—see `python_files` in [pyproject.toml](pyproject.toml).
 
@@ -87,7 +87,7 @@ CompressionPreset(minimum_size=500).add_to_app(app)
 ## Related packages
 
 - **`fast_tenancy`** — `TenantMiddleware` and tenant context (different concern).
-- **`fast_core`** — app config; not HTTP middleware.
+- **`fast_platform`** — app config; not HTTP middleware.
 - Monorepo: [../README.md](../README.md).
 
 ## Tooling

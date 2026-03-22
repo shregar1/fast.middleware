@@ -11,14 +11,14 @@ from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoin
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fast_core.utils.request_id_context import reset_request_id, set_request_id
+from fast_platform.utils.request_id_context import reset_request_id, set_request_id
 
 DEFAULT_REQUEST_ID_HEADER = "X-Request-ID"
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
     """
-    Set ``X-Request-ID`` on the response and bind the value to ``fast_core`` request id context.
+    Set ``X-Request-ID`` on the response and bind the value to ``fast_platform`` request id context.
 
     If the client sends the header and ``accept_incoming`` is True, that value is reused;
     otherwise a new UUID4 string is generated.

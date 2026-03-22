@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from fast_core.utils.request_id_context import get_request_id
+from fast_platform.utils.request_id_context import get_request_id
 
 ErrorKind = Literal[
     "missing_bearer",

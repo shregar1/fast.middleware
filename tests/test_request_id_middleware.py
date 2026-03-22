@@ -6,7 +6,7 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from fast_core.utils.request_id_context import get_request_id
+from fast_platform.utils.request_id_context import get_request_id
 from fast_middleware import RequestIDMiddleware
 
 
