@@ -6,12 +6,12 @@ from starlette.responses import PlainTextResponse
 from starlette.routing import Route
 from starlette.testclient import TestClient
 
-from utils.request_id_context import get_request_id
+from core.utils.request_id_context import RequestIdContext
 from fastmiddleware import RequestIDMiddleware
 
 
 async def homepage(_request: Request):
-    return PlainTextResponse(get_request_id() or "")
+    return PlainTextResponse(RequestIdContext.get() or "")
 
 
 def _app():

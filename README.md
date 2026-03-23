@@ -1,12 +1,20 @@
 # fast_middleware
 
-**HTTP middleware for FastAPI / Starlette** in the FastMVC monorepo: request correlation IDs (via `fast_platform`), optional security headers, response timing, CORS presets, body-size limits, client IP extraction, and gzip compression presets. This package is **not** the same as **`fast_tenancy`** (tenant resolution) or **`fast_platform`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
+**HTTP middleware for FastAPI / Starlette** in the FastMVC monorepo. The installable package is **`fastmiddleware`** (import `from fastmiddleware import …`); PyPI name is **`fast-middleware`**. It ships **90+** ASGI middlewares—request correlation IDs (via `fast_platform`), security headers, rate limiting, sessions, caching, i18n, routing helpers, **build/version headers**, **immutable static asset caching**, **DNS prefetch control**, and more. This package is **not** the same as **`fast_tenancy`** (tenant resolution) or **`fast_platform`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
 
 The `tests/` directory also contains legacy suites that target an optional **`fastmiddleware`** package (not installed by default). The default pytest configuration only runs the lightweight **`fast_middleware`** tests—see `python_files` in [pyproject.toml](pyproject.toml).
 
 ## Layout
 
-- `src/fast_middleware/` — `RequestIDMiddleware`, `SecurityHeadersMiddleware`, `ResponseTimingMiddleware`, `CORSPreset`, `BodySizeLimitMiddleware`, `get_client_ip` / `ClientIPMiddleware`, `CompressionPreset`, and related helpers.
+Source lives under **`src/`**, mapped to the **`fastmiddleware`** package (see `package-dir` in [pyproject.toml](pyproject.toml)):
+
+| Section | Path | Role |
+|--------|------|------|
+| **mw_core** | `src/mw_core/` | Factory helpers, CORS, logging, timing, body limits, client IP, request ID, compression |
+| **sec** | `src/sec/` | Security headers, CSRF, auth backends, JWT bearer, webhooks, trusted hosts, etc. |
+| **operations** | `src/operations/` | Rate limits, metrics, health, sessions, caching, i18n, routing, **build/version**, **immutable static cache**, **DNS prefetch**, etc. |
+
+See [src/taxonomy.py](src/taxonomy.py) for the section map.
 
 ## Install
 
@@ -20,7 +28,7 @@ pip install -e ./fast_middleware
 
 ```python
 from fastapi import FastAPI
-from fast_middleware import (
+from fastmiddleware import (
     RequestIDMiddleware,
     SecurityHeadersConfig,
     SecurityHeadersMiddleware,
@@ -44,7 +52,7 @@ app.add_middleware(ResponseTimingMiddleware)  # X-Response-Time (seconds by defa
 
 ```python
 from starlette.middleware.cors import CORSMiddleware
-from fast_middleware import CORSPreset
+from fastmiddleware import CORSPreset
 
 preset = CORSPreset(allow_origins=["https://app.example.com"], allow_credentials=True)
 app.add_middleware(CORSMiddleware, **preset.starlette_kwargs())
@@ -55,7 +63,7 @@ app.add_middleware(CORSMiddleware, **preset.starlette_kwargs())
 Checks `Content-Length` before the handler runs; use a reverse-proxy limit for chunked uploads without `Content-Length`.
 
 ```python
-from fast_middleware import BodySizeLimitMiddleware
+from fastmiddleware import BodySizeLimitMiddleware
 
 app.add_middleware(BodySizeLimitMiddleware, max_bytes=512_000)
 ```
@@ -63,7 +71,7 @@ app.add_middleware(BodySizeLimitMiddleware, max_bytes=512_000)
 ### Client IP (proxies)
 
 ```python
-from fast_middleware import ClientIPMiddleware, get_client_ip, read_client_ip
+from fastmiddleware import ClientIPMiddleware, get_client_ip, read_client_ip
 
 app.add_middleware(ClientIPMiddleware, trusted_proxy_depth=1)
 
@@ -79,10 +87,81 @@ Set `trusted_proxy_depth=0` to ignore `X-Forwarded-For` when the app is not behi
 Starlette ships `GZipMiddleware` only (no brotli). Use a CDN or server-level brotli if needed.
 
 ```python
-from fast_middleware import CompressionPreset
+from fastmiddleware import CompressionPreset
 
 CompressionPreset(minimum_size=500).add_to_app(app)
 ```
+
+### Build / version headers (support & deploys)
+
+Expose release metadata on every response (`APP_VERSION` and `GIT_SHA` by default):
+
+```python
+from fastmiddleware import BuildVersionMiddleware, BuildVersionConfig
+
+app.add_middleware(
+    BuildVersionMiddleware,
+    config=BuildVersionConfig(
+        version_header="X-App-Version",
+        git_sha_header="X-Git-SHA",
+    ),
+)
+```
+
+### Immutable cache for static assets
+
+Use with fingerprinted filenames (`app.[hash].js`). Adds `Cache-Control: public, max-age=…, immutable` for matching path prefixes.
+
+```python
+from fastmiddleware import ImmutableStaticCacheMiddleware, ImmutableStaticCacheConfig
+
+app.add_middleware(
+    ImmutableStaticCacheMiddleware,
+    config=ImmutableStaticCacheConfig(
+        path_prefixes=("/static/", "/assets/"),
+        max_age_seconds=31_536_000,
+    ),
+)
+```
+
+### DNS prefetch control (privacy)
+
+```python
+from fastmiddleware import DNSPrefetchControlMiddleware
+
+app.add_middleware(DNSPrefetchControlMiddleware)  # X-DNS-Prefetch-Control: off
+```
+
+### Edge performance tiers (CDN-class cache semantics)
+
+Preset **Cache-Control** shapes for apps behind Cloudflare / Fastly / CloudFront—analogous to **feed (Instagram-class)**, **creator (subscription / mixed public–private)**, and **live (Twitch-class low-latency)** products. Sets `s-maxage`, **stale-while-revalidate**, optional **`CDN-Cache-Control`** and **`Surrogate-Control`**, plus **`Vary`**. Does not replace `Cache-Control` your handlers already set when `only_if_missing=True` (default).
+
+```python
+from fastmiddleware import (
+    EdgePerformanceTier,
+    EdgeTierCacheHeadersConfig,
+    EdgeTierCacheHeadersMiddleware,
+)
+
+app.add_middleware(
+    EdgeTierCacheHeadersMiddleware,
+    config=EdgeTierCacheHeadersConfig(tier=EdgePerformanceTier.FEED),
+)
+# Use EdgePerformanceTier.CREATOR for mixed public catalog + private APIs,
+# EdgePerformanceTier.LIVE for short-TTL / no-store live paths, or
+# EdgePerformanceTier.VOD for Netflix-class catalogue + playback split (long
+# edge SWR on metadata, private playback/license APIs, immutable posters).
+```
+
+Pair with **`CompressionPreset`**, **`ImmutableStaticCacheMiddleware`**, and **`ResponseCacheMiddleware`** for origin shielding.
+
+### Factory helpers
+
+```python
+from fastmiddleware import create_middleware, middleware, MiddlewareBuilder, quick_middleware
+```
+
+Use these when you need a small custom middleware without a new module file.
 
 ## Related packages
 
