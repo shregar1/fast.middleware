@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Health Check middleware.
-"""
+"""Comprehensive tests for Health Check middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -21,10 +19,20 @@ def health_app() -> FastAPI:
 
     @app.get("/")
     async def root():
+        """Execute root operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello"}
 
     @app.get("/api/data")
     async def get_data():
+        """Execute get_data operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"data": [1, 2, 3]}
 
     return app
@@ -32,6 +40,14 @@ def health_app() -> FastAPI:
 
 @pytest.fixture
 def health_client(health_app: FastAPI) -> TestClient:
+    """Execute health_client operation.
+
+    Args:
+        health_app: The health_app parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return TestClient(health_app)
 
 
@@ -173,12 +189,25 @@ class TestCustomPaths:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def custom_path_client(self, custom_path_app: FastAPI) -> TestClient:
+        """Execute custom_path_client operation.
+
+        Args:
+            custom_path_app: The custom_path_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(custom_path_app)
 
     def test_custom_health_path(self, custom_path_client: TestClient):
@@ -215,9 +244,19 @@ class TestCustomHealthChecks:
         app = FastAPI()
 
         async def check_database():
+            """Execute check_database operation.
+
+            Returns:
+                The result of the operation.
+            """
             return True
 
         async def check_cache():
+            """Execute check_cache operation.
+
+            Returns:
+                The result of the operation.
+            """
             return True
 
         config = HealthConfig(
@@ -232,6 +271,14 @@ class TestCustomHealthChecks:
 
     @pytest.fixture
     def all_healthy_client(self, all_healthy_app: FastAPI) -> TestClient:
+        """Execute all_healthy_client operation.
+
+        Args:
+            all_healthy_app: The all_healthy_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(all_healthy_app)
 
     def test_all_healthy_returns_200(self, all_healthy_client: TestClient):
@@ -261,9 +308,19 @@ class TestUnhealthyChecks:
         app = FastAPI()
 
         async def check_database():
+            """Execute check_database operation.
+
+            Returns:
+                The result of the operation.
+            """
             return True
 
         async def check_cache():
+            """Execute check_cache operation.
+
+            Returns:
+                The result of the operation.
+            """
             return False  # Unhealthy
 
         config = HealthConfig(
@@ -278,6 +335,14 @@ class TestUnhealthyChecks:
 
     @pytest.fixture
     def unhealthy_client(self, unhealthy_app: FastAPI) -> TestClient:
+        """Execute unhealthy_client operation.
+
+        Args:
+            unhealthy_app: The unhealthy_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(unhealthy_app)
 
     def test_unhealthy_returns_503(self, unhealthy_client: TestClient):
@@ -319,6 +384,11 @@ class TestCheckExceptions:
         app = FastAPI()
 
         async def check_that_fails():
+            """Execute check_that_fails operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise RuntimeError("Check failed")
 
         config = HealthConfig(
@@ -332,6 +402,14 @@ class TestCheckExceptions:
 
     @pytest.fixture
     def exception_client(self, exception_app: FastAPI) -> TestClient:
+        """Execute exception_client operation.
+
+        Args:
+            exception_app: The exception_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(exception_app)
 
     def test_exception_treated_as_unhealthy(self, exception_client: TestClient):
@@ -360,6 +438,14 @@ class TestWithoutDetails:
 
     @pytest.fixture
     def no_details_client(self, no_details_app: FastAPI) -> TestClient:
+        """Execute no_details_client operation.
+
+        Args:
+            no_details_app: The no_details_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(no_details_app)
 
     def test_no_uptime_in_response(self, no_details_client: TestClient):

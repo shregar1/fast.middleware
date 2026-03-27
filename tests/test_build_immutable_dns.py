@@ -17,10 +17,23 @@ from fastmiddleware import (
 
 
 async def _hello(_: Request) -> PlainTextResponse:
+    """Execute _hello operation.
+
+    Args:
+        _: The _ parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return PlainTextResponse("ok")
 
 
 def test_build_version_from_explicit_config():
+    """Execute test_build_version_from_explicit_config operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", _hello)])
     app.add_middleware(
         BuildVersionMiddleware,
@@ -33,6 +46,14 @@ def test_build_version_from_explicit_config():
 
 
 def test_build_version_from_env(monkeypatch):
+    """Execute test_build_version_from_env operation.
+
+    Args:
+        monkeypatch: The monkeypatch parameter.
+
+    Returns:
+        The result of the operation.
+    """
     monkeypatch.setenv("APP_VERSION", " 1.2.3 ")
     monkeypatch.setenv("GIT_SHA", "deadbeef")
     app = Starlette(routes=[Route("/", _hello)])
@@ -44,6 +65,14 @@ def test_build_version_from_env(monkeypatch):
 
 
 def test_build_version_skips_empty_without_include_empty(monkeypatch):
+    """Execute test_build_version_skips_empty_without_include_empty operation.
+
+    Args:
+        monkeypatch: The monkeypatch parameter.
+
+    Returns:
+        The result of the operation.
+    """
     monkeypatch.delenv("APP_VERSION", raising=False)
     monkeypatch.delenv("GIT_SHA", raising=False)
     app = Starlette(routes=[Route("/", _hello)])
@@ -55,7 +84,21 @@ def test_build_version_skips_empty_without_include_empty(monkeypatch):
 
 
 def test_immutable_static_cache_on_prefix():
+    """Execute test_immutable_static_cache_on_prefix operation.
+
+    Returns:
+        The result of the operation.
+    """
+
     async def asset(_: Request) -> PlainTextResponse:
+        """Execute asset operation.
+
+        Args:
+            _: The _ parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return PlainTextResponse("x")
 
     app = Starlette(routes=[Route("/static/app.hash.js", asset)])
@@ -68,6 +111,11 @@ def test_immutable_static_cache_on_prefix():
 
 
 def test_immutable_static_skips_api():
+    """Execute test_immutable_static_skips_api operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/api/x", _hello)])
     app.add_middleware(ImmutableStaticCacheMiddleware)
     client = TestClient(app)
@@ -76,6 +124,11 @@ def test_immutable_static_skips_api():
 
 
 def test_dns_prefetch_off_by_default():
+    """Execute test_dns_prefetch_off_by_default operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", _hello)])
     app.add_middleware(DNSPrefetchControlMiddleware)
     client = TestClient(app)
@@ -84,6 +137,11 @@ def test_dns_prefetch_off_by_default():
 
 
 def test_dns_prefetch_custom():
+    """Execute test_dns_prefetch_custom operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", _hello)])
     app.add_middleware(
         DNSPrefetchControlMiddleware,

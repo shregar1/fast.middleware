@@ -1,5 +1,4 @@
-"""
-Logging Middleware for FastMVC.
+"""Logging Middleware for FastMVC.
 
 Provides structured request/response logging with configurable log levels and filters.
 """
@@ -18,8 +17,7 @@ logger = logging.getLogger("fastmvc.middleware")
 
 
 class LoggingMiddleware(FastMVCMiddleware):
-    """
-    Middleware that logs incoming requests and outgoing responses.
+    """Middleware that logs incoming requests and outgoing responses.
 
     Features:
         - Configurable log levels
@@ -53,6 +51,7 @@ class LoggingMiddleware(FastMVCMiddleware):
             log_request_headers=True,
         )
         ```
+
     """
 
     # Default paths to exclude from logging
@@ -77,8 +76,7 @@ class LoggingMiddleware(FastMVCMiddleware):
         exclude_methods: set[str] | None = None,
         custom_logger: logging.Logger | None = None,
     ) -> None:
-        """
-        Initialize the logging middleware.
+        """Initialize the logging middleware.
 
         Args:
             app: The ASGI application.
@@ -90,9 +88,14 @@ class LoggingMiddleware(FastMVCMiddleware):
             exclude_paths: Paths to exclude from logging.
             exclude_methods: HTTP methods to exclude from logging.
             custom_logger: Custom logger instance to use.
+
         """
-        _exclude_paths = exclude_paths if exclude_paths is not None else self.DEFAULT_EXCLUDE_PATHS
-        super().__init__(app, exclude_paths=_exclude_paths, exclude_methods=exclude_methods)
+        _exclude_paths = (
+            exclude_paths if exclude_paths is not None else self.DEFAULT_EXCLUDE_PATHS
+        )
+        super().__init__(
+            app, exclude_paths=_exclude_paths, exclude_methods=exclude_methods
+        )
 
         self.log_level = log_level
         self.log_request_body = log_request_body
@@ -104,8 +107,7 @@ class LoggingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process the request, logging request and response details.
+        """Process the request, logging request and response details.
 
         Args:
             request: The incoming HTTP request.
@@ -113,6 +115,7 @@ class LoggingMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response.
+
         """
         # Skip logging for excluded paths/methods
         if self.should_skip(request):

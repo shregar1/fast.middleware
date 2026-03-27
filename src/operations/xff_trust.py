@@ -1,5 +1,4 @@
-"""
-X-Forwarded-For Trust Middleware for FastMVC.
+"""X-Forwarded-For Trust Middleware for FastMVC.
 
 Handles trusted proxy headers.
 """
@@ -15,13 +14,13 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class XFFTrustConfig:
-    """
-    Configuration for X-Forwarded-For trust middleware.
+    """Configuration for X-Forwarded-For trust middleware.
 
     Attributes:
         trusted_proxies: List of trusted proxy IPs/CIDRs.
         depth: Number of proxies to skip from right.
         trust_all: Trust all X-Forwarded-For values.
+
     """
 
     trusted_proxies: list[str] = field(default_factory=list)
@@ -30,8 +29,7 @@ class XFFTrustConfig:
 
 
 class XFFTrustMiddleware(FastMVCMiddleware):
-    """
-    Middleware that handles X-Forwarded-For headers.
+    """Middleware that handles X-Forwarded-For headers.
 
     Properly extracts client IP from proxy headers
     based on trusted proxy configuration.
@@ -46,6 +44,7 @@ class XFFTrustMiddleware(FastMVCMiddleware):
             depth=2,  # Skip 2 rightmost proxies
         )
         ```
+
     """
 
     def __init__(
@@ -55,6 +54,14 @@ class XFFTrustMiddleware(FastMVCMiddleware):
         trusted_proxies: list[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            trusted_proxies: The trusted_proxies parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or XFFTrustConfig()
 
@@ -88,6 +95,15 @@ class XFFTrustMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

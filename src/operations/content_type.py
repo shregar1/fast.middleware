@@ -1,5 +1,4 @@
-"""
-Content Type Validation Middleware for FastMVC.
+"""Content Type Validation Middleware for FastMVC.
 
 Validates Content-Type headers on incoming requests.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ContentTypeConfig:
-    """
-    Configuration for content type validation middleware.
+    """Configuration for content type validation middleware.
 
     Attributes:
         allowed_types: Allowed content types for each method.
@@ -36,6 +34,7 @@ class ContentTypeConfig:
             },
         )
         ```
+
     """
 
     allowed_types: dict[str, set[str]] = field(default_factory=dict)
@@ -47,12 +46,13 @@ class ContentTypeConfig:
         }
     )
     strict: bool = False
-    methods_requiring_body: set[str] = field(default_factory=lambda: {"POST", "PUT", "PATCH"})
+    methods_requiring_body: set[str] = field(
+        default_factory=lambda: {"POST", "PUT", "PATCH"}
+    )
 
 
 class ContentTypeMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates Content-Type headers.
+    """Middleware that validates Content-Type headers.
 
     Ensures requests have appropriate Content-Type headers for
     methods that include request bodies.
@@ -84,6 +84,7 @@ class ContentTypeMiddleware(FastMVCMiddleware):
             },
         )
         ```
+
     """
 
     def __init__(
@@ -94,8 +95,7 @@ class ContentTypeMiddleware(FastMVCMiddleware):
         strict: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the content type middleware.
+        """Initialize the content type middleware.
 
         Args:
             app: The ASGI application.
@@ -103,6 +103,7 @@ class ContentTypeMiddleware(FastMVCMiddleware):
             allowed_types: Per-method allowed types (overrides config).
             strict: Strict mode (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ContentTypeConfig()
@@ -114,7 +115,9 @@ class ContentTypeMiddleware(FastMVCMiddleware):
 
     def _get_allowed_types(self, method: str) -> set[str]:
         """Get allowed content types for method."""
-        return self.config.allowed_types.get(method.upper(), self.config.default_allowed)
+        return self.config.allowed_types.get(
+            method.upper(), self.config.default_allowed
+        )
 
     def _extract_content_type(self, content_type: str) -> str:
         """Extract base content type (remove charset, etc.)."""
@@ -129,8 +132,7 @@ class ContentTypeMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with content type validation.
+        """Process request with content type validation.
 
         Args:
             request: The incoming HTTP request.
@@ -138,6 +140,7 @@ class ContentTypeMiddleware(FastMVCMiddleware):
 
         Returns:
             The response or 415 if content type invalid.
+
         """
         if self.should_skip(request):
             return await call_next(request)

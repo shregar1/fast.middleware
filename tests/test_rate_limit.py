@@ -1,6 +1,4 @@
-"""
-Tests for Rate Limiting middleware.
-"""
+"""Tests for Rate Limiting middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -72,7 +70,9 @@ class TestRateLimitMiddleware:
         response = client.get("/")
         assert response.status_code == 429
         assert "Retry-After" in response.headers
-        assert response.json()["detail"] == "Rate limit exceeded. Please try again later."
+        assert (
+            response.json()["detail"] == "Rate limit exceeded. Please try again later."
+        )
 
 
 class TestRateLimitConfig:

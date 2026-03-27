@@ -1,5 +1,4 @@
-"""
-Request Coalescing Middleware for FastMVC.
+"""Request Coalescing Middleware for FastMVC.
 
 Coalesces identical concurrent requests.
 """
@@ -18,12 +17,12 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class CoalescingConfig:
-    """
-    Configuration for request coalescing middleware.
+    """Configuration for request coalescing middleware.
 
     Attributes:
         window: Coalescing window in seconds.
         max_coalesced: Max requests to coalesce.
+
     """
 
     window: float = 0.1
@@ -31,8 +30,7 @@ class CoalescingConfig:
 
 
 class RequestCoalescingMiddleware(FastMVCMiddleware):
-    """
-    Middleware that coalesces identical requests.
+    """Middleware that coalesces identical requests.
 
     When multiple identical requests arrive within a short
     window, only one is processed and the result is shared.
@@ -49,6 +47,7 @@ class RequestCoalescingMiddleware(FastMVCMiddleware):
         # Multiple /api/data requests within 100ms
         # will be coalesced into a single backend call
         ```
+
     """
 
     def __init__(
@@ -57,6 +56,13 @@ class RequestCoalescingMiddleware(FastMVCMiddleware):
         config: CoalescingConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or CoalescingConfig()
         self._pending: dict[str, tuple[asyncio.Event, Any]] = {}
@@ -73,6 +79,15 @@ class RequestCoalescingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

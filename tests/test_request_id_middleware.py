@@ -11,16 +11,34 @@ from fastmiddleware import RequestIDMiddleware
 
 
 async def homepage(_request: Request):
+    """Execute homepage operation.
+
+    Args:
+        _request: The _request parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return PlainTextResponse(RequestIdContext.get() or "")
 
 
 def _app():
+    """Execute _app operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", homepage)])
     app.add_middleware(RequestIDMiddleware)
     return app
 
 
 def test_request_id_header_and_context_match():
+    """Execute test_request_id_header_and_context_match operation.
+
+    Returns:
+        The result of the operation.
+    """
     client = TestClient(_app())
     r = client.get("/")
     assert r.status_code == 200
@@ -30,6 +48,11 @@ def test_request_id_header_and_context_match():
 
 
 def test_accepts_incoming_request_id():
+    """Execute test_accepts_incoming_request_id operation.
+
+    Returns:
+        The result of the operation.
+    """
     client = TestClient(_app())
     r = client.get("/", headers={"X-Request-ID": "  from-client  "})
     assert r.headers["X-Request-ID"] == "from-client"
@@ -37,6 +60,11 @@ def test_accepts_incoming_request_id():
 
 
 def test_custom_id_factory():
+    """Execute test_custom_id_factory operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", homepage)])
     app.add_middleware(RequestIDMiddleware, id_factory=lambda: "fixed-id")
     client = TestClient(app)

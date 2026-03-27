@@ -1,5 +1,4 @@
-"""
-User Agent Parser Middleware for FastMVC.
+"""User Agent Parser Middleware for FastMVC.
 
 Parses and normalizes User-Agent headers.
 """
@@ -40,6 +39,11 @@ class UserAgentInfo:
     is_bot: bool = False
 
     def to_dict(self) -> dict[str, Any]:
+        """Execute to_dict operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {
             "raw": self.raw,
             "browser": self.browser,
@@ -63,8 +67,7 @@ class UserAgentConfig:
 
 
 class UserAgentMiddleware(FastMVCMiddleware):
-    """
-    Middleware that parses User-Agent headers.
+    """Middleware that parses User-Agent headers.
 
     Extracts browser, OS, device, and bot information
     from User-Agent strings.
@@ -82,6 +85,7 @@ class UserAgentMiddleware(FastMVCMiddleware):
                 return mobile_response()
             return desktop_response()
         ```
+
     """
 
     BROWSER_PATTERNS = [
@@ -106,7 +110,14 @@ class UserAgentMiddleware(FastMVCMiddleware):
         (r"CrOS", "Chrome OS"),
     ]
 
-    MOBILE_PATTERNS = [r"Mobile", r"Android", r"iPhone", r"iPod", r"BlackBerry", r"Windows Phone"]
+    MOBILE_PATTERNS = [
+        r"Mobile",
+        r"Android",
+        r"iPhone",
+        r"iPod",
+        r"BlackBerry",
+        r"Windows Phone",
+    ]
     TABLET_PATTERNS = [r"iPad", r"Android(?!.*Mobile)", r"Tablet"]
     BOT_PATTERNS = [r"bot", r"crawl", r"spider", r"slurp", r"search"]
 
@@ -116,6 +127,13 @@ class UserAgentMiddleware(FastMVCMiddleware):
         config: UserAgentConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or UserAgentConfig()
         self._cache: dict[str, UserAgentInfo] = {}
@@ -143,7 +161,9 @@ class UserAgentMiddleware(FastMVCMiddleware):
             match = re.search(pattern, ua_string)
             if match:
                 info.os = name
-                info.os_version = match.group(1).replace("_", ".") if match.groups() else ""
+                info.os_version = (
+                    match.group(1).replace("_", ".") if match.groups() else ""
+                )
                 break
 
         # Detect device type
@@ -173,6 +193,15 @@ class UserAgentMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

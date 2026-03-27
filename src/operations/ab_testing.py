@@ -1,5 +1,4 @@
-"""
-A/B Testing Middleware for FastMVC.
+"""A/B Testing Middleware for FastMVC.
 
 Provides A/B test variant assignment and routing.
 """
@@ -21,8 +20,7 @@ _ab_ctx: ContextVar[dict[str, str] | None] = ContextVar("ab_variants", default=N
 
 
 def get_variant(experiment: str) -> str | None:
-    """
-    Get the assigned variant for an experiment.
+    """Get the assigned variant for an experiment.
 
     Args:
         experiment: Experiment name.
@@ -41,6 +39,7 @@ def get_variant(experiment: str) -> str | None:
                 return new_checkout()
             return old_checkout()
         ```
+
     """
     variants = _ab_ctx.get()
     return variants.get(experiment) if variants else None
@@ -56,6 +55,11 @@ class Experiment:
     enabled: bool = True
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.weights is None:
             # Equal distribution
             self.weights = [1.0 / len(self.variants)] * len(self.variants)
@@ -63,8 +67,7 @@ class Experiment:
 
 @dataclass
 class ABTestConfig:
-    """
-    Configuration for A/B testing middleware.
+    """Configuration for A/B testing middleware.
 
     Attributes:
         experiments: List of experiments.
@@ -91,6 +94,7 @@ class ABTestConfig:
             ],
         )
         ```
+
     """
 
     experiments: list[Experiment] = field(default_factory=list)
@@ -101,8 +105,7 @@ class ABTestConfig:
 
 
 class ABTestMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides A/B testing support.
+    """Middleware that provides A/B testing support.
 
     Assigns users to experiment variants and maintains
     consistent assignments across requests.
@@ -134,6 +137,7 @@ class ABTestMiddleware(FastMVCMiddleware):
                 return new_checkout_flow()
             return standard_checkout_flow()
         ```
+
     """
 
     def __init__(
@@ -143,6 +147,14 @@ class ABTestMiddleware(FastMVCMiddleware):
         experiments: list[Experiment] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            experiments: The experiments parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ABTestConfig()
 
@@ -181,7 +193,9 @@ class ABTestMiddleware(FastMVCMiddleware):
 
         # Select variant based on weights
         cumulative = 0.0
-        for variant, weight in zip(experiment.variants, experiment.weights, strict=False):
+        for variant, weight in zip(
+            experiment.variants, experiment.weights, strict=False
+        ):
             cumulative += weight
             if value < cumulative:
                 return variant
@@ -221,6 +235,15 @@ class ABTestMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 
@@ -244,7 +267,9 @@ class ABTestMiddleware(FastMVCMiddleware):
             )
 
             # Add header showing active variants
-            response.headers["X-AB-Variants"] = ",".join(f"{k}={v}" for k, v in assignments.items())
+            response.headers["X-AB-Variants"] = ",".join(
+                f"{k}={v}" for k, v in assignments.items()
+            )
 
             return response
         finally:

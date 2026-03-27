@@ -1,5 +1,4 @@
-"""
-CORS (Cross-Origin Resource Sharing) Middleware for FastMVC.
+"""CORS (Cross-Origin Resource Sharing) Middleware for FastMVC.
 
 Provides configurable CORS headers with sensible defaults for API development.
 """
@@ -10,8 +9,7 @@ from starlette.middleware.cors import CORSMiddleware as StarletteCORSMiddleware
 
 
 class CORSMiddleware(StarletteCORSMiddleware):
-    """
-    CORS middleware with sensible defaults for FastMVC applications.
+    """CORS middleware with sensible defaults for FastMVC applications.
 
     This is a thin wrapper around Starlette's CORSMiddleware with
     commonly used defaults for API development.
@@ -48,21 +46,28 @@ class CORSMiddleware(StarletteCORSMiddleware):
     Note:
         When `allow_origins` is set to `["*"]`, `allow_credentials` must be
         set to `False` for security reasons.
+
     """
 
     def __init__(
         self,
         app,
         allow_origins: Sequence[str] = (),
-        allow_methods: Sequence[str] = ("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"),
+        allow_methods: Sequence[str] = (
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH",
+            "OPTIONS",
+        ),
         allow_headers: Sequence[str] = ("*",),
         allow_credentials: bool = True,
         allow_origin_regex: str | None = None,
         expose_headers: Sequence[str] = (),
         max_age: int = 600,
     ) -> None:
-        """
-        Initialize the CORS middleware.
+        """Initialize the CORS middleware.
 
         Args:
             app: The ASGI application.
@@ -73,6 +78,7 @@ class CORSMiddleware(StarletteCORSMiddleware):
             allow_origin_regex: Regex pattern for matching allowed origins.
             expose_headers: Headers to expose to the browser.
             max_age: Maximum time (seconds) for browsers to cache preflight responses.
+
         """
         super().__init__(
             app,

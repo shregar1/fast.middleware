@@ -1,5 +1,4 @@
-"""
-Profiling Middleware for FastMVC.
+"""Profiling Middleware for FastMVC.
 
 Provides request profiling and performance metrics.
 """
@@ -20,8 +19,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ProfilingConfig:
-    """
-    Configuration for profiling middleware.
+    """Configuration for profiling middleware.
 
     Attributes:
         enabled: Whether profiling is enabled.
@@ -40,6 +38,7 @@ class ProfilingConfig:
             slow_request_threshold=500,  # Log >500ms requests
         )
         ```
+
     """
 
     enabled: bool = False  # Disabled by default (enable in dev only)
@@ -118,8 +117,7 @@ class EndpointStats:
 
 
 class ProfilingMiddleware(FastMVCMiddleware):
-    """
-    Middleware that profiles request performance.
+    """Middleware that profiles request performance.
 
     Collects timing statistics for all endpoints and optionally
     provides detailed CPU profiling.
@@ -151,6 +149,7 @@ class ProfilingMiddleware(FastMVCMiddleware):
 
     Warning:
         Do NOT enable in production! Profiling adds overhead.
+
     """
 
     def __init__(
@@ -160,14 +159,14 @@ class ProfilingMiddleware(FastMVCMiddleware):
         enabled: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the profiling middleware.
+        """Initialize the profiling middleware.
 
         Args:
             app: The ASGI application.
             config: Profiling configuration.
             enabled: Enable profiling (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ProfilingConfig()
@@ -185,7 +184,9 @@ class ProfilingMiddleware(FastMVCMiddleware):
         uptime = time.time() - self._start_time
 
         # Build stats
-        endpoints = {path: stats.to_dict() for path, stats in sorted(self._stats.items())}
+        endpoints = {
+            path: stats.to_dict() for path, stats in sorted(self._stats.items())
+        }
 
         # Calculate totals
         total_requests = sum(s.count for s in self._stats.values())
@@ -196,7 +197,9 @@ class ProfilingMiddleware(FastMVCMiddleware):
                 "uptime_seconds": round(uptime, 2),
                 "total_requests": total_requests,
                 "total_time_ms": round(total_time, 2),
-                "avg_time_ms": round(total_time / total_requests, 2) if total_requests > 0 else 0,
+                "avg_time_ms": round(total_time / total_requests, 2)
+                if total_requests > 0
+                else 0,
                 "endpoints": endpoints,
                 "slow_requests": self._slow_requests[-20:],  # Last 20 slow requests
             }
@@ -225,8 +228,7 @@ class ProfilingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with profiling.
+        """Process request with profiling.
 
         Args:
             request: The incoming HTTP request.
@@ -234,6 +236,7 @@ class ProfilingMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with profiling data.
+
         """
         # Handle profile endpoint
         if request.url.path == self.config.profile_path:

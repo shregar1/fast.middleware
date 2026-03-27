@@ -1,5 +1,4 @@
-"""
-Warmup Middleware for FastMVC.
+"""Warmup Middleware for FastMVC.
 
 Handles warmup/readiness requests for container orchestration.
 """
@@ -16,14 +15,14 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class WarmupConfig:
-    """
-    Configuration for warmup middleware.
+    """Configuration for warmup middleware.
 
     Attributes:
         warmup_paths: Paths that trigger warmup.
         warmup_header: Header to indicate warmup request.
         min_warmup_time: Minimum time app needs to be ready.
         warmup_callbacks: Functions to call during warmup.
+
     """
 
     warmup_paths: set[str] = field(
@@ -39,8 +38,7 @@ class WarmupConfig:
 
 
 class WarmupMiddleware(FastMVCMiddleware):
-    """
-    Middleware for handling warmup requests.
+    """Middleware for handling warmup requests.
 
     Used with container orchestration (Kubernetes, App Engine)
     to pre-warm instances before receiving traffic.
@@ -57,6 +55,7 @@ class WarmupMiddleware(FastMVCMiddleware):
         # During warmup, app returns 503 for normal requests
         # /_warmup returns 200 when ready
         ```
+
     """
 
     def __init__(
@@ -66,6 +65,14 @@ class WarmupMiddleware(FastMVCMiddleware):
         warmup_paths: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            warmup_paths: The warmup_paths parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or WarmupConfig()
 
@@ -95,6 +102,15 @@ class WarmupMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         path = request.url.path
         is_warmup = (
             path in self.config.warmup_paths

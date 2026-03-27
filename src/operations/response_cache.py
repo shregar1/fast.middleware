@@ -1,5 +1,4 @@
-"""
-In-Memory Response Cache Middleware for FastMVC.
+"""In-Memory Response Cache Middleware for FastMVC.
 
 Simple in-memory response caching.
 """
@@ -27,13 +26,17 @@ class CacheEntry:
 
     @property
     def is_expired(self) -> bool:
+        """Execute is_expired operation.
+
+        Returns:
+            The result of the operation.
+        """
         return time.time() > self.created_at + self.ttl
 
 
 @dataclass
 class ResponseCacheConfig:
-    """
-    Configuration for response cache middleware.
+    """Configuration for response cache middleware.
 
     Attributes:
         default_ttl: Default TTL in seconds.
@@ -42,6 +45,7 @@ class ResponseCacheConfig:
         cache_status_codes: Status codes to cache.
         path_ttls: Path-specific TTLs.
         vary_headers: Headers to include in cache key.
+
     """
 
     default_ttl: float = 60.0
@@ -53,8 +57,7 @@ class ResponseCacheConfig:
 
 
 class ResponseCacheMiddleware(FastMVCMiddleware):
-    """
-    Middleware for in-memory response caching.
+    """Middleware for in-memory response caching.
 
     Caches responses for specified methods and status codes
     to reduce backend load.
@@ -72,6 +75,7 @@ class ResponseCacheMiddleware(FastMVCMiddleware):
             },
         )
         ```
+
     """
 
     def __init__(
@@ -81,6 +85,14 @@ class ResponseCacheMiddleware(FastMVCMiddleware):
         default_ttl: float | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            default_ttl: The default_ttl parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ResponseCacheConfig()
 
@@ -139,6 +151,15 @@ class ResponseCacheMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

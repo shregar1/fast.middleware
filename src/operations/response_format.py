@@ -1,5 +1,4 @@
-"""
-Response Formatting Middleware for FastMVC.
+"""Response Formatting Middleware for FastMVC.
 
 Provides consistent response structure and content negotiation.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ResponseFormatConfig:
-    """
-    Configuration for response formatting middleware.
+    """Configuration for response formatting middleware.
 
     Attributes:
         wrap_responses: Wrap all responses in a standard envelope.
@@ -39,6 +37,7 @@ class ResponseFormatConfig:
             },
         )
         ```
+
     """
 
     wrap_responses: bool = False
@@ -50,8 +49,7 @@ class ResponseFormatConfig:
 
 
 class ResponseFormatMiddleware(FastMVCMiddleware):
-    """
-    Middleware that ensures consistent response formatting.
+    """Middleware that ensures consistent response formatting.
 
     Provides a standard envelope structure for all API responses
     and handles content negotiation.
@@ -84,6 +82,7 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
         #   }
         # }
         ```
+
     """
 
     def __init__(
@@ -93,14 +92,14 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
         wrap_responses: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the response format middleware.
+        """Initialize the response format middleware.
 
         Args:
             app: The ASGI application.
             config: Response format configuration.
             wrap_responses: Enable wrapping (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ResponseFormatConfig()
@@ -135,8 +134,7 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request and format response.
+        """Process request and format response.
 
         Args:
             request: The incoming HTTP request.
@@ -144,6 +142,7 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
 
         Returns:
             The formatted response.
+
         """
         if self.should_skip(request):
             return await call_next(request)

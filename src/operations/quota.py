@@ -1,5 +1,4 @@
-"""
-Quota Middleware for FastMVC.
+"""Quota Middleware for FastMVC.
 
 Implements usage quotas for API resources.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class QuotaConfig:
-    """
-    Configuration for quota middleware.
+    """Configuration for quota middleware.
 
     Attributes:
         default_quota: Default quota per period.
@@ -38,6 +36,7 @@ class QuotaConfig:
             quota_period=86400,  # 24 hours
         )
         ```
+
     """
 
     default_quota: int = 1000
@@ -50,8 +49,7 @@ class QuotaConfig:
 
 
 class QuotaMiddleware(FastMVCMiddleware):
-    """
-    Middleware that enforces usage quotas.
+    """Middleware that enforces usage quotas.
 
     Tracks API usage and enforces limits based on quotas,
     useful for tiered API access.
@@ -80,6 +78,7 @@ class QuotaMiddleware(FastMVCMiddleware):
         # X-Quota-Used: 5
         # X-Quota-Reset: 1699999999
         ```
+
     """
 
     def __init__(
@@ -89,6 +88,14 @@ class QuotaMiddleware(FastMVCMiddleware):
         default_quota: int | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            default_quota: The default_quota parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or QuotaConfig()
 
@@ -96,7 +103,9 @@ class QuotaMiddleware(FastMVCMiddleware):
             self.config.default_quota = default_quota
 
         # Usage tracking: key -> (count, period_start)
-        self._usage: dict[str, tuple[int, float]] = defaultdict(lambda: (0, time.time()))
+        self._usage: dict[str, tuple[int, float]] = defaultdict(
+            lambda: (0, time.time())
+        )
         self._lock = asyncio.Lock()
 
     def _get_quota_key(self, request: Request) -> str:
@@ -116,6 +125,7 @@ class QuotaMiddleware(FastMVCMiddleware):
 
         Returns:
             (allowed, remaining, used, reset_time)
+
         """
         async with self._lock:
             now = time.time()
@@ -142,6 +152,15 @@ class QuotaMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

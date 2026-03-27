@@ -1,6 +1,4 @@
-"""
-Tests for Request ID middleware.
-"""
+"""Tests for Request ID middleware."""
 
 import uuid
 
@@ -70,6 +68,11 @@ class TestRequestIDCustomGenerator:
         counter = {"value": 0}
 
         def custom_generator():
+            """Execute custom_generator operation.
+
+            Returns:
+                The result of the operation.
+            """
             counter["value"] += 1
             return f"req-{counter['value']:05d}"
 
@@ -95,7 +98,9 @@ class TestRequestIDCustomGenerator:
 
     def test_ignores_incoming_when_trust_disabled(self, custom_gen_client: TestClient):
         """Test that incoming IDs are ignored when trust is disabled."""
-        response = custom_gen_client.get("/", headers={"X-Request-ID": "should-be-ignored"})
+        response = custom_gen_client.get(
+            "/", headers={"X-Request-ID": "should-be-ignored"}
+        )
 
         assert response.headers["X-Request-ID"].startswith("req-")
 

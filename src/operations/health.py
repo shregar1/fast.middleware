@@ -1,5 +1,4 @@
-"""
-Health Check Middleware for FastMVC.
+"""Health Check Middleware for FastMVC.
 
 Provides built-in health, readiness, and liveness endpoints.
 """
@@ -16,8 +15,7 @@ from starlette.responses import JSONResponse, Response
 
 @dataclass
 class HealthConfig:
-    """
-    Configuration for health check middleware.
+    """Configuration for health check middleware.
 
     Attributes:
         health_path: Path for health check endpoint.
@@ -40,6 +38,7 @@ class HealthConfig:
             custom_checks={"database": check_database},
         )
         ```
+
     """
 
     health_path: str = "/health"
@@ -51,12 +50,13 @@ class HealthConfig:
 
     # Custom health check functions: {name: async_check_function}
     # Each function should return True for healthy, False for unhealthy
-    custom_checks: dict[str, Callable[[], Awaitable[bool]]] = field(default_factory=dict)
+    custom_checks: dict[str, Callable[[], Awaitable[bool]]] = field(
+        default_factory=dict
+    )
 
 
 class HealthCheckMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware that provides built-in health check endpoints.
+    """Middleware that provides built-in health check endpoints.
 
     Automatically responds to health, readiness, and liveness check
     requests without passing them to your application routes.
@@ -127,6 +127,7 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
             path: /ready
             port: 8000
         ```
+
     """
 
     def __init__(
@@ -139,8 +140,7 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
         version: str | None = None,
         service_name: str | None = None,
     ) -> None:
-        """
-        Initialize the health check middleware.
+        """Initialize the health check middleware.
 
         Args:
             app: The ASGI application.
@@ -150,6 +150,7 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
             live_path: Path for liveness endpoint (overrides config).
             version: Application version (overrides config).
             service_name: Service name (overrides config).
+
         """
         super().__init__(app)
 
@@ -232,7 +233,9 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
         return JSONResponse(
             content={
                 "alive": True,
-                "timestamp": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+                "timestamp": datetime.now(timezone.utc)
+                .isoformat()
+                .replace("+00:00", "Z"),
             },
             status_code=200,
         )
@@ -240,8 +243,7 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Handle health check requests or pass through to application.
+        """Handle health check requests or pass through to application.
 
         Args:
             request: The incoming HTTP request.
@@ -249,6 +251,7 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
 
         Returns:
             Health check response or the application response.
+
         """
         path = request.url.path
 

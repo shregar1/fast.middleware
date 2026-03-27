@@ -1,5 +1,4 @@
-"""
-Multi-Tenancy Middleware for FastMVC.
+"""Multi-Tenancy Middleware for FastMVC.
 
 Provides tenant isolation and context for multi-tenant applications.
 """
@@ -20,8 +19,7 @@ _tenant_ctx: ContextVar[dict[str, Any] | None] = ContextVar("tenant", default=No
 
 
 def get_tenant() -> dict[str, Any] | None:
-    """
-    Get the current tenant context.
+    """Get the current tenant context.
 
     Returns:
         Tenant data dict or None.
@@ -36,6 +34,7 @@ def get_tenant() -> dict[str, Any] | None:
             tenant_id = tenant.get("id")
             # Query data filtered by tenant_id
         ```
+
     """
     return _tenant_ctx.get()
 
@@ -48,8 +47,7 @@ def get_tenant_id() -> str | None:
 
 @dataclass
 class TenantConfig:
-    """
-    Configuration for tenant middleware.
+    """Configuration for tenant middleware.
 
     Attributes:
         header_name: Header containing tenant identifier.
@@ -74,6 +72,7 @@ class TenantConfig:
             subdomain_mode=True,
         )
         ```
+
     """
 
     header_name: str = "X-Tenant-ID"
@@ -88,8 +87,7 @@ class TenantConfig:
 
 
 class TenantMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides multi-tenancy support.
+    """Middleware that provides multi-tenancy support.
 
     Identifies tenants from various sources and provides
     tenant context throughout the request lifecycle.
@@ -132,6 +130,7 @@ class TenantMiddleware(FastMVCMiddleware):
         )
         # acme.example.com -> tenant_id = "acme"
         ```
+
     """
 
     def __init__(
@@ -142,6 +141,15 @@ class TenantMiddleware(FastMVCMiddleware):
         require_tenant: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            header_name: The header_name parameter.
+            require_tenant: The require_tenant parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or TenantConfig()
 
@@ -217,6 +225,15 @@ class TenantMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

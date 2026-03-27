@@ -1,6 +1,4 @@
-"""
-Tests for Request Context middleware.
-"""
+"""Tests for Request Context middleware."""
 
 import pytest
 from fastapi import FastAPI, Request
@@ -21,6 +19,14 @@ def context_app() -> FastAPI:
 
     @app.get("/")
     async def root(request: Request):
+        """Execute root operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return {
             "request_id": request.state.request_id,
             "has_start_time": request.state.start_time is not None,
@@ -28,6 +34,11 @@ def context_app() -> FastAPI:
 
     @app.get("/context-var")
     async def context_var():
+        """Execute context_var operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {
             "request_id": get_request_id(),
             "context": get_request_context(),
@@ -124,6 +135,11 @@ class TestContextCustomConfiguration:
         counter = {"value": 0}
 
         def custom_generator():
+            """Execute custom_generator operation.
+
+            Returns:
+                The result of the operation.
+            """
             counter["value"] += 1
             return f"ctx-{counter['value']}"
 
@@ -137,6 +153,14 @@ class TestContextCustomConfiguration:
 
         @app.get("/")
         async def root(request: Request):
+            """Execute root operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return {"request_id": request.state.request_id}
 
         return app
@@ -163,6 +187,8 @@ class TestContextCustomConfiguration:
 
     def test_ignores_incoming_when_disabled(self, custom_context_client: TestClient):
         """Test that incoming IDs are ignored when trust is disabled."""
-        response = custom_context_client.get("/", headers={"X-Correlation-ID": "should-be-ignored"})
+        response = custom_context_client.get(
+            "/", headers={"X-Correlation-ID": "should-be-ignored"}
+        )
 
         assert response.json()["request_id"].startswith("ctx-")

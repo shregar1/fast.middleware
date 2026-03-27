@@ -1,5 +1,4 @@
-"""
-Section layout for :mod:`fastmiddleware` (aligned with ``fast_platform.taxonomy``).
+"""Section layout for :mod:`fastmiddleware` (aligned with ``fast_platform.taxonomy``).
 
 - **mw_core** — factory, CORS, logging, timing, body limits, client IP, request id, compression
   (named ``mw_core`` to avoid clashing with ``core.*`` from ``fast-platform`` on ``PYTHONPATH``).
@@ -18,6 +17,8 @@ __all__ = ["MiddlewareSection", "SECTION_SUBPACKAGES"]
 
 
 class MiddlewareSection(str, Enum):
+    """Represents the MiddlewareSection class."""
+
     MW_CORE = "mw_core"
     SECURITY = "sec"
     OPERATIONS = "operations"

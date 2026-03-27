@@ -1,5 +1,4 @@
-"""
-Caching Middleware for FastMVC.
+"""Caching Middleware for FastMVC.
 
 Provides HTTP caching with ETags and Cache-Control headers.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class CacheConfig:
-    """
-    Configuration for caching middleware.
+    """Configuration for caching middleware.
 
     Attributes:
         default_max_age: Default Cache-Control max-age in seconds.
@@ -43,6 +41,7 @@ class CacheConfig:
             },
         )
         ```
+
     """
 
     default_max_age: int = 0
@@ -59,8 +58,7 @@ class CacheConfig:
 
 
 class CacheMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds HTTP caching headers and ETag support.
+    """Middleware that adds HTTP caching headers and ETag support.
 
     Implements proper HTTP caching semantics including ETags,
     Cache-Control headers, and conditional request handling.
@@ -102,6 +100,7 @@ class CacheMiddleware(FastMVCMiddleware):
     Conditional Requests:
         Clients can send If-None-Match header with ETag to receive
         304 Not Modified response if content hasn't changed.
+
     """
 
     def __init__(
@@ -114,8 +113,7 @@ class CacheMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the cache middleware.
+        """Initialize the cache middleware.
 
         Args:
             app: The ASGI application.
@@ -125,8 +123,11 @@ class CacheMiddleware(FastMVCMiddleware):
             private: Set private caching (overrides config).
             exclude_paths: Paths to exclude from caching.
             exclude_methods: HTTP methods to exclude from caching.
+
         """
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
 
         self.config = config or CacheConfig()
 
@@ -196,8 +197,7 @@ class CacheMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with caching support.
+        """Process request with caching support.
 
         Args:
             request: The incoming HTTP request.
@@ -205,6 +205,7 @@ class CacheMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response with cache headers.
+
         """
         # Skip excluded paths/methods
         if self.should_skip(request):

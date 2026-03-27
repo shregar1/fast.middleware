@@ -1,5 +1,4 @@
-"""
-Referrer-Policy Middleware for FastMVC.
+"""Referrer-Policy Middleware for FastMVC.
 
 Sets Referrer-Policy header for privacy control.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ReferrerPolicyConfig:
-    """
-    Configuration for referrer policy middleware.
+    """Configuration for referrer policy middleware.
 
     Attributes:
         policy: Referrer policy value.
@@ -30,14 +28,14 @@ class ReferrerPolicyConfig:
         - strict-origin
         - strict-origin-when-cross-origin
         - unsafe-url
+
     """
 
     policy: str = "strict-origin-when-cross-origin"
 
 
 class ReferrerPolicyMiddleware(FastMVCMiddleware):
-    """
-    Middleware that sets Referrer-Policy header.
+    """Middleware that sets Referrer-Policy header.
 
     Controls how much referrer information should be
     included with requests.
@@ -51,6 +49,7 @@ class ReferrerPolicyMiddleware(FastMVCMiddleware):
             policy="strict-origin-when-cross-origin",
         )
         ```
+
     """
 
     VALID_POLICIES = {
@@ -71,6 +70,14 @@ class ReferrerPolicyMiddleware(FastMVCMiddleware):
         policy: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            policy: The policy parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ReferrerPolicyConfig()
 
@@ -83,6 +90,15 @@ class ReferrerPolicyMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

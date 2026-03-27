@@ -1,5 +1,4 @@
-"""
-Trusted Host Middleware for FastMVC.
+"""Trusted Host Middleware for FastMVC.
 
 Validates the Host header to prevent host header attacks.
 """
@@ -14,8 +13,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 
 class TrustedHostMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates the Host header against a list of trusted hosts.
+    """Middleware that validates the Host header against a list of trusted hosts.
 
     Protects against host header attacks by rejecting requests with
     unrecognized Host headers. This is important for security when
@@ -56,6 +54,7 @@ class TrustedHostMiddleware(FastMVCMiddleware):
     Security:
         Never use `allowed_hosts=["*"]` in production. Always specify
         the exact hosts your application should respond to.
+
     """
 
     def __init__(
@@ -68,8 +67,7 @@ class TrustedHostMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the trusted host middleware.
+        """Initialize the trusted host middleware.
 
         Args:
             app: The ASGI application.
@@ -79,8 +77,11 @@ class TrustedHostMiddleware(FastMVCMiddleware):
             www_redirect: Redirect www to non-www (or vice versa).
             exclude_paths: Paths to exclude from host validation.
             exclude_methods: HTTP methods to exclude from host validation.
+
         """
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
 
         self.allowed_hosts = list(allowed_hosts) if allowed_hosts else ["*"]
         self.redirect_to_primary = redirect_to_primary
@@ -124,8 +125,7 @@ class TrustedHostMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Validate the Host header and process the request.
+        """Validate the Host header and process the request.
 
         Args:
             request: The incoming HTTP request.
@@ -133,6 +133,7 @@ class TrustedHostMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response, or 400 if host is invalid.
+
         """
         # Skip excluded paths/methods
         if self.should_skip(request):

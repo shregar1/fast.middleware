@@ -1,5 +1,4 @@
-"""
-Circuit Breaker Middleware for FastMVC.
+"""Circuit Breaker Middleware for FastMVC.
 
 Implements the circuit breaker pattern to prevent cascade failures.
 """
@@ -26,8 +25,7 @@ class CircuitState(Enum):
 
 @dataclass
 class CircuitBreakerConfig:
-    """
-    Configuration for circuit breaker middleware.
+    """Configuration for circuit breaker middleware.
 
     Attributes:
         failure_threshold: Number of failures before opening circuit.
@@ -47,13 +45,16 @@ class CircuitBreakerConfig:
             failure_status_codes={500, 502, 503, 504},
         )
         ```
+
     """
 
     failure_threshold: int = 5
     success_threshold: int = 2
     timeout: float = 60.0
     failure_status_codes: set[int] = field(default_factory=lambda: {500, 502, 503, 504})
-    excluded_status_codes: set[int] = field(default_factory=lambda: {400, 401, 403, 404, 422})
+    excluded_status_codes: set[int] = field(
+        default_factory=lambda: {400, 401, 403, 404, 422}
+    )
     per_endpoint: bool = True
 
 
@@ -70,8 +71,7 @@ class CircuitStats:
 
 
 class CircuitBreakerMiddleware(FastMVCMiddleware):
-    """
-    Middleware that implements the circuit breaker pattern.
+    """Middleware that implements the circuit breaker pattern.
 
     Prevents cascade failures by temporarily rejecting requests
     when error rates exceed thresholds.
@@ -105,6 +105,7 @@ class CircuitBreakerMiddleware(FastMVCMiddleware):
         # After timeout, half-open state tests recovery
         # Successes close the circuit
         ```
+
     """
 
     def __init__(
@@ -115,8 +116,7 @@ class CircuitBreakerMiddleware(FastMVCMiddleware):
         timeout: float | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the circuit breaker middleware.
+        """Initialize the circuit breaker middleware.
 
         Args:
             app: The ASGI application.
@@ -124,6 +124,7 @@ class CircuitBreakerMiddleware(FastMVCMiddleware):
             failure_threshold: Failure count (overrides config).
             timeout: Recovery timeout (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or CircuitBreakerConfig()
@@ -217,8 +218,7 @@ class CircuitBreakerMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with circuit breaker logic.
+        """Process request with circuit breaker logic.
 
         Args:
             request: The incoming HTTP request.
@@ -226,6 +226,7 @@ class CircuitBreakerMiddleware(FastMVCMiddleware):
 
         Returns:
             The response or 503 if circuit is open.
+
         """
         if self.should_skip(request):
             return await call_next(request)

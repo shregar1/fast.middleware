@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Metrics middleware.
-"""
+"""Comprehensive tests for Metrics middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -17,18 +15,41 @@ def metrics_app() -> FastAPI:
 
     @app.get("/")
     async def root():
+        """Execute root operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello"}
 
     @app.get("/users/{user_id}")
     async def get_user(user_id: int):
+        """Execute get_user operation.
+
+        Args:
+            user_id: The user_id parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return {"user_id": user_id}
 
     @app.post("/users")
     async def create_user():
+        """Execute create_user operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"created": True}
 
     @app.get("/error")
     async def error():
+        """Execute error operation.
+
+        Returns:
+            The result of the operation.
+        """
         raise ValueError("Error")
 
     return app
@@ -36,6 +57,14 @@ def metrics_app() -> FastAPI:
 
 @pytest.fixture
 def metrics_client(metrics_app: FastAPI) -> TestClient:
+    """Execute metrics_client operation.
+
+    Args:
+        metrics_app: The metrics_app parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return TestClient(metrics_app, raise_server_exceptions=False)
 
 
@@ -228,12 +257,25 @@ class TestCustomMetricsPath:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def custom_path_client(self, custom_path_app: FastAPI) -> TestClient:
+        """Execute custom_path_client operation.
+
+        Args:
+            custom_path_app: The custom_path_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(custom_path_app)
 
     def test_custom_path_works(self, custom_path_client: TestClient):
@@ -267,12 +309,28 @@ class TestPathNormalization:
 
         @app.get("/users/{user_id}")
         async def get_user(user_id: int):
+            """Execute get_user operation.
+
+            Args:
+                user_id: The user_id parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return {"user_id": user_id}
 
         return app
 
     @pytest.fixture
     def normalized_client(self, normalized_app: FastAPI) -> TestClient:
+        """Execute normalized_client operation.
+
+        Args:
+            normalized_app: The normalized_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(normalized_app)
 
     def test_paths_normalized_in_metrics(self, normalized_client: TestClient):
@@ -302,16 +360,34 @@ class TestMetricsExclusion:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         @app.get("/health")
         async def health():
+            """Execute health operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"status": "ok"}
 
         return app
 
     @pytest.fixture
     def excluded_client(self, excluded_app: FastAPI) -> TestClient:
+        """Execute excluded_client operation.
+
+        Args:
+            excluded_app: The excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(excluded_app)
 
     def test_excluded_paths_not_in_metrics(self, excluded_client: TestClient):

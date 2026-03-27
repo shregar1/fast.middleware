@@ -1,5 +1,4 @@
-"""
-Security Headers Middleware for FastMVC.
+"""Security Headers Middleware for FastMVC.
 
 Adds comprehensive security headers to protect against common web vulnerabilities.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class SecurityHeadersConfig:
-    """
-    Configuration for security headers.
+    """Configuration for security headers.
 
     This dataclass provides a structured way to configure all security headers
     with sensible defaults.
@@ -47,6 +45,7 @@ class SecurityHeadersConfig:
             content_security_policy="default-src 'self'",
         )
         ```
+
     """
 
     # Basic headers
@@ -86,8 +85,7 @@ class SecurityHeadersConfig:
 
 
 class SecurityHeadersMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds comprehensive security headers to all responses.
+    """Middleware that adds comprehensive security headers to all responses.
 
     This middleware protects against common web vulnerabilities by adding
     security headers recommended by OWASP and security best practices.
@@ -128,6 +126,7 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
         )
         app.add_middleware(SecurityHeadersMiddleware, config=config)
         ```
+
     """
 
     # Default CSP for APIs (restrictive)
@@ -167,8 +166,7 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the security headers middleware.
+        """Initialize the security headers middleware.
 
         Args:
             app: The ASGI application.
@@ -189,8 +187,11 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
             remove_server_header: Whether to remove the Server header.
             exclude_paths: Paths to exclude from security headers.
             exclude_methods: HTTP methods to exclude from security headers.
+
         """
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
 
         # Use config or create default
         self.config = config or SecurityHeadersConfig()
@@ -228,8 +229,7 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process the request and add security headers to response.
+        """Process the request and add security headers to response.
 
         Args:
             request: The incoming HTTP request.
@@ -237,6 +237,7 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response with security headers.
+
         """
         response = await call_next(request)
 
@@ -246,7 +247,9 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
 
         # Add basic security headers
         if self.config.x_content_type_options:
-            response.headers["X-Content-Type-Options"] = self.config.x_content_type_options
+            response.headers["X-Content-Type-Options"] = (
+                self.config.x_content_type_options
+            )
 
         if self.config.x_frame_options:
             response.headers["X-Frame-Options"] = self.config.x_frame_options
@@ -259,7 +262,9 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
 
         # Add HSTS header (only for HTTPS in production)
         if self.config.enable_hsts:
-            response.headers["Strict-Transport-Security"] = self.config.build_hsts_header()
+            response.headers["Strict-Transport-Security"] = (
+                self.config.build_hsts_header()
+            )
 
         # Add Content Security Policy (empty string disables CSP header)
         csp = (
@@ -281,7 +286,9 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
 
         # Add Cross-Origin policies
         if self.config.cross_origin_opener_policy:
-            response.headers["Cross-Origin-Opener-Policy"] = self.config.cross_origin_opener_policy
+            response.headers["Cross-Origin-Opener-Policy"] = (
+                self.config.cross_origin_opener_policy
+            )
 
         if self.config.cross_origin_resource_policy:
             response.headers["Cross-Origin-Resource-Policy"] = (

@@ -1,5 +1,4 @@
-"""
-Header Transform Middleware for FastMVC.
+"""Header Transform Middleware for FastMVC.
 
 Adds, removes, or modifies request and response headers.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class HeaderTransformConfig:
-    """
-    Configuration for header transform middleware.
+    """Configuration for header transform middleware.
 
     Attributes:
         add_request_headers: Headers to add to requests.
@@ -37,6 +35,7 @@ class HeaderTransformConfig:
             remove_response_headers={"Server"},
         )
         ```
+
     """
 
     add_request_headers: dict[str, str] = field(default_factory=dict)
@@ -47,8 +46,7 @@ class HeaderTransformConfig:
 
 
 class HeaderTransformMiddleware(FastMVCMiddleware):
-    """
-    Middleware that transforms request and response headers.
+    """Middleware that transforms request and response headers.
 
     Useful for adding standard headers, removing sensitive information,
     or normalizing header names.
@@ -80,6 +78,7 @@ class HeaderTransformMiddleware(FastMVCMiddleware):
         # X-Powered-By: FastMVC
         # And Server header removed
         ```
+
     """
 
     def __init__(
@@ -90,6 +89,15 @@ class HeaderTransformMiddleware(FastMVCMiddleware):
         remove_response_headers: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            add_response_headers: The add_response_headers parameter.
+            remove_response_headers: The remove_response_headers parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or HeaderTransformConfig()
 
@@ -101,6 +109,15 @@ class HeaderTransformMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

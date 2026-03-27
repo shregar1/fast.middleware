@@ -11,14 +11,37 @@ from fastmiddleware.sec.jwt_bearer_auth import JWTBearerAuthMiddleware
 
 
 async def _ok(_request: Request):
+    """Execute _ok operation.
+
+    Args:
+        _request: The _request parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return PlainTextResponse("ok")
 
 
 def _json_err(urn: str, kind, _exc):
+    """Execute _json_err operation.
+
+    Args:
+        urn: The urn parameter.
+        kind: The kind parameter.
+        _exc: The _exc parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return JSONResponse({"urn": urn, "kind": kind}, status_code=401)
 
 
 def test_skips_options():
+    """Execute test_skips_options operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/p", _ok, methods=["GET", "OPTIONS"])])
     app.add_middleware(
         JWTBearerAuthMiddleware,
@@ -35,6 +58,11 @@ def test_skips_options():
 
 
 def test_unprotected_path():
+    """Execute test_unprotected_path operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/health", _ok)])
     app.add_middleware(
         JWTBearerAuthMiddleware,
@@ -51,6 +79,11 @@ def test_unprotected_path():
 
 
 def test_missing_bearer():
+    """Execute test_missing_bearer operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/api/x", _ok)])
     app.add_middleware(
         JWTBearerAuthMiddleware,
@@ -68,9 +101,23 @@ def test_missing_bearer():
 
 
 def test_success_calls_on_authenticated():
+    """Execute test_success_calls_on_authenticated operation.
+
+    Returns:
+        The result of the operation.
+    """
     calls = []
 
     def on_auth(request, data):
+        """Execute on_auth operation.
+
+        Args:
+            request: The request parameter.
+            data: The data parameter.
+
+        Returns:
+            The result of the operation.
+        """
         calls.append((request, data))
         request.state.user_id = data["user_id"]
 

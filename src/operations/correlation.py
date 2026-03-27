@@ -1,5 +1,4 @@
-"""
-Correlation ID Middleware for FastMVC.
+"""Correlation ID Middleware for FastMVC.
 
 Provides distributed tracing support with correlation IDs.
 """
@@ -20,8 +19,7 @@ _correlation_id_ctx: ContextVar[str | None] = ContextVar("correlation_id", defau
 
 
 def get_correlation_id() -> str | None:
-    """
-    Get the current correlation ID.
+    """Get the current correlation ID.
 
     Returns:
         The correlation ID or None if not set.
@@ -35,14 +33,14 @@ def get_correlation_id() -> str | None:
             correlation_id = get_correlation_id()
             logger.info(f"Processing request", extra={"correlation_id": correlation_id})
         ```
+
     """
     return _correlation_id_ctx.get()
 
 
 @dataclass
 class CorrelationConfig:
-    """
-    Configuration for correlation ID middleware.
+    """Configuration for correlation ID middleware.
 
     Attributes:
         header_name: Header name for correlation ID.
@@ -60,6 +58,7 @@ class CorrelationConfig:
             response_header=True,
         )
         ```
+
     """
 
     header_name: str = "X-Correlation-ID"
@@ -70,8 +69,7 @@ class CorrelationConfig:
 
 
 class CorrelationMiddleware(FastMVCMiddleware):
-    """
-    Middleware that manages correlation IDs for distributed tracing.
+    """Middleware that manages correlation IDs for distributed tracing.
 
     Correlation IDs help track requests across multiple services
     in a microservices architecture.
@@ -118,6 +116,7 @@ class CorrelationMiddleware(FastMVCMiddleware):
             '%(asctime)s [%(correlation_id)s] %(message)s'
         )
         ```
+
     """
 
     def __init__(
@@ -127,14 +126,14 @@ class CorrelationMiddleware(FastMVCMiddleware):
         header_name: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the correlation middleware.
+        """Initialize the correlation middleware.
 
         Args:
             app: The ASGI application.
             config: Correlation configuration.
             header_name: Header name (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or CorrelationConfig()
@@ -162,8 +161,7 @@ class CorrelationMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with correlation ID management.
+        """Process request with correlation ID management.
 
         Args:
             request: The incoming HTTP request.
@@ -171,6 +169,7 @@ class CorrelationMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with correlation ID.
+
         """
         if self.should_skip(request):
             return await call_next(request)

@@ -1,6 +1,4 @@
-"""
-``X-Response-Time`` header: wall-clock duration to produce the response.
-"""
+"""``X-Response-Time`` header: wall-clock duration to produce the response."""
 
 from __future__ import annotations
 
@@ -14,8 +12,7 @@ DEFAULT_RESPONSE_TIME_HEADER = "X-Response-Time"
 
 
 class ResponseTimingMiddleware(BaseHTTPMiddleware):
-    """
-    Add ``X-Response-Time`` with elapsed seconds (floating point, 6 decimal places).
+    """Add ``X-Response-Time`` with elapsed seconds (floating point, 6 decimal places).
 
     Measured with :func:`time.perf_counter` around the downstream ASGI call.
     """
@@ -27,11 +24,29 @@ class ResponseTimingMiddleware(BaseHTTPMiddleware):
         header_name: str = DEFAULT_RESPONSE_TIME_HEADER,
         unit_seconds: bool = True,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            header_name: The header_name parameter.
+            unit_seconds: The unit_seconds parameter.
+        """
         super().__init__(app)
         self.header_name = header_name
         self.unit_seconds = unit_seconds
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         t0 = time.perf_counter()
         response = await call_next(request)
         elapsed = time.perf_counter() - t0

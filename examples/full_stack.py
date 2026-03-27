@@ -1,5 +1,4 @@
-"""
-Full stack example for FastMVC Middleware.
+"""Full stack example for FastMVC Middleware.
 
 This example demonstrates a production-ready FastAPI application with:
 - CORS handling
@@ -50,8 +49,10 @@ RATE_LIMIT_PER_MINUTE = int(os.getenv("RATE_LIMIT_PER_MINUTE", "60"))
 # Models
 # ============================================================================
 
+
 class Item(BaseModel):
     """Sample item model."""
+
     name: str
     description: Optional[str] = None
     price: float
@@ -59,6 +60,7 @@ class Item(BaseModel):
 
 class ItemResponse(BaseModel):
     """Response model for items."""
+
     id: int
     name: str
     description: Optional[str]
@@ -168,6 +170,7 @@ item_counter = 0
 # ============================================================================
 # Routes
 # ============================================================================
+
 
 @app.get("/")
 async def root():
@@ -284,8 +287,9 @@ if __name__ == "__main__":
     print(f"Rate limit: {RATE_LIMIT_PER_MINUTE} requests/minute")
     print("API Documentation: http://localhost:8000/docs")
     print("\nTest with:")
-    print('  curl http://localhost:8000/public')
-    print('  curl -H "Authorization: Bearer demo-api-key-1" http://localhost:8000/protected')
+    print("  curl http://localhost:8000/public")
+    print(
+        '  curl -H "Authorization: Bearer demo-api-key-1" http://localhost:8000/protected'
+    )
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

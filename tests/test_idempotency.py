@@ -1,12 +1,14 @@
-"""
-Comprehensive tests for Idempotency middleware.
-"""
+"""Comprehensive tests for Idempotency middleware."""
 
 import pytest
 from fastapi import FastAPI
 from starlette.testclient import TestClient
 
-from fastmiddleware import IdempotencyConfig, IdempotencyMiddleware, InMemoryIdempotencyStore
+from fastmiddleware import (
+    IdempotencyConfig,
+    IdempotencyMiddleware,
+    InMemoryIdempotencyStore,
+)
 
 
 @pytest.fixture
@@ -19,25 +21,50 @@ def idempotency_app() -> FastAPI:
 
     @app.post("/create")
     async def create():
+        """Execute create operation.
+
+        Returns:
+            The result of the operation.
+        """
         counter["value"] += 1
         return {"created": True, "count": counter["value"]}
 
     @app.put("/update")
     async def update():
+        """Execute update operation.
+
+        Returns:
+            The result of the operation.
+        """
         counter["value"] += 1
         return {"updated": True, "count": counter["value"]}
 
     @app.patch("/patch")
     async def patch():
+        """Execute patch operation.
+
+        Returns:
+            The result of the operation.
+        """
         counter["value"] += 1
         return {"patched": True, "count": counter["value"]}
 
     @app.get("/read")
     async def read():
+        """Execute read operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"count": counter["value"]}
 
     @app.delete("/delete")
     async def delete():
+        """Execute delete operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"deleted": True}
 
     return app
@@ -45,6 +72,14 @@ def idempotency_app() -> FastAPI:
 
 @pytest.fixture
 def idempotency_client(idempotency_app: FastAPI) -> TestClient:
+    """Execute idempotency_client operation.
+
+    Args:
+        idempotency_app: The idempotency_app parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return TestClient(idempotency_app)
 
 
@@ -87,8 +122,12 @@ class TestIdempotencyMiddleware:
 
     def test_different_keys_not_cached(self, idempotency_client: TestClient):
         """Test that different keys produce different responses."""
-        response1 = idempotency_client.post("/create", headers={"Idempotency-Key": "key-1"})
-        response2 = idempotency_client.post("/create", headers={"Idempotency-Key": "key-2"})
+        response1 = idempotency_client.post(
+            "/create", headers={"Idempotency-Key": "key-1"}
+        )
+        response2 = idempotency_client.post(
+            "/create", headers={"Idempotency-Key": "key-2"}
+        )
 
         assert response1.json()["count"] != response2.json()["count"]
 
@@ -108,7 +147,9 @@ class TestIdempotencyMiddleware:
 
     def test_no_replay_header_on_first_request(self, idempotency_client: TestClient):
         """Test that first request doesn't have replay header."""
-        response = idempotency_client.post("/create", headers={"Idempotency-Key": "first-time-key"})
+        response = idempotency_client.post(
+            "/create", headers={"Idempotency-Key": "first-time-key"}
+        )
 
         assert "X-Idempotent-Replayed" not in response.headers
 
@@ -161,16 +202,34 @@ class TestRequiredKey:
 
         @app.post("/create")
         async def create():
+            """Execute create operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"created": True}
 
         @app.get("/read")
         async def read():
+            """Execute read operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         return app
 
     @pytest.fixture
     def required_key_client(self, required_key_app: FastAPI) -> TestClient:
+        """Execute required_key_client operation.
+
+        Args:
+            required_key_app: The required_key_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(required_key_app)
 
     def test_missing_key_returns_400(self, required_key_client: TestClient):
@@ -182,7 +241,9 @@ class TestRequiredKey:
 
     def test_with_key_succeeds(self, required_key_client: TestClient):
         """Test that request with key succeeds."""
-        response = required_key_client.post("/create", headers={"Idempotency-Key": "my-key"})
+        response = required_key_client.post(
+            "/create", headers={"Idempotency-Key": "my-key"}
+        )
 
         assert response.status_code == 200
 
@@ -207,6 +268,11 @@ class TestCustomHeader:
 
         @app.post("/create")
         async def create():
+            """Execute create operation.
+
+            Returns:
+                The result of the operation.
+            """
             counter["value"] += 1
             return {"count": counter["value"]}
 
@@ -214,6 +280,14 @@ class TestCustomHeader:
 
     @pytest.fixture
     def custom_header_client(self, custom_header_app: FastAPI) -> TestClient:
+        """Execute custom_header_client operation.
+
+        Args:
+            custom_header_app: The custom_header_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(custom_header_app)
 
     def test_custom_header_works(self, custom_header_client: TestClient):
@@ -229,8 +303,12 @@ class TestCustomHeader:
         """Test that standard header is not used."""
         key = "standard-key"
 
-        response1 = custom_header_client.post("/create", headers={"Idempotency-Key": key})
-        response2 = custom_header_client.post("/create", headers={"Idempotency-Key": key})
+        response1 = custom_header_client.post(
+            "/create", headers={"Idempotency-Key": key}
+        )
+        response2 = custom_header_client.post(
+            "/create", headers={"Idempotency-Key": key}
+        )
 
         # Should not be cached (different counts)
         assert response1.json()["count"] != response2.json()["count"]
@@ -310,16 +388,34 @@ class TestPathExclusion:
 
         @app.post("/included")
         async def included():
+            """Execute included operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         @app.post("/excluded")
         async def excluded():
+            """Execute excluded operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def excluded_client(self, excluded_app: FastAPI) -> TestClient:
+        """Execute excluded_client operation.
+
+        Args:
+            excluded_app: The excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(excluded_app)
 
     def test_excluded_path_no_key_required(self, excluded_client: TestClient):

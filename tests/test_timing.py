@@ -12,11 +12,24 @@ from fastmiddleware import DEFAULT_RESPONSE_TIME_HEADER, ResponseTimingMiddlewar
 
 
 async def slow(_request: Request):
+    """Execute slow operation.
+
+    Args:
+        _request: The _request parameter.
+
+    Returns:
+        The result of the operation.
+    """
     await asyncio.sleep(0.01)
     return PlainTextResponse("ok")
 
 
 def test_x_response_time_header():
+    """Execute test_x_response_time_header operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", slow)])
     app.add_middleware(ResponseTimingMiddleware)
     client = TestClient(app)
@@ -27,6 +40,11 @@ def test_x_response_time_header():
 
 
 def test_x_response_time_milliseconds():
+    """Execute test_x_response_time_milliseconds operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", slow)])
     app.add_middleware(ResponseTimingMiddleware, unit_seconds=False)
     client = TestClient(app)

@@ -1,5 +1,4 @@
-"""
-Request Size Limit Middleware for FastMVC.
+"""Request Size Limit Middleware for FastMVC.
 
 Limits the size of request bodies to prevent abuse.
 """
@@ -38,8 +37,7 @@ def parse_size(size: str | int) -> int:
 
 @dataclass
 class RequestLimitConfig:
-    """
-    Configuration for request size limit middleware.
+    """Configuration for request size limit middleware.
 
     Attributes:
         max_size: Maximum request body size (bytes or string like '10MB').
@@ -59,6 +57,7 @@ class RequestLimitConfig:
             },
         )
         ```
+
     """
 
     max_size: str | int = "10MB"
@@ -68,8 +67,7 @@ class RequestLimitConfig:
 
 
 class RequestLimitMiddleware(FastMVCMiddleware):
-    """
-    Middleware that limits request body size.
+    """Middleware that limits request body size.
 
     Protects your server from memory exhaustion attacks by rejecting
     requests with bodies larger than the configured limit.
@@ -100,6 +98,7 @@ class RequestLimitMiddleware(FastMVCMiddleware):
             },
         )
         ```
+
     """
 
     def __init__(
@@ -110,8 +109,7 @@ class RequestLimitMiddleware(FastMVCMiddleware):
         path_limits: dict[str, str | int] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the request limit middleware.
+        """Initialize the request limit middleware.
 
         Args:
             app: The ASGI application.
@@ -119,6 +117,7 @@ class RequestLimitMiddleware(FastMVCMiddleware):
             max_size: Maximum size (overrides config).
             path_limits: Path-specific limits (overrides config).
             exclude_paths: Paths to exclude from limit.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestLimitConfig()
@@ -151,8 +150,7 @@ class RequestLimitMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with size limit check.
+        """Process request with size limit check.
 
         Args:
             request: The incoming HTTP request.
@@ -160,6 +158,7 @@ class RequestLimitMiddleware(FastMVCMiddleware):
 
         Returns:
             The response or 413 if too large.
+
         """
         if self.should_skip(request):
             return await call_next(request)

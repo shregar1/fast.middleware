@@ -1,5 +1,4 @@
-"""
-Payload Size Middleware for FastMVC.
+"""Payload Size Middleware for FastMVC.
 
 Limits request and response payload sizes.
 """
@@ -15,14 +14,14 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class PayloadSizeConfig:
-    """
-    Configuration for payload size middleware.
+    """Configuration for payload size middleware.
 
     Attributes:
         max_request_size: Max request body size in bytes.
         max_response_size: Max response size in bytes.
         check_content_length: Check Content-Length header.
         add_header: Add size header to response.
+
     """
 
     max_request_size: int = 10 * 1024 * 1024  # 10 MB
@@ -32,8 +31,7 @@ class PayloadSizeConfig:
 
 
 class PayloadSizeMiddleware(FastMVCMiddleware):
-    """
-    Middleware that limits payload sizes.
+    """Middleware that limits payload sizes.
 
     Enforces maximum request body size and optionally
     limits response sizes.
@@ -47,6 +45,7 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
             max_request_size=5 * 1024 * 1024,  # 5 MB
         )
         ```
+
     """
 
     def __init__(
@@ -56,6 +55,14 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
         max_request_size: int | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            max_request_size: The max_request_size parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or PayloadSizeConfig()
 
@@ -73,6 +80,15 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 
@@ -88,7 +104,9 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
                             content={
                                 "error": True,
                                 "message": "Request payload too large",
-                                "max_size": self._format_size(self.config.max_request_size),
+                                "max_size": self._format_size(
+                                    self.config.max_request_size
+                                ),
                                 "received_size": self._format_size(size),
                             },
                         )
@@ -115,6 +133,8 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
                     pass
 
         if self.config.add_header:
-            response.headers["X-Max-Request-Size"] = self._format_size(self.config.max_request_size)
+            response.headers["X-Max-Request-Size"] = self._format_size(
+                self.config.max_request_size
+            )
 
         return response

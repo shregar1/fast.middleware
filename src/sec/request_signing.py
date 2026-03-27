@@ -1,5 +1,4 @@
-"""
-Request Signing Middleware for FastMVC.
+"""Request Signing Middleware for FastMVC.
 
 Validates HMAC signatures on incoming requests.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class RequestSigningConfig:
-    """
-    Configuration for request signing middleware.
+    """Configuration for request signing middleware.
 
     Attributes:
         secret_key: Secret key for HMAC.
@@ -27,6 +25,7 @@ class RequestSigningConfig:
         timestamp_header: Header containing timestamp.
         algorithm: Hash algorithm (sha256, sha512).
         max_age: Maximum request age in seconds.
+
     """
 
     secret_key: str = ""
@@ -37,8 +36,7 @@ class RequestSigningConfig:
 
 
 class RequestSigningMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates HMAC request signatures.
+    """Middleware that validates HMAC request signatures.
 
     Ensures requests are signed with a shared secret,
     preventing tampering and unauthorized access.
@@ -55,6 +53,7 @@ class RequestSigningMiddleware(FastMVCMiddleware):
         # Clients must sign: {timestamp}.{method}.{path}.{body}
         # signature = HMAC-SHA256(secret, payload)
         ```
+
     """
 
     ALGORITHMS = {
@@ -70,6 +69,14 @@ class RequestSigningMiddleware(FastMVCMiddleware):
         secret_key: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            secret_key: The secret_key parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestSigningConfig()
 
@@ -95,6 +102,15 @@ class RequestSigningMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

@@ -1,5 +1,4 @@
-"""
-Origin Validation Middleware for FastMVC.
+"""Origin Validation Middleware for FastMVC.
 
 Validates Origin and Referer headers for security.
 """
@@ -16,8 +15,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class OriginConfig:
-    """
-    Configuration for origin validation middleware.
+    """Configuration for origin validation middleware.
 
     Attributes:
         allowed_origins: Set of allowed origins.
@@ -37,6 +35,7 @@ class OriginConfig:
             },
         )
         ```
+
     """
 
     allowed_origins: set[str] = field(default_factory=set)
@@ -47,8 +46,7 @@ class OriginConfig:
 
 
 class OriginMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates Origin and Referer headers.
+    """Middleware that validates Origin and Referer headers.
 
     Protects against CSRF by ensuring requests originate
     from trusted sources.
@@ -76,6 +74,7 @@ class OriginMiddleware(FastMVCMiddleware):
 
         # POST requests from other origins get 403
         ```
+
     """
 
     def __init__(
@@ -85,6 +84,14 @@ class OriginMiddleware(FastMVCMiddleware):
         allowed_origins: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            allowed_origins: The allowed_origins parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or OriginConfig()
 
@@ -160,6 +167,15 @@ class OriginMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

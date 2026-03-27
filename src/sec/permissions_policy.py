@@ -1,5 +1,4 @@
-"""
-Permissions-Policy Middleware for FastMVC.
+"""Permissions-Policy Middleware for FastMVC.
 
 Sets Permissions-Policy header for feature control.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class PermissionsPolicyConfig:
-    """
-    Configuration for permissions policy middleware.
+    """Configuration for permissions policy middleware.
 
     Attributes:
         policies: Dict of feature to allowed origins.
@@ -31,6 +29,7 @@ class PermissionsPolicyConfig:
         - *: All origins
         - "https://example.com": Specific origin
         - (): No origins (disabled)
+
     """
 
     policies: dict[str, list[str]] = field(
@@ -48,8 +47,7 @@ class PermissionsPolicyConfig:
 
 
 class PermissionsPolicyMiddleware(FastMVCMiddleware):
-    """
-    Middleware that sets Permissions-Policy header.
+    """Middleware that sets Permissions-Policy header.
 
     Controls which browser features and APIs can be
     used in the document.
@@ -67,6 +65,7 @@ class PermissionsPolicyMiddleware(FastMVCMiddleware):
             },
         )
         ```
+
     """
 
     def __init__(
@@ -76,6 +75,14 @@ class PermissionsPolicyMiddleware(FastMVCMiddleware):
         policies: dict[str, list[str]] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            policies: The policies parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or PermissionsPolicyConfig()
 
@@ -95,7 +102,9 @@ class PermissionsPolicyMiddleware(FastMVCMiddleware):
                 parts.append(f"{feature}=*")
             else:
                 # Specific origins
-                origin_list = " ".join("self" if o == "self" else f'"{o}"' for o in origins)
+                origin_list = " ".join(
+                    "self" if o == "self" else f'"{o}"' for o in origins
+                )
                 parts.append(f"{feature}=({origin_list})")
 
         return ", ".join(parts)
@@ -103,6 +112,15 @@ class PermissionsPolicyMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

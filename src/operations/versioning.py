@@ -1,5 +1,4 @@
-"""
-API Versioning Middleware for FastMVC.
+"""API Versioning Middleware for FastMVC.
 
 Provides API version detection and routing.
 """
@@ -20,8 +19,7 @@ _api_version_ctx: ContextVar[str | None] = ContextVar("api_version", default=Non
 
 
 def get_api_version() -> str | None:
-    """
-    Get the current API version.
+    """Get the current API version.
 
     Returns:
         The API version string or None if not set.
@@ -37,6 +35,7 @@ def get_api_version() -> str | None:
                 return {"users": [...], "meta": {...}}
             return {"users": [...]}
         ```
+
     """
     return _api_version_ctx.get()
 
@@ -52,8 +51,7 @@ class VersionLocation(Enum):
 
 @dataclass
 class VersioningConfig:
-    """
-    Configuration for API versioning middleware.
+    """Configuration for API versioning middleware.
 
     Attributes:
         location: Where to extract version from.
@@ -76,6 +74,7 @@ class VersioningConfig:
             default_version="v3",
         )
         ```
+
     """
 
     location: VersionLocation = VersionLocation.HEADER
@@ -89,8 +88,7 @@ class VersioningConfig:
 
 
 class VersioningMiddleware(FastMVCMiddleware):
-    """
-    Middleware that detects and manages API versions.
+    """Middleware that detects and manages API versions.
 
     Extracts API version from headers, path, query params, or Accept header
     and makes it available throughout the request lifecycle.
@@ -126,6 +124,7 @@ class VersioningMiddleware(FastMVCMiddleware):
             version = get_api_version()
             # Return version-specific response
         ```
+
     """
 
     def __init__(
@@ -136,8 +135,7 @@ class VersioningMiddleware(FastMVCMiddleware):
         supported_versions: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the versioning middleware.
+        """Initialize the versioning middleware.
 
         Args:
             app: The ASGI application.
@@ -145,6 +143,7 @@ class VersioningMiddleware(FastMVCMiddleware):
             location: Version location (overrides config).
             supported_versions: Supported versions (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or VersioningConfig()
@@ -209,8 +208,7 @@ class VersioningMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with version detection.
+        """Process request with version detection.
 
         Args:
             request: The incoming HTTP request.
@@ -218,6 +216,7 @@ class VersioningMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with version handling.
+
         """
         if self.should_skip(request):
             return await call_next(request)
@@ -251,7 +250,9 @@ class VersioningMiddleware(FastMVCMiddleware):
             # Add deprecation warning
             if version in self.config.deprecated_versions:
                 response.headers["X-API-Deprecated"] = "true"
-                response.headers["Warning"] = f'299 - "API version {version} is deprecated"'
+                response.headers["Warning"] = (
+                    f'299 - "API version {version} is deprecated"'
+                )
 
             return response
         finally:

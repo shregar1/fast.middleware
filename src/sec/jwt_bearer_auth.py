@@ -1,5 +1,4 @@
-"""
-JWT Bearer authentication middleware (injectable decode + user lookup).
+"""JWT Bearer authentication middleware (injectable decode + user lookup).
 
 Application code supplies callables for token decoding, session validation,
 and JSON error responses so this package stays free of app models and DTOs.
@@ -42,8 +41,7 @@ def default_resolve_request_urn(request: Request) -> str:
 
 
 class JWTBearerAuthMiddleware(BaseHTTPMiddleware):
-    """
-    Validate ``Authorization: Bearer`` on protected routes; attach user to ``request.state``.
+    """Validate ``Authorization: Bearer`` on protected routes; attach user to ``request.state``.
 
     Skips OPTIONS and paths in *unprotected_paths* or *callback_paths*.
     """
@@ -57,10 +55,25 @@ class JWTBearerAuthMiddleware(BaseHTTPMiddleware):
         decode_bearer: Callable[[str, str], dict],
         load_user: Callable[[dict, str], Any | None],
         on_authenticated: Callable[[Request, dict], None],
-        build_error_response: Callable[[str, ErrorKind, BaseException | None], JSONResponse],
+        build_error_response: Callable[
+            [str, ErrorKind, BaseException | None], JSONResponse
+        ],
         resolve_request_urn: Callable[[Request], str] | None = None,
         log: Any | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            unprotected_paths: The unprotected_paths parameter.
+            callback_paths: The callback_paths parameter.
+            decode_bearer: The decode_bearer parameter.
+            load_user: The load_user parameter.
+            on_authenticated: The on_authenticated parameter.
+            build_error_response: The build_error_response parameter.
+            resolve_request_urn: The resolve_request_urn parameter.
+            log: The log parameter.
+        """
         super().__init__(app)
         self._unprotected = frozenset(unprotected_paths)
         self._callback = frozenset(callback_paths)
@@ -72,10 +85,27 @@ class JWTBearerAuthMiddleware(BaseHTTPMiddleware):
         self._log = log
 
     def _debug(self, msg: str, **kwargs: Any) -> None:
+        """Execute _debug operation.
+
+        Args:
+            msg: The msg parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self._log is not None:
             self._log.debug(msg, **kwargs)
 
     async def dispatch(self, request: Request, call_next):
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         urn = self._urn(request)
         endpoint = request.url.path
 

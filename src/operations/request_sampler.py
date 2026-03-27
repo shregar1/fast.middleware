@@ -1,5 +1,4 @@
-"""
-Request Sampler Middleware for FastMVC.
+"""Request Sampler Middleware for FastMVC.
 
 Samples requests for logging, tracing, or analytics.
 """
@@ -25,14 +24,14 @@ def is_sampled() -> bool:
 
 @dataclass
 class RequestSamplerConfig:
-    """
-    Configuration for request sampler middleware.
+    """Configuration for request sampler middleware.
 
     Attributes:
         rate: Sampling rate (0.0 to 1.0).
         path_rates: Path-specific sampling rates.
         header_name: Header to indicate sampling.
         force_header: Header to force sampling.
+
     """
 
     rate: float = 0.1  # 10% sampling
@@ -42,8 +41,7 @@ class RequestSamplerConfig:
 
 
 class RequestSamplerMiddleware(FastMVCMiddleware):
-    """
-    Middleware for request sampling.
+    """Middleware for request sampling.
 
     Randomly samples requests for logging, distributed
     tracing, or analytics collection.
@@ -67,6 +65,7 @@ class RequestSamplerMiddleware(FastMVCMiddleware):
                 log_detailed_metrics()
             return result
         ```
+
     """
 
     def __init__(
@@ -76,6 +75,14 @@ class RequestSamplerMiddleware(FastMVCMiddleware):
         rate: float | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            rate: The rate parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestSamplerConfig()
 
@@ -102,6 +109,15 @@ class RequestSamplerMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

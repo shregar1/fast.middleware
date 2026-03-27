@@ -1,5 +1,4 @@
-"""
-Load Shedding Middleware for FastMVC.
+"""Load Shedding Middleware for FastMVC.
 
 Protects services under heavy load by rejecting excess requests.
 """
@@ -19,8 +18,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class LoadSheddingConfig:
-    """
-    Configuration for load shedding middleware.
+    """Configuration for load shedding middleware.
 
     Attributes:
         max_concurrent: Maximum concurrent requests.
@@ -41,6 +39,7 @@ class LoadSheddingConfig:
             shed_probability=0.5,
         )
         ```
+
     """
 
     max_concurrent: int = 100
@@ -53,8 +52,7 @@ class LoadSheddingConfig:
 
 
 class LoadSheddingMiddleware(FastMVCMiddleware):
-    """
-    Middleware that sheds load when service is overloaded.
+    """Middleware that sheds load when service is overloaded.
 
     Protects the service from cascading failures by rejecting
     requests when capacity is exceeded.
@@ -90,6 +88,7 @@ class LoadSheddingMiddleware(FastMVCMiddleware):
             "retry_after": 5
         }
         ```
+
     """
 
     def __init__(
@@ -99,6 +98,14 @@ class LoadSheddingMiddleware(FastMVCMiddleware):
         max_concurrent: int | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            max_concurrent: The max_concurrent parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or LoadSheddingConfig()
 
@@ -143,7 +150,9 @@ class LoadSheddingMiddleware(FastMVCMiddleware):
             if is_high_priority:
                 max_allowed = self.config.max_concurrent
             else:
-                max_allowed = self.config.max_concurrent - self.config.high_priority_reserved
+                max_allowed = (
+                    self.config.max_concurrent - self.config.high_priority_reserved
+                )
 
             if self._current_requests >= max_allowed:
                 # Check if we should probabilistically shed
@@ -166,6 +175,15 @@ class LoadSheddingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

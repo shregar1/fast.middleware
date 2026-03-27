@@ -1,5 +1,4 @@
-"""
-Graceful Shutdown Middleware for FastMVC.
+"""Graceful Shutdown Middleware for FastMVC.
 
 Handles graceful shutdown with in-flight request draining.
 """
@@ -17,12 +16,12 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class GracefulShutdownConfig:
-    """
-    Configuration for graceful shutdown middleware.
+    """Configuration for graceful shutdown middleware.
 
     Attributes:
         timeout: Max time to wait for requests to complete.
         check_path: Path to check shutdown status.
+
     """
 
     timeout: float = 30.0
@@ -30,8 +29,7 @@ class GracefulShutdownConfig:
 
 
 class GracefulShutdownMiddleware(FastMVCMiddleware):
-    """
-    Middleware for graceful shutdown handling.
+    """Middleware for graceful shutdown handling.
 
     Tracks in-flight requests and allows them to complete
     before shutdown, while rejecting new requests.
@@ -46,6 +44,7 @@ class GracefulShutdownMiddleware(FastMVCMiddleware):
         await shutdown_mw.shutdown()
         # Waits for in-flight requests, then returns
         ```
+
     """
 
     def __init__(
@@ -55,6 +54,14 @@ class GracefulShutdownMiddleware(FastMVCMiddleware):
         timeout: float | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            timeout: The timeout parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or GracefulShutdownConfig()
 
@@ -77,8 +84,7 @@ class GracefulShutdownMiddleware(FastMVCMiddleware):
         return self._in_flight
 
     async def shutdown(self) -> None:
-        """
-        Initiate graceful shutdown.
+        """Initiate graceful shutdown.
 
         Stops accepting new requests and waits for
         in-flight requests to complete.
@@ -100,6 +106,15 @@ class GracefulShutdownMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         # Handle status check
         if request.url.path == self.config.check_path:
             return JSONResponse(

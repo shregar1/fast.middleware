@@ -1,6 +1,4 @@
-"""
-Expose application build/version metadata on every response (support & observability).
-"""
+"""Expose application build/version metadata on every response (support & observability)."""
 
 from __future__ import annotations
 
@@ -19,8 +17,7 @@ _DEFAULT_ENV_GIT = "GIT_SHA"
 
 @dataclass
 class BuildVersionConfig:
-    """
-    Response headers for release/version metadata.
+    """Response headers for release/version metadata.
 
     If ``version`` / ``git_sha`` are unset, values are read from the environment
     (see ``version_env`` / ``git_sha_env``). Empty strings are skipped unless
@@ -39,8 +36,7 @@ class BuildVersionConfig:
 
 
 class BuildVersionMiddleware(FastMVCMiddleware):
-    """
-    Add ``X-App-Version`` / ``X-Git-SHA`` (or custom names) to responses.
+    """Add ``X-App-Version`` / ``X-Git-SHA`` (or custom names) to responses.
 
     Typical env wiring::
 
@@ -64,12 +60,24 @@ class BuildVersionMiddleware(FastMVCMiddleware):
         *,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or BuildVersionConfig()
         self._version = self._resolve_version()
         self._git = self._resolve_git()
 
     def _resolve_version(self) -> str | None:
+        """Execute _resolve_version operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.config.version is not None:
             v = self.config.version.strip()
         else:
@@ -80,6 +88,11 @@ class BuildVersionMiddleware(FastMVCMiddleware):
         return v or None
 
     def _resolve_git(self) -> str | None:
+        """Execute _resolve_git operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.config.git_sha is not None:
             g = self.config.git_sha.strip()
         else:
@@ -92,6 +105,15 @@ class BuildVersionMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

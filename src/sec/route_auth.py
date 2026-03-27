@@ -1,5 +1,4 @@
-"""
-Route-Based Authentication Middleware for FastMVC.
+"""Route-Based Authentication Middleware for FastMVC.
 
 Applies different auth requirements per route.
 """
@@ -27,13 +26,13 @@ class RouteAuth:
 
 @dataclass
 class RouteAuthConfig:
-    """
-    Configuration for route auth middleware.
+    """Configuration for route auth middleware.
 
     Attributes:
         routes: List of route auth requirements.
         default_require_auth: Default auth requirement.
         user_state_key: Key in request.state for user.
+
     """
 
     routes: list[RouteAuth] = field(default_factory=list)
@@ -42,8 +41,7 @@ class RouteAuthConfig:
 
 
 class RouteAuthMiddleware(FastMVCMiddleware):
-    """
-    Middleware that applies auth per route.
+    """Middleware that applies auth per route.
 
     Allows different authentication and authorization
     requirements for different routes.
@@ -61,6 +59,7 @@ class RouteAuthMiddleware(FastMVCMiddleware):
             ],
         )
         ```
+
     """
 
     def __init__(
@@ -70,6 +69,14 @@ class RouteAuthMiddleware(FastMVCMiddleware):
         routes: list[RouteAuth] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            routes: The routes parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RouteAuthConfig()
 
@@ -102,6 +109,15 @@ class RouteAuthMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

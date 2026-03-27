@@ -1,6 +1,4 @@
-"""
-``X-DNS-Prefetch-Control`` — opt out of DNS prefetching for privacy-sensitive apps.
-"""
+"""``X-DNS-Prefetch-Control`` — opt out of DNS prefetching for privacy-sensitive apps."""
 
 from __future__ import annotations
 
@@ -15,8 +13,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class DNSPrefetchControlConfig:
-    """
-    Browser hint for DNS prefetch behavior.
+    r"""Browser hint for DNS prefetch behavior.
 
     Common values: ``\"off\"`` (disable), ``\"on\"`` (allow). See MDN for semantics.
     """
@@ -26,8 +23,7 @@ class DNSPrefetchControlConfig:
 
 
 class DNSPrefetchControlMiddleware(FastMVCMiddleware):
-    """
-    Set ``X-DNS-Prefetch-Control`` on all responses (default ``off``).
+    """Set ``X-DNS-Prefetch-Control`` on all responses (default ``off``).
 
     Example::
 
@@ -46,12 +42,28 @@ class DNSPrefetchControlMiddleware(FastMVCMiddleware):
         *,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or DNSPrefetchControlConfig()
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

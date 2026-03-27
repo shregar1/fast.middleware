@@ -1,5 +1,4 @@
-"""
-Edge performance tiers inspired by large-scale consumer platforms.
+"""Edge performance tiers inspired by large-scale consumer platforms.
 
 These are **HTTP cache semantics** for FastAPI/Starlette behind a CDN or reverse
 proxy—not full platform replication. Use with:
@@ -53,8 +52,7 @@ class EdgePerformanceTier(str, Enum):
 
 @dataclass(frozen=True)
 class EdgeTierDefinition:
-    """
-    Header bundle for one tier.
+    """Header bundle for one tier.
 
     * ``default_cache_control`` — applied when no path override matches and the
       response has no ``Cache-Control`` yet.
@@ -74,7 +72,6 @@ class EdgeTierDefinition:
 
 def tier_definition(tier: EdgePerformanceTier) -> EdgeTierDefinition:
     """Return the built-in preset for *tier* (override by building your own middleware config)."""
-
     if tier is EdgePerformanceTier.FEED:
         return EdgeTierDefinition(
             title="Feed / social timeline (Instagram-class)",
@@ -101,7 +98,10 @@ def tier_definition(tier: EdgePerformanceTier) -> EdgeTierDefinition:
             vary="Accept-Encoding, Authorization",
             path_overrides=(
                 ("/api/public/", "public, s-maxage=300, stale-while-revalidate=3600"),
-                ("/public/", "public, max-age=60, s-maxage=600, stale-while-revalidate=86400"),
+                (
+                    "/public/",
+                    "public, max-age=60, s-maxage=600, stale-while-revalidate=86400",
+                ),
                 ("/static/", "public, max-age=31536000, immutable"),
             ),
         )
@@ -124,14 +124,26 @@ def tier_definition(tier: EdgePerformanceTier) -> EdgeTierDefinition:
                 ("/api/drm/", "private, no-store"),
                 ("/api/session/", "private, no-store"),
                 ("/api/entitlement/", "private, no-store"),
-                ("/api/catalog/", "public, s-maxage=1800, stale-while-revalidate=604800"),
-                ("/api/metadata/", "public, s-maxage=3600, stale-while-revalidate=604800"),
-                ("/api/recommendations/", "public, max-age=0, s-maxage=120, stale-while-revalidate=3600"),
+                (
+                    "/api/catalog/",
+                    "public, s-maxage=1800, stale-while-revalidate=604800",
+                ),
+                (
+                    "/api/metadata/",
+                    "public, s-maxage=3600, stale-while-revalidate=604800",
+                ),
+                (
+                    "/api/recommendations/",
+                    "public, max-age=0, s-maxage=120, stale-while-revalidate=3600",
+                ),
                 ("/images/", "public, max-age=31536000, immutable"),
                 ("/img/", "public, max-age=31536000, immutable"),
                 ("/static/", "public, max-age=31536000, immutable"),
                 ("/assets/", "public, max-age=31536000, immutable"),
-                ("/media/", "public, max-age=8, s-maxage=86400, stale-while-revalidate=3600"),
+                (
+                    "/media/",
+                    "public, max-age=8, s-maxage=86400, stale-while-revalidate=3600",
+                ),
             ),
         )
 
@@ -154,14 +166,14 @@ def tier_definition(tier: EdgePerformanceTier) -> EdgeTierDefinition:
 
 @dataclass
 class EdgeTierCacheHeadersConfig:
-    """
-    Apply tier-based cache headers to GET/HEAD responses when not already set.
+    """Apply tier-based cache headers to GET/HEAD responses when not already set.
 
     Attributes:
         tier: Built-in preset (see :class:`EdgePerformanceTier`).
         definition: Optional full override of headers/path rules.
         only_if_missing: If True (default), do not overwrite existing ``Cache-Control``.
         set_cdn_headers: Emit ``CDN-Cache-Control`` / ``Surrogate-Control`` when defined.
+
     """
 
     tier: EdgePerformanceTier = EdgePerformanceTier.FEED
@@ -180,7 +192,6 @@ class EdgeTierCacheHeadersConfig:
 
 def _path_under_prefix(path: str, prefix: str) -> bool:
     """True if *path* equals *prefix* or is a deeper path under it."""
-
     base = prefix.rstrip("/")
     if not base:
         return False
@@ -190,6 +201,15 @@ def _path_under_prefix(path: str, prefix: str) -> bool:
 
 
 def _longest_prefix_match(path: str, rules: tuple[tuple[str, str], ...]) -> str | None:
+    """Execute _longest_prefix_match operation.
+
+    Args:
+        path: The path parameter.
+        rules: The rules parameter.
+
+    Returns:
+        The result of the operation.
+    """
     best: tuple[int, str] | None = None
     for prefix, value in rules:
         if _path_under_prefix(path, prefix):
@@ -200,8 +220,7 @@ def _longest_prefix_match(path: str, rules: tuple[tuple[str, str], ...]) -> str 
 
 
 class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
-    """
-    Apply **CDN-oriented** cache headers from a tier preset.
+    """Apply **CDN-oriented** cache headers from a tier preset.
 
     Safe defaults: does not replace ``Cache-Control`` already set by handlers when
     ``only_if_missing`` is True.
@@ -225,6 +244,15 @@ class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_prefixes: tuple[str, ...] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            tier: The tier parameter.
+            exclude_paths: The exclude_paths parameter.
+            exclude_prefixes: The exclude_prefixes parameter.
+        """
         super().__init__(app)
         self.config = config or EdgeTierCacheHeadersConfig()
         if tier is not None:
@@ -236,6 +264,14 @@ class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
         self._def = self.config.definition or tier_definition(self.config.tier)
 
     def _skip_path(self, path: str) -> bool:
+        """Execute _skip_path operation.
+
+        Args:
+            path: The path parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if path in self.config.exclude_paths:
             return True
         return any(path.startswith(p) for p in self.config.exclude_prefixes)
@@ -243,6 +279,15 @@ class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 
@@ -257,14 +302,21 @@ class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
             return response
 
         path = request.url.path
-        cc = _longest_prefix_match(path, self._def.path_overrides) or self._def.default_cache_control
+        cc = (
+            _longest_prefix_match(path, self._def.path_overrides)
+            or self._def.default_cache_control
+        )
         response.headers["Cache-Control"] = cc
 
         if self.config.set_cdn_headers:
             if self._def.cdn_cache_control:
-                response.headers.setdefault("CDN-Cache-Control", self._def.cdn_cache_control)
+                response.headers.setdefault(
+                    "CDN-Cache-Control", self._def.cdn_cache_control
+                )
             if self._def.surrogate_control:
-                response.headers.setdefault("Surrogate-Control", self._def.surrogate_control)
+                response.headers.setdefault(
+                    "Surrogate-Control", self._def.surrogate_control
+                )
 
         if self._def.vary and not response.headers.get("vary"):
             response.headers["Vary"] = self._def.vary

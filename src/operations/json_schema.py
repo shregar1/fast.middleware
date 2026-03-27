@@ -1,5 +1,4 @@
-"""
-JSON Schema Validation Middleware for FastMVC.
+"""JSON Schema Validation Middleware for FastMVC.
 
 Validates request bodies against JSON schemas.
 """
@@ -17,12 +16,12 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class JSONSchemaConfig:
-    """
-    Configuration for JSON schema middleware.
+    """Configuration for JSON schema middleware.
 
     Attributes:
         schemas: Dict of path patterns to JSON schemas.
         strict: Return error on validation failure.
+
     """
 
     schemas: dict[str, dict[str, Any]] = field(default_factory=dict)
@@ -30,8 +29,7 @@ class JSONSchemaConfig:
 
 
 class JSONSchemaMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates requests against JSON schemas.
+    """Middleware that validates requests against JSON schemas.
 
     Example:
         ```python
@@ -51,6 +49,7 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
             schemas={"/api/users": user_schema},
         )
         ```
+
     """
 
     def __init__(
@@ -60,6 +59,14 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
         schemas: dict[str, dict[str, Any]] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            schemas: The schemas parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or JSONSchemaConfig()
 
@@ -83,8 +90,7 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
         return isinstance(value, expected)
 
     def _validate(self, data: Any, schema: dict[str, Any]) -> tuple[bool, list[str]]:
-        """
-        Simple JSON schema validation.
+        """Simple JSON schema validation.
 
         For production, use a proper library like jsonschema.
         """
@@ -99,7 +105,9 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
         if schema_type:
             if isinstance(schema_type, list):
                 if not any(self._validate_type(data, t) for t in schema_type):
-                    errors.append(f"Expected one of {schema_type}, got {type(data).__name__}")
+                    errors.append(
+                        f"Expected one of {schema_type}, got {type(data).__name__}"
+                    )
             elif not self._validate_type(data, schema_type):
                 errors.append(f"Expected {schema_type}, got {type(data).__name__}")
                 return False, errors
@@ -168,6 +176,15 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

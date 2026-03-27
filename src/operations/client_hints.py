@@ -1,5 +1,4 @@
-"""
-Client Hints Middleware for FastMVC.
+"""Client Hints Middleware for FastMVC.
 
 Requests and processes Client Hints for adaptive responses.
 """
@@ -26,12 +25,12 @@ def get_client_hints() -> dict[str, Any]:
 
 @dataclass
 class ClientHintsConfig:
-    """
-    Configuration for client hints middleware.
+    """Configuration for client hints middleware.
 
     Attributes:
         request_hints: Hints to request from clients.
         critical_hints: Critical hints required for response.
+
     """
 
     request_hints: list[str] = field(
@@ -50,8 +49,7 @@ class ClientHintsConfig:
 
 
 class ClientHintsMiddleware(FastMVCMiddleware):
-    """
-    Middleware for Client Hints.
+    """Middleware for Client Hints.
 
     Requests Client Hints from browsers and makes
     them available for adaptive responses.
@@ -73,6 +71,7 @@ class ClientHintsMiddleware(FastMVCMiddleware):
 
             return serve_optimized_image(dpr, save_data)
         ```
+
     """
 
     def __init__(
@@ -82,6 +81,14 @@ class ClientHintsMiddleware(FastMVCMiddleware):
         request_hints: list[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            request_hints: The request_hints parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ClientHintsConfig()
 
@@ -131,6 +138,15 @@ class ClientHintsMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

@@ -1,5 +1,4 @@
-"""
-Rate Limiting Middleware for FastMVC.
+"""Rate Limiting Middleware for FastMVC.
 
 Provides configurable rate limiting with multiple algorithms and storage backends.
 """
@@ -19,8 +18,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class RateLimitConfig:
-    """
-    Configuration for rate limiting.
+    """Configuration for rate limiting.
 
     Supports multiple rate limiting strategies:
     - Sliding window: Smooth rate limiting over time
@@ -49,6 +47,7 @@ class RateLimitConfig:
             burst_limit=20,
         )
         ```
+
     """
 
     requests_per_minute: int = 60
@@ -60,8 +59,7 @@ class RateLimitConfig:
 
 
 class RateLimitStore(ABC):
-    """
-    Abstract base class for rate limit storage backends.
+    """Abstract base class for rate limit storage backends.
 
     Implement this class to create custom storage backends (Redis, Memcached, etc.)
 
@@ -81,12 +79,14 @@ class RateLimitStore(ABC):
                 # No cleanup needed for Redis (TTL handles it)
                 pass
         ```
+
     """
 
     @abstractmethod
-    async def check_rate_limit(self, key: str, limit: int, window: int) -> tuple[bool, int, int]:
-        """
-        Check if the request is within rate limits.
+    async def check_rate_limit(
+        self, key: str, limit: int, window: int
+    ) -> tuple[bool, int, int]:
+        """Check if the request is within rate limits.
 
         Args:
             key: Unique identifier for the rate limit bucket.
@@ -95,6 +95,7 @@ class RateLimitStore(ABC):
 
         Returns:
             Tuple of (allowed, remaining, reset_time).
+
         """
         pass
 
@@ -105,8 +106,7 @@ class RateLimitStore(ABC):
 
 
 class InMemoryRateLimitStore(RateLimitStore):
-    """
-    In-memory rate limit storage using sliding window algorithm.
+    """In-memory rate limit storage using sliding window algorithm.
 
     Suitable for single-instance deployments or development.
     For distributed systems, use Redis or another shared storage.
@@ -118,12 +118,14 @@ class InMemoryRateLimitStore(RateLimitStore):
     """
 
     def __init__(self) -> None:
+        """Execute __init__ operation."""
         self._windows: dict[str, deque] = defaultdict(deque)
         self._lock = asyncio.Lock()
 
-    async def check_rate_limit(self, key: str, limit: int, window: int) -> tuple[bool, int, int]:
-        """
-        Check sliding window rate limit.
+    async def check_rate_limit(
+        self, key: str, limit: int, window: int
+    ) -> tuple[bool, int, int]:
+        """Check sliding window rate limit.
 
         Args:
             key: Unique identifier for the rate limit bucket.
@@ -132,6 +134,7 @@ class InMemoryRateLimitStore(RateLimitStore):
 
         Returns:
             Tuple of (allowed, remaining, reset_time).
+
         """
         async with self._lock:
             now = time.time()
@@ -154,11 +157,11 @@ class InMemoryRateLimitStore(RateLimitStore):
             return True, remaining, reset_time
 
     async def cleanup(self, max_age: int = 3600) -> None:
-        """
-        Clean up expired rate limit entries.
+        """Clean up expired rate limit entries.
 
         Args:
             max_age: Maximum age in seconds for entries to keep.
+
         """
         async with self._lock:
             now = time.time()
@@ -179,8 +182,7 @@ class InMemoryRateLimitStore(RateLimitStore):
 
 
 class RateLimitMiddleware(FastMVCMiddleware):
-    """
-    Rate limiting middleware with configurable algorithms and storage.
+    """Rate limiting middleware with configurable algorithms and storage.
 
     Protects your API from abuse by limiting the number of requests
     from each client within a time window.
@@ -223,6 +225,7 @@ class RateLimitMiddleware(FastMVCMiddleware):
         config = RateLimitConfig(key_func=get_user_id)
         app.add_middleware(RateLimitMiddleware, config=config)
         ```
+
     """
 
     # Default paths to exclude from rate limiting
@@ -238,8 +241,7 @@ class RateLimitMiddleware(FastMVCMiddleware):
         error_message: str = "Rate limit exceeded. Please try again later.",
         include_headers: bool = True,
     ) -> None:
-        """
-        Initialize the rate limiting middleware.
+        """Initialize the rate limiting middleware.
 
         Args:
             app: The ASGI application.
@@ -249,10 +251,17 @@ class RateLimitMiddleware(FastMVCMiddleware):
             exclude_methods: HTTP methods to exclude from rate limiting.
             error_message: Message to return when rate limited.
             include_headers: Whether to include rate limit headers in responses.
+
         """
-        _exclude_paths = exclude_paths if exclude_paths is not None else self.DEFAULT_EXCLUDE_PATHS
-        _exclude_methods = exclude_methods if exclude_methods is not None else {"OPTIONS"}
-        super().__init__(app, exclude_paths=_exclude_paths, exclude_methods=_exclude_methods)
+        _exclude_paths = (
+            exclude_paths if exclude_paths is not None else self.DEFAULT_EXCLUDE_PATHS
+        )
+        _exclude_methods = (
+            exclude_methods if exclude_methods is not None else {"OPTIONS"}
+        )
+        super().__init__(
+            app, exclude_paths=_exclude_paths, exclude_methods=_exclude_methods
+        )
 
         self.config = config or RateLimitConfig()
         self.store = store or InMemoryRateLimitStore()
@@ -274,14 +283,14 @@ class RateLimitMiddleware(FastMVCMiddleware):
                 pass  # Log error in production
 
     def _get_rate_limit_key(self, request: Request) -> str:
-        """
-        Generate a rate limit key for the request.
+        """Generate a rate limit key for the request.
 
         Args:
             request: The incoming HTTP request.
 
         Returns:
             A unique key for rate limiting.
+
         """
         if self.config.key_func:
             return self.config.key_func(request)
@@ -293,8 +302,7 @@ class RateLimitMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process the request with rate limiting.
+        """Process the request with rate limiting.
 
         Args:
             request: The incoming HTTP request.
@@ -302,6 +310,7 @@ class RateLimitMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response, or a 429 error if rate limited.
+
         """
         # Skip rate limiting for excluded paths/methods
         if self.should_skip(request):
@@ -349,9 +358,10 @@ class RateLimitMiddleware(FastMVCMiddleware):
 
         return response
 
-    def _rate_limited_response(self, request: Request, limit: int, reset_time: int) -> Response:
-        """
-        Create a rate limited (429) response.
+    def _rate_limited_response(
+        self, request: Request, limit: int, reset_time: int
+    ) -> Response:
+        """Create a rate limited (429) response.
 
         Args:
             request: The incoming HTTP request.
@@ -360,6 +370,7 @@ class RateLimitMiddleware(FastMVCMiddleware):
 
         Returns:
             A 429 Too Many Requests response.
+
         """
         retry_after = max(1, reset_time - int(time.time()))
 

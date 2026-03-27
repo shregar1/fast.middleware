@@ -1,5 +1,4 @@
-"""
-CSP Report Handler Middleware for FastMVC.
+"""CSP Report Handler Middleware for FastMVC.
 
 Handles Content-Security-Policy violation reports.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class CSPReportConfig:
-    """
-    Configuration for CSP report middleware.
+    """Configuration for CSP report middleware.
 
     Attributes:
         report_uri: URI where reports are sent.
@@ -27,6 +25,7 @@ class CSPReportConfig:
         store_reports: Store reports in memory.
         max_stored: Max reports to store.
         logger_name: Logger name for reports.
+
     """
 
     report_uri: str = "/_csp-report"
@@ -37,8 +36,7 @@ class CSPReportConfig:
 
 
 class CSPReportMiddleware(FastMVCMiddleware):
-    """
-    Middleware that handles CSP violation reports.
+    """Middleware that handles CSP violation reports.
 
     Receives and processes Content-Security-Policy
     violation reports sent by browsers.
@@ -56,6 +54,7 @@ class CSPReportMiddleware(FastMVCMiddleware):
         # Configure CSP header to send reports:
         # Content-Security-Policy: ...; report-uri /_csp-report
         ```
+
     """
 
     def __init__(
@@ -65,6 +64,14 @@ class CSPReportMiddleware(FastMVCMiddleware):
         report_uri: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            report_uri: The report_uri parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or CSPReportConfig()
 
@@ -121,6 +128,15 @@ class CSPReportMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         # Handle CSP report endpoint
         if request.url.path == self.config.report_uri and request.method == "POST":
             return await self._handle_report(request)

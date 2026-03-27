@@ -1,5 +1,4 @@
-"""
-Request Validator Middleware for FastMVC.
+"""Request Validator Middleware for FastMVC.
 
 Validates request structure and content.
 """
@@ -27,12 +26,12 @@ class ValidationRule:
 
 @dataclass
 class RequestValidatorConfig:
-    """
-    Configuration for request validator middleware.
+    """Configuration for request validator middleware.
 
     Attributes:
         rules: Validation rules.
         strict: Return error on validation failure.
+
     """
 
     rules: list[ValidationRule] = field(default_factory=list)
@@ -40,8 +39,7 @@ class RequestValidatorConfig:
 
 
 class RequestValidatorMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates request structure.
+    """Middleware that validates request structure.
 
     Checks required headers, query parameters, content types,
     and body size based on configured rules.
@@ -63,6 +61,7 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
             ],
         )
         ```
+
     """
 
     def __init__(
@@ -72,6 +71,14 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
         rules: list[ValidationRule] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            rules: The rules parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestValidatorConfig()
 
@@ -108,7 +115,9 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
             if rule.content_types:
                 content_type = request.headers.get("Content-Type", "")
                 if not any(ct in content_type for ct in rule.content_types):
-                    errors.append(f"Invalid Content-Type. Expected one of: {rule.content_types}")
+                    errors.append(
+                        f"Invalid Content-Type. Expected one of: {rule.content_types}"
+                    )
 
             # Check content length
             if rule.max_body_size is not None:
@@ -117,7 +126,9 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
                     try:
                         size = int(content_length)
                         if size > rule.max_body_size:
-                            errors.append(f"Body too large. Max: {rule.max_body_size} bytes")
+                            errors.append(
+                                f"Body too large. Max: {rule.max_body_size} bytes"
+                            )
                     except ValueError:
                         pass
 
@@ -126,6 +137,15 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

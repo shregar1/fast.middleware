@@ -1,6 +1,4 @@
-"""
-Tests for Authentication middleware.
-"""
+"""Tests for Authentication middleware."""
 
 import pytest
 from fastapi import FastAPI, Request
@@ -41,6 +39,14 @@ class TestAPIKeyAuthBackend:
         """Test custom validator function."""
 
         async def validator(key: str):
+            """Execute validator operation.
+
+            Args:
+                key: The key parameter.
+
+            Returns:
+                The result of the operation.
+            """
             if key == "special-key":
                 return {"user_id": 123, "tier": "premium"}
             return None
@@ -93,12 +99,16 @@ class TestAuthenticationMiddleware:
 
     def test_valid_auth_succeeds(self, auth_client: TestClient):
         """Test that valid authentication succeeds."""
-        response = auth_client.get("/protected", headers={"Authorization": "Bearer test-api-key"})
+        response = auth_client.get(
+            "/protected", headers={"Authorization": "Bearer test-api-key"}
+        )
         assert response.status_code == 200
 
     def test_invalid_auth_fails(self, auth_client: TestClient):
         """Test that invalid authentication fails."""
-        response = auth_client.get("/protected", headers={"Authorization": "Bearer wrong-key"})
+        response = auth_client.get(
+            "/protected", headers={"Authorization": "Bearer wrong-key"}
+        )
         assert response.status_code == 401
 
     def test_missing_scheme_fails(self, auth_client: TestClient):
@@ -121,10 +131,20 @@ class TestAuthenticationMiddleware:
 
         @app.get("/check-auth")
         async def check_auth(request: Request):
+            """Execute check_auth operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return {"auth": request.state.auth}
 
         client = TestClient(app)
-        response = client.get("/check-auth", headers={"Authorization": "Bearer test-key"})
+        response = client.get(
+            "/check-auth", headers={"Authorization": "Bearer test-key"}
+        )
 
         assert response.status_code == 200
         assert response.json()["auth"]["api_key"] == "test-key"

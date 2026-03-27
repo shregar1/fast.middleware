@@ -1,5 +1,4 @@
-"""
-Server-Timing Middleware for FastMVC.
+"""Server-Timing Middleware for FastMVC.
 
 Adds Server-Timing headers for performance metrics.
 """
@@ -37,15 +36,31 @@ class ServerTimingContext:
     """Context manager for timing code blocks."""
 
     def __init__(self, name: str, description: str = ""):
+        """Execute __init__ operation.
+
+        Args:
+            name: The name parameter.
+            description: The description parameter.
+        """
         self.name = name
         self.description = description
         self.start = 0.0
 
     def __enter__(self):
+        """Execute __enter__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         self.start = time.perf_counter()
         return self
 
     def __exit__(self, *args):
+        """Execute __exit__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         duration = (time.perf_counter() - self.start) * 1000  # ms
         add_timing(self.name, duration, self.description)
 
@@ -57,12 +72,12 @@ def timing(name: str, description: str = "") -> ServerTimingContext:
 
 @dataclass
 class ServerTimingConfig:
-    """
-    Configuration for server timing middleware.
+    """Configuration for server timing middleware.
 
     Attributes:
         include_total: Include total time.
         include_app: Include app processing time.
+
     """
 
     include_total: bool = True
@@ -70,8 +85,7 @@ class ServerTimingConfig:
 
 
 class ServerTimingMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds Server-Timing headers.
+    """Middleware that adds Server-Timing headers.
 
     Implements the Server-Timing HTTP header for exposing
     performance metrics to clients and dev tools.
@@ -92,6 +106,7 @@ class ServerTimingMiddleware(FastMVCMiddleware):
 
             return output
         ```
+
     """
 
     def __init__(
@@ -100,6 +115,13 @@ class ServerTimingMiddleware(FastMVCMiddleware):
         config: ServerTimingConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ServerTimingConfig()
 
@@ -123,6 +145,15 @@ class ServerTimingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

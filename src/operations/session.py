@@ -1,5 +1,4 @@
-"""
-Session Middleware for FastMVC.
+"""Session Middleware for FastMVC.
 
 Provides server-side session management.
 """
@@ -19,8 +18,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class SessionConfig:
-    """
-    Configuration for session middleware.
+    """Configuration for session middleware.
 
     Attributes:
         cookie_name: Name of the session cookie.
@@ -40,6 +38,7 @@ class SessionConfig:
             cookie_secure=True,
         )
         ```
+
     """
 
     cookie_name: str = "session_id"
@@ -52,8 +51,7 @@ class SessionConfig:
 
 
 class SessionStore(ABC):
-    """
-    Abstract base class for session storage backends.
+    """Abstract base class for session storage backends.
 
     Implement this to create custom storage (Redis, database, etc.)
     """
@@ -80,14 +78,14 @@ class SessionStore(ABC):
 
 
 class InMemorySessionStore(SessionStore):
-    """
-    In-memory session storage.
+    """In-memory session storage.
 
     Suitable for development and single-instance deployments.
     For production, use Redis or database storage.
     """
 
     def __init__(self) -> None:
+        """Execute __init__ operation."""
         self._sessions: dict[str, tuple[dict[str, Any], float]] = {}
 
     async def get(self, session_id: str) -> dict[str, Any] | None:
@@ -115,14 +113,15 @@ class InMemorySessionStore(SessionStore):
     async def cleanup(self) -> None:
         """Clean up expired sessions."""
         now = time.time()
-        expired = [sid for sid, (_, expires_at) in self._sessions.items() if now > expires_at]
+        expired = [
+            sid for sid, (_, expires_at) in self._sessions.items() if now > expires_at
+        ]
         for sid in expired:
             del self._sessions[sid]
 
 
 class Session:
-    """
-    Session object providing dict-like access to session data.
+    """Session object providing dict-like access to session data.
 
     Example:
         ```python
@@ -132,31 +131,88 @@ class Session:
             session["user_id"] = 123
             username = session.get("username", "Guest")
         ```
+
     """
 
     def __init__(self, data: dict[str, Any] | None = None) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            data: The data parameter.
+        """
         self._data = data or {}
         self._modified = False
         self._deleted = False
 
     def __getitem__(self, key: str) -> Any:
+        """Execute __getitem__ operation.
+
+        Args:
+            key: The key parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return self._data[key]
 
     def __setitem__(self, key: str, value: Any) -> None:
+        """Execute __setitem__ operation.
+
+        Args:
+            key: The key parameter.
+            value: The value parameter.
+
+        Returns:
+            The result of the operation.
+        """
         self._data[key] = value
         self._modified = True
 
     def __delitem__(self, key: str) -> None:
+        """Execute __delitem__ operation.
+
+        Args:
+            key: The key parameter.
+
+        Returns:
+            The result of the operation.
+        """
         del self._data[key]
         self._modified = True
 
     def __contains__(self, key: str) -> bool:
+        """Execute __contains__ operation.
+
+        Args:
+            key: The key parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return key in self._data
 
     def get(self, key: str, default: Any = None) -> Any:
+        """Execute get operation.
+
+        Args:
+            key: The key parameter.
+            default: The default parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return self._data.get(key, default)
 
     def pop(self, key: str, default: Any = None) -> Any:
+        """Execute pop operation.
+
+        Args:
+            key: The key parameter.
+            default: The default parameter.
+
+        Returns:
+            The result of the operation.
+        """
         self._modified = True
         return self._data.pop(key, default)
 
@@ -187,8 +243,7 @@ class Session:
 
 
 class SessionMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides server-side session management.
+    """Middleware that provides server-side session management.
 
     Sessions are stored server-side with only a session ID in the cookie.
 
@@ -221,6 +276,7 @@ class SessionMiddleware(FastMVCMiddleware):
             user_id = request.state.session.get("user_id")
             return {"user_id": user_id}
         ```
+
     """
 
     def __init__(
@@ -230,14 +286,14 @@ class SessionMiddleware(FastMVCMiddleware):
         store: SessionStore | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the session middleware.
+        """Initialize the session middleware.
 
         Args:
             app: The ASGI application.
             config: Session configuration.
             store: Session storage backend.
             exclude_paths: Paths to exclude from sessions.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or SessionConfig()
@@ -250,8 +306,7 @@ class SessionMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with session management.
+        """Process request with session management.
 
         Args:
             request: The incoming HTTP request.
@@ -259,6 +314,7 @@ class SessionMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with session handling.
+
         """
         if self.should_skip(request):
             return await call_next(request)

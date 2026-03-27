@@ -1,5 +1,4 @@
-"""
-Custom middleware example for FastMVC Middleware.
+"""Custom middleware example for FastMVC Middleware.
 
 This example demonstrates how to create your own middleware
 by extending FastMVCMiddleware base class.
@@ -20,9 +19,9 @@ from fastmiddleware import FastMVCMiddleware, get_request_id
 # Custom Middleware Examples
 # ============================================================================
 
+
 class MaintenanceModeMiddleware(FastMVCMiddleware):
-    """
-    Middleware that enables maintenance mode.
+    """Middleware that enables maintenance mode.
 
     When enabled, all requests (except excluded paths) return a 503 response.
     """
@@ -35,11 +34,31 @@ class MaintenanceModeMiddleware(FastMVCMiddleware):
         exclude_paths: Set[str] | None = None,
         exclude_methods: Set[str] | None = None,
     ) -> None:
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            enabled: The enabled parameter.
+            message: The message parameter.
+            exclude_paths: The exclude_paths parameter.
+            exclude_methods: The exclude_methods parameter.
+        """
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
         self.enabled = enabled
         self.message = message
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         # Skip if maintenance mode is disabled
         if not self.enabled:
             return await call_next(request)
@@ -60,8 +79,7 @@ class MaintenanceModeMiddleware(FastMVCMiddleware):
 
 
 class GeoIPMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds geographic information based on client IP.
+    """Middleware that adds geographic information based on client IP.
 
     In production, you would integrate with a GeoIP database like MaxMind.
     This example uses mock data for demonstration.
@@ -79,19 +97,38 @@ class GeoIPMiddleware(FastMVCMiddleware):
         default_country: str = "Unknown",
         exclude_paths: Set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            default_country: The default_country parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.default_country = default_country
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         # Get client IP
         client_ip = self.get_client_ip(request)
 
         # Look up geographic data
-        geo_data = self.MOCK_GEO_DATA.get(client_ip, {
-            "country": self.default_country,
-            "city": "Unknown",
-            "timezone": "UTC",
-        })
+        geo_data = self.MOCK_GEO_DATA.get(
+            client_ip,
+            {
+                "country": self.default_country,
+                "city": "Unknown",
+                "timezone": "UTC",
+            },
+        )
 
         # Store in request state
         request.state.geo = geo_data
@@ -101,8 +138,7 @@ class GeoIPMiddleware(FastMVCMiddleware):
 
 
 class RequestThrottleMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds artificial delay to requests.
+    """Middleware that adds artificial delay to requests.
 
     Useful for testing slow network conditions or simulating
     high-latency services.
@@ -115,11 +151,28 @@ class RequestThrottleMiddleware(FastMVCMiddleware):
         delay_paths: Set[str] | None = None,
         exclude_paths: Set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            delay_seconds: The delay_seconds parameter.
+            delay_paths: The delay_paths parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.delay_seconds = delay_seconds
         self.delay_paths = delay_paths or set()
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         import asyncio
 
         # Skip if no delay configured
@@ -144,8 +197,7 @@ class RequestThrottleMiddleware(FastMVCMiddleware):
 
 
 class DeprecationWarningMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds deprecation warnings to specific endpoints.
+    """Middleware that adds deprecation warnings to specific endpoints.
 
     Useful for notifying clients about upcoming API changes.
     """
@@ -156,10 +208,26 @@ class DeprecationWarningMiddleware(FastMVCMiddleware):
         deprecated_paths: Dict[str, str] | None = None,
         exclude_paths: Set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            deprecated_paths: The deprecated_paths parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.deprecated_paths = deprecated_paths or {}
 
     async def dispatch(self, request: Request, call_next) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         response = await call_next(request)
 
         # Check if path is deprecated
@@ -207,6 +275,7 @@ app.add_middleware(
 # ============================================================================
 # Routes
 # ============================================================================
+
 
 @app.get("/")
 async def root():
@@ -262,4 +331,3 @@ if __name__ == "__main__":
     print("  GET /v2/new-endpoint - No deprecation warnings")
 
     uvicorn.run(app, host="0.0.0.0", port=8000)
-

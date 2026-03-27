@@ -1,5 +1,4 @@
-"""
-IP Filter Middleware for FastMVC.
+"""IP Filter Middleware for FastMVC.
 
 Provides IP-based access control with whitelist and blacklist support.
 """
@@ -16,8 +15,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class IPFilterConfig:
-    """
-    Configuration for IP filter middleware.
+    """Configuration for IP filter middleware.
 
     Attributes:
         whitelist: Set of allowed IP addresses/ranges.
@@ -42,6 +40,7 @@ class IPFilterConfig:
             blacklist={"1.2.3.4", "5.6.7.0/24"},
         )
         ```
+
     """
 
     whitelist: set[str] = field(default_factory=set)
@@ -53,8 +52,7 @@ class IPFilterConfig:
 
 
 class IPFilterMiddleware(FastMVCMiddleware):
-    """
-    Middleware that filters requests based on client IP address.
+    """Middleware that filters requests based on client IP address.
 
     Supports both whitelist (allow only listed) and blacklist (block listed)
     modes with CIDR range support.
@@ -85,6 +83,7 @@ class IPFilterMiddleware(FastMVCMiddleware):
         )
         app.add_middleware(IPFilterMiddleware, config=config)
         ```
+
     """
 
     def __init__(
@@ -95,8 +94,7 @@ class IPFilterMiddleware(FastMVCMiddleware):
         blacklist: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the IP filter middleware.
+        """Initialize the IP filter middleware.
 
         Args:
             app: The ASGI application.
@@ -104,6 +102,7 @@ class IPFilterMiddleware(FastMVCMiddleware):
             whitelist: IPs to allow (overrides config).
             blacklist: IPs to block (overrides config).
             exclude_paths: Paths to exclude from filtering.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or IPFilterConfig()
@@ -165,8 +164,7 @@ class IPFilterMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with IP filtering.
+        """Process request with IP filtering.
 
         Args:
             request: The incoming HTTP request.
@@ -174,6 +172,7 @@ class IPFilterMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response or 403 if blocked.
+
         """
         if self.should_skip(request):
             return await call_next(request)

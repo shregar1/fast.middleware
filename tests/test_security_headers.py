@@ -10,10 +10,23 @@ from fastmiddleware import SecurityHeadersConfig, SecurityHeadersMiddleware
 
 
 async def ok(_request: Request):
+    """Execute ok operation.
+
+    Args:
+        _request: The _request parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return PlainTextResponse("ok")
 
 
 def test_security_headers_defaults():
+    """Execute test_security_headers_defaults operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", ok)])
     app.add_middleware(SecurityHeadersMiddleware)
     client = TestClient(app)
@@ -25,6 +38,11 @@ def test_security_headers_defaults():
 
 
 def test_security_headers_hsts_and_no_csp():
+    """Execute test_security_headers_hsts_and_no_csp operation.
+
+    Returns:
+        The result of the operation.
+    """
     app = Starlette(routes=[Route("/", ok)])
     app.add_middleware(
         SecurityHeadersMiddleware,

@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Cache middleware.
-"""
+"""Comprehensive tests for Cache middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -21,20 +19,40 @@ def cache_app() -> FastAPI:
 
     @app.get("/data")
     async def get_data():
+        """Execute get_data operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello", "timestamp": "2024-01-01"}
 
     @app.get("/dynamic")
     async def get_dynamic():
+        """Execute get_dynamic operation.
+
+        Returns:
+            The result of the operation.
+        """
         import time
 
         return {"time": time.time()}
 
     @app.post("/create")
     async def create_data():
+        """Execute create_data operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"created": True}
 
     @app.get("/empty")
     async def get_empty():
+        """Execute get_empty operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {}
 
     return app
@@ -42,6 +60,14 @@ def cache_app() -> FastAPI:
 
 @pytest.fixture
 def cache_client(cache_app: FastAPI) -> TestClient:
+    """Execute cache_client operation.
+
+    Args:
+        cache_app: The cache_app parameter.
+
+    Returns:
+        The result of the operation.
+    """
     return TestClient(cache_app)
 
 
@@ -114,7 +140,9 @@ class TestConditionalRequests:
 
     def test_200_on_non_matching_etag(self, cache_client: TestClient):
         """Test that 200 is returned when ETag doesn't match."""
-        response = cache_client.get("/data", headers={"If-None-Match": '"non-matching-etag"'})
+        response = cache_client.get(
+            "/data", headers={"If-None-Match": '"non-matching-etag"'}
+        )
 
         assert response.status_code == 200
 
@@ -187,24 +215,52 @@ class TestPathRules:
 
         @app.get("/static/file")
         async def static_file():
+            """Execute static_file operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "static"}
 
         @app.get("/private/data")
         async def private_data():
+            """Execute private_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "private"}
 
         @app.get("/no-cache/data")
         async def no_cache_data():
+            """Execute no_cache_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "no-cache"}
 
         @app.get("/default")
         async def default():
+            """Execute default operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "default"}
 
         return app
 
     @pytest.fixture
     def path_rules_client(self, path_rules_app: FastAPI) -> TestClient:
+        """Execute path_rules_client operation.
+
+        Args:
+            path_rules_app: The path_rules_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(path_rules_app)
 
     def test_static_path_long_cache(self, path_rules_client: TestClient):
@@ -238,12 +294,25 @@ class TestNoEtag:
 
         @app.get("/data")
         async def get_data():
+            """Execute get_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"value": 123}
 
         return app
 
     @pytest.fixture
     def no_etag_client(self, no_etag_app: FastAPI) -> TestClient:
+        """Execute no_etag_client operation.
+
+        Args:
+            no_etag_app: The no_etag_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(no_etag_app)
 
     def test_no_etag_header(self, no_etag_client: TestClient):
@@ -271,12 +340,25 @@ class TestPrivateCache:
 
         @app.get("/data")
         async def get_data():
+            """Execute get_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"value": "secret"}
 
         return app
 
     @pytest.fixture
     def private_client(self, private_app: FastAPI) -> TestClient:
+        """Execute private_client operation.
+
+        Args:
+            private_app: The private_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(private_app)
 
     def test_private_cache_control(self, private_client: TestClient):
@@ -302,16 +384,34 @@ class TestPathExclusion:
 
         @app.get("/cached")
         async def cached():
+            """Execute cached operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"cached": True}
 
         @app.get("/no-cache")
         async def no_cache():
+            """Execute no_cache operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"cached": False}
 
         return app
 
     @pytest.fixture
     def excluded_client(self, excluded_app: FastAPI) -> TestClient:
+        """Execute excluded_client operation.
+
+        Args:
+            excluded_app: The excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(excluded_app)
 
     def test_excluded_path_no_cache_headers(self, excluded_client: TestClient):

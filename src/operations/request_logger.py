@@ -1,5 +1,4 @@
-"""
-Request Logger Middleware for FastMVC.
+"""Request Logger Middleware for FastMVC.
 
 Logs requests in various formats.
 """
@@ -20,8 +19,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class RequestLoggerConfig:
-    """
-    Configuration for request logger middleware.
+    """Configuration for request logger middleware.
 
     Attributes:
         format: Log format (combined, common, json, custom).
@@ -30,19 +28,23 @@ class RequestLoggerConfig:
         include_headers: Include headers in log.
         mask_headers: Headers to mask values.
         skip_paths: Paths to skip logging.
+
     """
 
     format: str = "combined"
     logger_name: str = "access"
     log_level: int = logging.INFO
     include_headers: bool = False
-    mask_headers: set[str] = field(default_factory=lambda: {"Authorization", "Cookie", "X-API-Key"})
-    skip_paths: set[str] = field(default_factory=lambda: {"/health", "/ready", "/metrics"})
+    mask_headers: set[str] = field(
+        default_factory=lambda: {"Authorization", "Cookie", "X-API-Key"}
+    )
+    skip_paths: set[str] = field(
+        default_factory=lambda: {"/health", "/ready", "/metrics"}
+    )
 
 
 class RequestLoggerMiddleware(FastMVCMiddleware):
-    """
-    Middleware for logging requests.
+    """Middleware for logging requests.
 
     Logs HTTP requests in various formats including
     Apache Combined, Common, and JSON.
@@ -57,6 +59,7 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
             skip_paths={"/health"},
         )
         ```
+
     """
 
     def __init__(
@@ -66,6 +69,14 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
         format: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            format: The format parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestLoggerConfig()
 
@@ -80,7 +91,9 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
             return "***"
         return value[:2] + "***" + value[-2:]
 
-    def _format_combined(self, request: Request, response: Response, duration: float) -> str:
+    def _format_combined(
+        self, request: Request, response: Response, duration: float
+    ) -> str:
         """Format in Apache Combined format."""
         client_ip = self.get_client_ip(request)
         timestamp = datetime.now(timezone.utc).strftime("%d/%b/%Y:%H:%M:%S %z")
@@ -99,7 +112,9 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
             f'{status} {size} "{referer}" "{user_agent}" {duration:.3f}s'
         )
 
-    def _format_common(self, request: Request, response: Response, duration: float) -> str:
+    def _format_common(
+        self, request: Request, response: Response, duration: float
+    ) -> str:
         """Format in Apache Common format."""
         client_ip = self.get_client_ip(request)
         timestamp = datetime.now(timezone.utc).strftime("%d/%b/%Y:%H:%M:%S %z")
@@ -111,7 +126,9 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
 
         return f'{client_ip} - - [{timestamp}] "{method} {path} {protocol}" {status} {size}'
 
-    def _format_json(self, request: Request, response: Response, duration: float) -> str:
+    def _format_json(
+        self, request: Request, response: Response, duration: float
+    ) -> str:
         """Format as JSON."""
         data: dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -148,6 +165,15 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if request.url.path in self.config.skip_paths:
             return await call_next(request)
 

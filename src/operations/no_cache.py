@@ -1,5 +1,4 @@
-"""
-No-Cache Middleware for FastMVC.
+"""No-Cache Middleware for FastMVC.
 
 Disables caching for responses.
 """
@@ -15,13 +14,13 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class NoCacheConfig:
-    """
-    Configuration for no-cache middleware.
+    """Configuration for no-cache middleware.
 
     Attributes:
         paths: Paths to apply no-cache (empty = all).
         methods: Methods to apply no-cache.
         headers: Cache control headers to add.
+
     """
 
     paths: set[str] = field(default_factory=set)
@@ -31,8 +30,7 @@ class NoCacheConfig:
 
 
 class NoCacheMiddleware(FastMVCMiddleware):
-    """
-    Middleware that disables caching.
+    """Middleware that disables caching.
 
     Adds headers to prevent caching of responses,
     useful for dynamic content or sensitive data.
@@ -51,6 +49,7 @@ class NoCacheMiddleware(FastMVCMiddleware):
         # Pragma: no-cache
         # Expires: 0
         ```
+
     """
 
     def __init__(
@@ -60,6 +59,14 @@ class NoCacheMiddleware(FastMVCMiddleware):
         paths: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            paths: The paths parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or NoCacheConfig()
 
@@ -79,13 +86,24 @@ class NoCacheMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 
         response = await call_next(request)
 
         if self._should_apply(request.url.path, request.method):
-            response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, private"
+            response.headers["Cache-Control"] = (
+                "no-store, no-cache, must-revalidate, private"
+            )
 
             if self.config.pragma:
                 response.headers["Pragma"] = "no-cache"

@@ -1,5 +1,4 @@
-"""
-Basic Authentication Middleware for FastMVC.
+"""Basic Authentication Middleware for FastMVC.
 
 Simple HTTP Basic Authentication.
 """
@@ -17,13 +16,13 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class BasicAuthConfig:
-    """
-    Configuration for basic auth middleware.
+    """Configuration for basic auth middleware.
 
     Attributes:
         users: Dict of username -> password.
         realm: Authentication realm.
         exclude_methods: Methods that don't require auth.
+
     """
 
     users: dict[str, str] = field(default_factory=dict)
@@ -32,8 +31,7 @@ class BasicAuthConfig:
 
 
 class BasicAuthMiddleware(FastMVCMiddleware):
-    """
-    Middleware for HTTP Basic Authentication.
+    """Middleware for HTTP Basic Authentication.
 
     Simple username/password authentication using
     the Authorization header.
@@ -47,6 +45,7 @@ class BasicAuthMiddleware(FastMVCMiddleware):
             users={"admin": "secret123", "user": "password"},
         )
         ```
+
     """
 
     def __init__(
@@ -56,6 +55,14 @@ class BasicAuthMiddleware(FastMVCMiddleware):
         users: dict[str, str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            users: The users parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or BasicAuthConfig()
 
@@ -86,6 +93,15 @@ class BasicAuthMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

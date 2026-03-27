@@ -1,5 +1,4 @@
-"""
-CSRF Protection Middleware for FastMVC.
+"""CSRF Protection Middleware for FastMVC.
 
 Provides Cross-Site Request Forgery protection.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class CSRFConfig:
-    """
-    Configuration for CSRF protection middleware.
+    """Configuration for CSRF protection middleware.
 
     Attributes:
         secret: Secret key for token generation.
@@ -40,25 +38,32 @@ class CSRFConfig:
             cookie_secure=True,
         )
         ```
+
     """
 
     secret: str = ""
     token_header: str = "X-CSRF-Token"
     cookie_name: str = "csrf_token"
-    safe_methods: set[str] = field(default_factory=lambda: {"GET", "HEAD", "OPTIONS", "TRACE"})
+    safe_methods: set[str] = field(
+        default_factory=lambda: {"GET", "HEAD", "OPTIONS", "TRACE"}
+    )
     cookie_secure: bool = False
     cookie_httponly: bool = True
     cookie_samesite: str = "strict"
     cookie_max_age: int = 3600
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if not self.secret:
             self.secret = secrets.token_urlsafe(32)
 
 
 class CSRFMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides CSRF protection.
+    """Middleware that provides CSRF protection.
 
     Generates and validates CSRF tokens to prevent cross-site
     request forgery attacks.
@@ -91,6 +96,7 @@ class CSRFMiddleware(FastMVCMiddleware):
     Note:
         For API-only applications, consider using SameSite cookies
         and Origin/Referer validation instead.
+
     """
 
     def __init__(
@@ -100,14 +106,14 @@ class CSRFMiddleware(FastMVCMiddleware):
         secret: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the CSRF middleware.
+        """Initialize the CSRF middleware.
 
         Args:
             app: The ASGI application.
             config: CSRF configuration.
             secret: Secret key (overrides config).
             exclude_paths: Paths to exclude from protection.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or CSRFConfig()
@@ -151,8 +157,7 @@ class CSRFMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with CSRF protection.
+        """Process request with CSRF protection.
 
         Args:
             request: The incoming HTTP request.
@@ -160,6 +165,7 @@ class CSRFMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with CSRF handling.
+
         """
         if self.should_skip(request):
             return await call_next(request)

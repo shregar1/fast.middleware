@@ -1,6 +1,4 @@
-"""
-SPA-friendly CORS preset as a Pydantic DTO for Starlette :class:`CORSMiddleware`.
-"""
+"""SPA-friendly CORS preset as a Pydantic DTO for Starlette :class:`CORSMiddleware`."""
 
 from __future__ import annotations
 
@@ -8,8 +6,7 @@ from pydantic import BaseModel, Field
 
 
 class CORSPreset(BaseModel):
-    """
-    Common single-page-app defaults: local dev origins, credentials, wide methods.
+    """Common single-page-app defaults: local dev origins, credentials, wide methods.
 
     Pass :meth:`starlette_kwargs` to ``app.add_middleware(CORSMiddleware, **kwargs)``.
     """
@@ -25,7 +22,15 @@ class CORSPreset(BaseModel):
     )
     allow_credentials: bool = True
     allow_methods: list[str] = Field(
-        default_factory=lambda: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS", "HEAD"],
+        default_factory=lambda: [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS",
+            "HEAD",
+        ],
     )
     allow_headers: list[str] = Field(default_factory=lambda: ["*"])
     expose_headers: list[str] = Field(default_factory=list)

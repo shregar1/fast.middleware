@@ -1,6 +1,4 @@
-"""
-Tests for Logging middleware.
-"""
+"""Tests for Logging middleware."""
 
 import logging
 

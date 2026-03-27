@@ -1,5 +1,4 @@
-"""
-HATEOAS Middleware for FastMVC.
+"""HATEOAS Middleware for FastMVC.
 
 Adds hypermedia links to API responses.
 """
@@ -24,6 +23,11 @@ class Link:
     title: str = ""
 
     def to_dict(self) -> dict[str, str]:
+        """Execute to_dict operation.
+
+        Returns:
+            The result of the operation.
+        """
         d = {"rel": self.rel, "href": self.href, "method": self.method}
         if self.title:
             d["title"] = self.title
@@ -32,13 +36,13 @@ class Link:
 
 @dataclass
 class HATEOASConfig:
-    """
-    Configuration for HATEOAS middleware.
+    """Configuration for HATEOAS middleware.
 
     Attributes:
         links: Dict of path patterns to link generators.
         link_key: Key for links in response.
         self_link: Include self link.
+
     """
 
     link_generators: dict[str, list[Link]] = field(default_factory=dict)
@@ -47,8 +51,7 @@ class HATEOASConfig:
 
 
 class HATEOASMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds hypermedia links to responses.
+    """Middleware that adds hypermedia links to responses.
 
     Implements HATEOAS (Hypermedia as the Engine of
     Application State) for REST APIs.
@@ -69,6 +72,7 @@ class HATEOASMiddleware(FastMVCMiddleware):
         # Responses will include:
         # { "data": {...}, "_links": [...] }
         ```
+
     """
 
     def __init__(
@@ -78,6 +82,14 @@ class HATEOASMiddleware(FastMVCMiddleware):
         link_generators: dict[str, list[Link]] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            link_generators: The link_generators parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or HATEOASConfig()
 
@@ -113,6 +125,15 @@ class HATEOASMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

@@ -1,5 +1,4 @@
-"""
-Retry-After Middleware for FastMVC.
+"""Retry-After Middleware for FastMVC.
 
 Adds Retry-After headers to appropriate responses.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class RetryAfterConfig:
-    """
-    Configuration for retry-after middleware.
+    """Configuration for retry-after middleware.
 
     Attributes:
         status_codes: Status codes that should include Retry-After.
@@ -35,6 +33,7 @@ class RetryAfterConfig:
             },
         )
         ```
+
     """
 
     status_codes: set[int] = field(default_factory=lambda: {429, 503, 504})
@@ -43,8 +42,7 @@ class RetryAfterConfig:
 
 
 class RetryAfterMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds Retry-After headers to error responses.
+    """Middleware that adds Retry-After headers to error responses.
 
     Helps clients handle transient errors gracefully by indicating
     when they should retry.
@@ -73,6 +71,7 @@ class RetryAfterMiddleware(FastMVCMiddleware):
     Standards:
         RFC 7231 defines Retry-After for 503, and it's commonly
         used for 429 rate limiting responses.
+
     """
 
     def __init__(
@@ -82,14 +81,14 @@ class RetryAfterMiddleware(FastMVCMiddleware):
         default_retry: int | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the retry-after middleware.
+        """Initialize the retry-after middleware.
 
         Args:
             app: The ASGI application.
             config: Retry-after configuration.
             default_retry: Default retry time (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RetryAfterConfig()
@@ -99,13 +98,14 @@ class RetryAfterMiddleware(FastMVCMiddleware):
 
     def _get_retry_time(self, status_code: int) -> int:
         """Get retry time for status code."""
-        return self.config.status_retry_times.get(status_code, self.config.default_retry)
+        return self.config.status_retry_times.get(
+            status_code, self.config.default_retry
+        )
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request and add Retry-After if needed.
+        """Process request and add Retry-After if needed.
 
         Args:
             request: The incoming HTTP request.
@@ -113,6 +113,7 @@ class RetryAfterMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with Retry-After header if applicable.
+
         """
         if self.should_skip(request):
             return await call_next(request)

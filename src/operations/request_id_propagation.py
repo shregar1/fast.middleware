@@ -1,5 +1,4 @@
-"""
-Request ID Propagation Middleware for FastMVC.
+"""Request ID Propagation Middleware for FastMVC.
 
 Propagates request IDs across service boundaries.
 """
@@ -31,14 +30,14 @@ def get_trace_header() -> str:
 
 @dataclass
 class RequestIDPropagationConfig:
-    """
-    Configuration for request ID propagation middleware.
+    """Configuration for request ID propagation middleware.
 
     Attributes:
         headers: Headers to check for request IDs.
         response_header: Header for response.
         generate_if_missing: Generate ID if none found.
         max_chain: Maximum chain length to preserve.
+
     """
 
     headers: list[str] = field(
@@ -54,8 +53,7 @@ class RequestIDPropagationConfig:
 
 
 class RequestIDPropagationMiddleware(FastMVCMiddleware):
-    """
-    Middleware that propagates request IDs across services.
+    """Middleware that propagates request IDs across services.
 
     Collects request IDs from multiple sources and maintains
     the chain for distributed tracing.
@@ -72,6 +70,7 @@ class RequestIDPropagationMiddleware(FastMVCMiddleware):
             # Forward ids to downstream services
             return {"request_ids": ids}
         ```
+
     """
 
     def __init__(
@@ -80,6 +79,13 @@ class RequestIDPropagationMiddleware(FastMVCMiddleware):
         config: RequestIDPropagationConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestIDPropagationConfig()
 
@@ -101,6 +107,15 @@ class RequestIDPropagationMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

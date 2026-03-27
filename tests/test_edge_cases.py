@@ -1,6 +1,4 @@
-"""
-Edge case tests to boost coverage to 100%.
-"""
+"""Edge case tests to boost coverage to 100%."""
 
 import asyncio
 
@@ -11,10 +9,25 @@ from starlette.testclient import TestClient
 
 
 class TestCORSEdgeCases:
+    """Represents the TestCORSEdgeCases class."""
+
     def test_cors_preflight(self):
+        """Execute test_cors_preflight operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import CORSMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -36,9 +49,22 @@ class TestCORSEdgeCases:
         assert response.status_code == 200
 
     def test_cors_wildcard(self):
+        """Execute test_cors_wildcard operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import CORSMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -50,10 +76,25 @@ class TestCORSEdgeCases:
 
 
 class TestSecurityHeadersEdgeCases:
+    """Represents the TestSecurityHeadersEdgeCases class."""
+
     def test_security_headers_csp(self):
+        """Execute test_security_headers_csp operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import SecurityHeadersConfig, SecurityHeadersMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         config = SecurityHeadersConfig(
@@ -74,10 +115,25 @@ class TestSecurityHeadersEdgeCases:
 
 
 class TestRateLimitEdgeCases:
+    """Represents the TestRateLimitEdgeCases class."""
+
     def test_rate_limit_exceeded(self):
+        """Execute test_rate_limit_exceeded operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import RateLimitConfig, RateLimitMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -94,10 +150,25 @@ class TestRateLimitEdgeCases:
 
 
 class TestCompressionEdgeCases:
+    """Represents the TestCompressionEdgeCases class."""
+
     def test_compression_large_response(self):
+        """Execute test_compression_large_response operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import CompressionMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("X" * 10000)
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -108,9 +179,22 @@ class TestCompressionEdgeCases:
         assert response.status_code == 200
 
     def test_compression_small_response(self):
+        """Execute test_compression_small_response operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import CompressionMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("small")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -122,10 +206,25 @@ class TestCompressionEdgeCases:
 
 
 class TestErrorHandlerEdgeCases:
+    """Represents the TestErrorHandlerEdgeCases class."""
+
     def test_error_handler_exception(self):
+        """Execute test_error_handler_exception operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import ErrorHandlerMiddleware
 
         async def error_route(request):
+            """Execute error_route operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error")
 
         app = Starlette(routes=[Route("/", error_route)])
@@ -137,10 +236,25 @@ class TestErrorHandlerEdgeCases:
 
 
 class TestHealthCheckEdgeCases:
+    """Represents the TestHealthCheckEdgeCases class."""
+
     def test_health_ready_live(self):
+        """Execute test_health_ready_live operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import HealthCheckMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -159,10 +273,25 @@ class TestHealthCheckEdgeCases:
 
 
 class TestMaintenanceEdgeCases:
+    """Represents the TestMaintenanceEdgeCases class."""
+
     def test_maintenance_enabled(self):
+        """Execute test_maintenance_enabled operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import MaintenanceConfig, MaintenanceMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage), Route("/health", homepage)])
@@ -176,10 +305,25 @@ class TestMaintenanceEdgeCases:
 
 
 class TestMetricsEdgeCases:
+    """Represents the TestMetricsEdgeCases class."""
+
     def test_metrics_endpoint(self):
+        """Execute test_metrics_endpoint operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import MetricsMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage), Route("/metrics", homepage)])
@@ -195,12 +339,27 @@ class TestMetricsEdgeCases:
 
 
 class TestIdempotencyEdgeCases:
+    """Represents the TestIdempotencyEdgeCases class."""
+
     def test_idempotency_replay(self):
+        """Execute test_idempotency_replay operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import IdempotencyConfig, IdempotencyMiddleware
 
         counter = {"value": 0}
 
         async def increment(request):
+            """Execute increment operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             counter["value"] += 1
             return JSONResponse({"count": counter["value"]})
 
@@ -220,10 +379,25 @@ class TestIdempotencyEdgeCases:
 
 
 class TestAuthenticationEdgeCases:
+    """Represents the TestAuthenticationEdgeCases class."""
+
     def test_auth_with_api_key_backend(self):
+        """Execute test_auth_with_api_key_backend operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import APIKeyAuthBackend, AuthenticationMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -239,10 +413,25 @@ class TestAuthenticationEdgeCases:
 
 
 class TestCacheEdgeCases:
+    """Represents the TestCacheEdgeCases class."""
+
     def test_cache_with_etag(self):
+        """Execute test_cache_with_etag operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import CacheConfig, CacheMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("Content")
 
         config = CacheConfig(default_max_age=3600)
@@ -255,10 +444,25 @@ class TestCacheEdgeCases:
 
 
 class TestLoggingEdgeCases:
+    """Represents the TestLoggingEdgeCases class."""
+
     def test_logging_post_request(self):
+        """Execute test_logging_post_request operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import LoggingMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             await request.body()
             return PlainTextResponse("OK")
 
@@ -271,10 +475,25 @@ class TestLoggingEdgeCases:
 
 
 class TestTrustedHostEdgeCases:
+    """Represents the TestTrustedHostEdgeCases class."""
+
     def test_trusted_host_wildcard(self):
+        """Execute test_trusted_host_wildcard operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import TrustedHostMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -285,9 +504,22 @@ class TestTrustedHostEdgeCases:
         assert response.status_code == 200
 
     def test_trusted_host_blocked(self):
+        """Execute test_trusted_host_blocked operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import TrustedHostMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -299,13 +531,34 @@ class TestTrustedHostEdgeCases:
 
 
 class TestRequestContextEdgeCases:
+    """Represents the TestRequestContextEdgeCases class."""
+
     def test_request_context_async(self):
-        from fastmiddleware import RequestContextMiddleware, get_request_context, get_request_id
+        """Execute test_request_context_async operation.
+
+        Returns:
+            The result of the operation.
+        """
+        from fastmiddleware import (
+            RequestContextMiddleware,
+            get_request_context,
+            get_request_id,
+        )
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             req_id = get_request_id()
             ctx = get_request_context()
-            return JSONResponse({"has_id": req_id is not None, "has_ctx": ctx is not None})
+            return JSONResponse(
+                {"has_id": req_id is not None, "has_ctx": ctx is not None}
+            )
 
         app = Starlette(routes=[Route("/", homepage)])
         app.add_middleware(RequestContextMiddleware)
@@ -316,10 +569,25 @@ class TestRequestContextEdgeCases:
 
 
 class TestTimingEdgeCases:
+    """Represents the TestTimingEdgeCases class."""
+
     def test_timing_slow_request(self):
+        """Execute test_timing_slow_request operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import TimingMiddleware
 
         async def slow_handler(request):
+            """Execute slow_handler operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             await asyncio.sleep(0.01)
             return PlainTextResponse("OK")
 
@@ -333,10 +601,25 @@ class TestTimingEdgeCases:
 
 
 class TestPathRewriteEdgeCases:
+    """Represents the TestPathRewriteEdgeCases class."""
+
     def test_path_rewrite_no_match(self):
+        """Execute test_path_rewrite_no_match operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import PathRewriteMiddleware, RewriteRule
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse(request.url.path)
 
         app = Starlette(routes=[Route("/nomatch", homepage)])
@@ -348,10 +631,25 @@ class TestPathRewriteEdgeCases:
 
 
 class TestProfilingEdgeCases:
+    """Represents the TestProfilingEdgeCases class."""
+
     def test_profiling_disabled(self):
+        """Execute test_profiling_disabled operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import ProfilingMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -363,10 +661,25 @@ class TestProfilingEdgeCases:
 
 
 class TestBotDetectionEdgeCases:
+    """Represents the TestBotDetectionEdgeCases class."""
+
     def test_bot_detection_googlebot(self):
+        """Execute test_bot_detection_googlebot operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import BotDetectionMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return JSONResponse({"is_bot": getattr(request.state, "is_bot", False)})
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -374,16 +687,32 @@ class TestBotDetectionEdgeCases:
         client = TestClient(app)
 
         response = client.get(
-            "/", headers={"User-Agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"}
+            "/",
+            headers={"User-Agent": "Googlebot/2.1 (+http://www.google.com/bot.html)"},
         )
         assert response.status_code == 200
 
 
 class TestLocaleEdgeCases:
+    """Represents the TestLocaleEdgeCases class."""
+
     def test_locale_from_query(self):
+        """Execute test_locale_from_query operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import LocaleMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -395,10 +724,25 @@ class TestLocaleEdgeCases:
 
 
 class TestGeoIPEdgeCases:
+    """Represents the TestGeoIPEdgeCases class."""
+
     def test_geoip_cloudflare_headers(self):
+        """Execute test_geoip_cloudflare_headers operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import GeoIPMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -416,10 +760,25 @@ class TestGeoIPEdgeCases:
 
 
 class TestFeatureFlagEdgeCases:
+    """Represents the TestFeatureFlagEdgeCases class."""
+
     def test_feature_flag_header_override(self):
+        """Execute test_feature_flag_header_override operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import FeatureFlagConfig, FeatureFlagMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             flags = getattr(request.state, "feature_flags", {})
             return JSONResponse({"flags": flags})
 
@@ -433,10 +792,25 @@ class TestFeatureFlagEdgeCases:
 
 
 class TestClientHintsEdgeCases:
+    """Represents the TestClientHintsEdgeCases class."""
+
     def test_client_hints_all_headers(self):
+        """Execute test_client_hints_all_headers operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import ClientHintsMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -455,10 +829,25 @@ class TestClientHintsEdgeCases:
 
 
 class TestTrailingSlashEdgeCases:
+    """Represents the TestTrailingSlashEdgeCases class."""
+
     def test_trailing_slash_strip(self):
+        """Execute test_trailing_slash_strip operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import TrailingSlashConfig, TrailingSlashMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse(request.url.path)
 
         config = TrailingSlashConfig(redirect=True, action="strip")
@@ -471,10 +860,25 @@ class TestTrailingSlashEdgeCases:
 
 
 class TestMethodOverrideEdgeCases:
+    """Represents the TestMethodOverrideEdgeCases class."""
+
     def test_method_override_query_param(self):
+        """Execute test_method_override_query_param operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import MethodOverrideMiddleware
 
         async def handler(request):
+            """Execute handler operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse(request.method)
 
         app = Starlette(routes=[Route("/", handler, methods=["POST", "PUT", "DELETE"])])
@@ -486,10 +890,25 @@ class TestMethodOverrideEdgeCases:
 
 
 class TestRedirectEdgeCases:
+    """Represents the TestRedirectEdgeCases class."""
+
     def test_redirect_permanent(self):
+        """Execute test_redirect_permanent operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import RedirectMiddleware, RedirectRule
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/new", homepage)])
@@ -503,27 +922,59 @@ class TestRedirectEdgeCases:
 
 
 class TestXFFTrustEdgeCases:
+    """Represents the TestXFFTrustEdgeCases class."""
+
     def test_xff_trust_chain(self):
+        """Execute test_xff_trust_chain operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import XFFTrustMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("OK")
 
         app = Starlette(routes=[Route("/", homepage)])
         app.add_middleware(XFFTrustMiddleware, trusted_proxies=["10.0.0.0/8"])
         client = TestClient(app)
 
-        response = client.get("/", headers={"X-Forwarded-For": "1.2.3.4, 10.0.0.1, 10.0.0.2"})
+        response = client.get(
+            "/", headers={"X-Forwarded-For": "1.2.3.4, 10.0.0.1, 10.0.0.2"}
+        )
         assert response.status_code == 200
 
 
 class TestResponseCacheEdgeCases:
+    """Represents the TestResponseCacheEdgeCases class."""
+
     def test_response_cache_invalidation(self):
+        """Execute test_response_cache_invalidation operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import ResponseCacheMiddleware
 
         counter = {"value": 0}
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             counter["value"] += 1
             return JSONResponse({"count": counter["value"]})
 
@@ -540,10 +991,25 @@ class TestResponseCacheEdgeCases:
 
 
 class TestETagEdgeCases:
+    """Represents the TestETagEdgeCases class."""
+
     def test_etag_conditional(self):
+        """Execute test_etag_conditional operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import ETagMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return PlainTextResponse("Static Content")
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -556,10 +1022,25 @@ class TestETagEdgeCases:
 
 
 class TestHATEOASEdgeCases:
+    """Represents the TestHATEOASEdgeCases class."""
+
     def test_hateoas_json_response(self):
+        """Execute test_hateoas_json_response operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import HATEOASMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return JSONResponse({"id": 1, "name": "Test"})
 
         app = Starlette(routes=[Route("/", homepage)])
@@ -571,10 +1052,25 @@ class TestHATEOASEdgeCases:
 
 
 class TestDataMaskingEdgeCases:
+    """Represents the TestDataMaskingEdgeCases class."""
+
     def test_data_masking_json(self):
+        """Execute test_data_masking_json operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import DataMaskingMiddleware
 
         async def homepage(request):
+            """Execute homepage operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return JSONResponse({"password": "secret", "name": "John"})
 
         app = Starlette(routes=[Route("/", homepage)])

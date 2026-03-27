@@ -1,5 +1,4 @@
-"""
-Locale/i18n Middleware for FastMVC.
+"""Locale/i18n Middleware for FastMVC.
 
 Provides language detection and localization support.
 """
@@ -19,8 +18,7 @@ _locale_ctx: ContextVar[str | None] = ContextVar("locale", default=None)
 
 
 def get_locale() -> str | None:
-    """
-    Get the current request's locale.
+    """Get the current request's locale.
 
     Returns:
         Locale string (e.g., 'en-US') or None.
@@ -34,14 +32,14 @@ def get_locale() -> str | None:
             locale = get_locale()
             return {"message": translate("hello", locale)}
         ```
+
     """
     return _locale_ctx.get()
 
 
 @dataclass
 class LocaleConfig:
-    """
-    Configuration for locale middleware.
+    """Configuration for locale middleware.
 
     Attributes:
         default_locale: Default locale if none detected.
@@ -60,6 +58,7 @@ class LocaleConfig:
             supported_locales=["en-US", "en-GB", "es", "fr", "de"],
         )
         ```
+
     """
 
     default_locale: str = "en"
@@ -72,8 +71,7 @@ class LocaleConfig:
 
 
 class LocaleMiddleware(FastMVCMiddleware):
-    """
-    Middleware that detects and manages request locale.
+    """Middleware that detects and manages request locale.
 
     Determines the user's preferred language from various sources
     and makes it available throughout the request.
@@ -114,6 +112,7 @@ class LocaleMiddleware(FastMVCMiddleware):
             }
             return {"greeting": greetings.get(locale, "Hello")}
         ```
+
     """
 
     def __init__(
@@ -124,6 +123,15 @@ class LocaleMiddleware(FastMVCMiddleware):
         default_locale: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            supported_locales: The supported_locales parameter.
+            default_locale: The default_locale parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or LocaleConfig()
 
@@ -208,6 +216,15 @@ class LocaleMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

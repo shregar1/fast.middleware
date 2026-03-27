@@ -1,5 +1,4 @@
-"""
-ETag Middleware for FastMVC.
+"""ETag Middleware for FastMVC.
 
 Automatic ETag generation and conditional request handling.
 """
@@ -16,8 +15,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ETagConfig:
-    """
-    Configuration for ETag middleware.
+    """Configuration for ETag middleware.
 
     Attributes:
         weak_etag: Generate weak ETags.
@@ -35,6 +33,7 @@ class ETagConfig:
             handle_if_none_match=True,
         )
         ```
+
     """
 
     weak_etag: bool = False
@@ -45,8 +44,7 @@ class ETagConfig:
 
 
 class ETagMiddleware(FastMVCMiddleware):
-    """
-    Middleware that generates ETags and handles conditional requests.
+    """Middleware that generates ETags and handles conditional requests.
 
     Automatically generates ETags for responses and handles
     If-None-Match/If-Match headers for caching and concurrency.
@@ -74,6 +72,7 @@ class ETagMiddleware(FastMVCMiddleware):
         # If client sends: If-None-Match: "abc123..."
         # Returns: 304 Not Modified
         ```
+
     """
 
     def __init__(
@@ -83,6 +82,14 @@ class ETagMiddleware(FastMVCMiddleware):
         weak_etag: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            weak_etag: The weak_etag parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ETagConfig()
 
@@ -125,6 +132,15 @@ class ETagMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

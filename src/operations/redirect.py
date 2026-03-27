@@ -1,5 +1,4 @@
-"""
-Redirect Middleware for FastMVC.
+"""Redirect Middleware for FastMVC.
 
 Handles URL redirects and rewrites.
 """
@@ -27,8 +26,7 @@ class RedirectRule:
 
 @dataclass
 class RedirectConfig:
-    """
-    Configuration for redirect middleware.
+    r"""Configuration for redirect middleware.
 
     Attributes:
         rules: List of redirect rules.
@@ -49,6 +47,7 @@ class RedirectConfig:
             },
         )
         ```
+
     """
 
     rules: list[RedirectRule] = field(default_factory=list)
@@ -57,8 +56,7 @@ class RedirectConfig:
 
 
 class RedirectMiddleware(FastMVCMiddleware):
-    """
-    Middleware that handles URL redirects.
+    r"""Middleware that handles URL redirects.
 
     Redirects requests based on configured rules, supporting
     both simple path matching and regex patterns.
@@ -95,6 +93,7 @@ class RedirectMiddleware(FastMVCMiddleware):
             ],
         )
         ```
+
     """
 
     def __init__(
@@ -105,6 +104,15 @@ class RedirectMiddleware(FastMVCMiddleware):
         permanent_redirects: dict[str, str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            rules: The rules parameter.
+            permanent_redirects: The permanent_redirects parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RedirectConfig()
 
@@ -149,6 +157,15 @@ class RedirectMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

@@ -1,5 +1,4 @@
-"""
-Trailing Slash Middleware for FastMVC.
+"""Trailing Slash Middleware for FastMVC.
 
 Normalizes URL paths by adding or removing trailing slashes.
 """
@@ -24,8 +23,7 @@ class SlashAction(Enum):
 
 @dataclass
 class TrailingSlashConfig:
-    """
-    Configuration for trailing slash middleware.
+    """Configuration for trailing slash middleware.
 
     Attributes:
         action: What to do with trailing slashes (add/remove/none).
@@ -43,6 +41,7 @@ class TrailingSlashConfig:
         # Add trailing slashes
         config = TrailingSlashConfig(action=SlashAction.ADD)
         ```
+
     """
 
     action: SlashAction = SlashAction.REMOVE
@@ -51,6 +50,11 @@ class TrailingSlashConfig:
     exclude_extensions: set[str] = None  # type: ignore
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.exclude_extensions is None:
             self.exclude_extensions = {
                 ".html",
@@ -75,8 +79,7 @@ class TrailingSlashConfig:
 
 
 class TrailingSlashMiddleware(FastMVCMiddleware):
-    """
-    Middleware that normalizes trailing slashes in URLs.
+    """Middleware that normalizes trailing slashes in URLs.
 
     Ensures consistent URL structure by either adding or removing
     trailing slashes from all paths.
@@ -107,6 +110,7 @@ class TrailingSlashMiddleware(FastMVCMiddleware):
     SEO Note:
         Consistent trailing slashes help avoid duplicate content issues
         in search engine indexing.
+
     """
 
     def __init__(
@@ -117,8 +121,7 @@ class TrailingSlashMiddleware(FastMVCMiddleware):
         redirect: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the trailing slash middleware.
+        """Initialize the trailing slash middleware.
 
         Args:
             app: The ASGI application.
@@ -126,6 +129,7 @@ class TrailingSlashMiddleware(FastMVCMiddleware):
             action: Slash action (overrides config).
             redirect: Whether to redirect (overrides config).
             exclude_paths: Paths to exclude from normalization.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or TrailingSlashConfig()
@@ -160,8 +164,7 @@ class TrailingSlashMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request and normalize trailing slashes.
+        """Process request and normalize trailing slashes.
 
         Args:
             request: The incoming HTTP request.
@@ -169,6 +172,7 @@ class TrailingSlashMiddleware(FastMVCMiddleware):
 
         Returns:
             Response with normalized URL.
+
         """
         if self.should_skip(request):
             return await call_next(request)

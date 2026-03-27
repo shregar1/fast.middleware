@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Error Handler middleware.
-"""
+"""Comprehensive tests for Error Handler middleware."""
 
 import logging
 
@@ -25,28 +23,61 @@ class TestErrorHandlerMiddleware:
 
         @app.get("/error")
         async def raise_error():
+            """Execute raise_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error message")
 
         @app.get("/runtime-error")
         async def raise_runtime_error():
+            """Execute raise_runtime_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise RuntimeError("Runtime error occurred")
 
         @app.get("/zero-division")
         async def zero_division():
+            """Execute zero_division operation.
+
+            Returns:
+                The result of the operation.
+            """
             return 1 / 0
 
         @app.get("/success")
         async def success():
+            """Execute success operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"status": "ok"}
 
         @app.get("/http-exception")
         async def http_exception():
+            """Execute http_exception operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise HTTPException(status_code=404, detail="Not found")
 
         return app
 
     @pytest.fixture
     def error_client(self, error_app: FastAPI) -> TestClient:
+        """Execute error_client operation.
+
+        Args:
+            error_app: The error_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(error_app, raise_server_exceptions=False)
 
     def test_catches_value_error(self, error_client: TestClient):
@@ -126,24 +157,52 @@ class TestCustomErrorHandlers:
 
         @app.get("/value-error")
         async def value_error():
+            """Execute value_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("bad value")
 
         @app.get("/permission-error")
         async def permission_error():
+            """Execute permission_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise PermissionError("not allowed")
 
         @app.get("/file-not-found")
         async def file_not_found():
+            """Execute file_not_found operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise FileNotFoundError("missing file")
 
         @app.get("/generic-error")
         async def generic_error():
+            """Execute generic_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise RuntimeError("generic")
 
         return app
 
     @pytest.fixture
     def custom_handler_client(self, custom_handler_app: FastAPI) -> TestClient:
+        """Execute custom_handler_client operation.
+
+        Args:
+            custom_handler_app: The custom_handler_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(custom_handler_app, raise_server_exceptions=False)
 
     def test_value_error_returns_400(self, custom_handler_client: TestClient):
@@ -190,12 +249,25 @@ class TestTraceback:
 
         @app.get("/error")
         async def raise_error():
+            """Execute raise_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise RuntimeError("Detailed error")
 
         return app
 
     @pytest.fixture
     def traceback_client(self, traceback_app: FastAPI) -> TestClient:
+        """Execute traceback_client operation.
+
+        Args:
+            traceback_app: The traceback_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(traceback_app, raise_server_exceptions=False)
 
     def test_includes_traceback(self, traceback_client: TestClient):
@@ -232,12 +304,25 @@ class TestNoTraceback:
 
         @app.get("/error")
         async def raise_error():
+            """Execute raise_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise RuntimeError("Secret error details")
 
         return app
 
     @pytest.fixture
     def prod_client(self, prod_app: FastAPI) -> TestClient:
+        """Execute prod_client operation.
+
+        Args:
+            prod_app: The prod_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(prod_app, raise_server_exceptions=False)
 
     def test_no_traceback_in_response(self, prod_client: TestClient):
@@ -276,12 +361,25 @@ class TestRequestIdInError:
 
         @app.get("/error")
         async def raise_error():
+            """Execute raise_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("error")
 
         return app
 
     @pytest.fixture
     def request_id_client(self, request_id_app: FastAPI) -> TestClient:
+        """Execute request_id_client operation.
+
+        Args:
+            request_id_app: The request_id_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(request_id_app, raise_server_exceptions=False)
 
     def test_request_id_in_error_response(self, request_id_client: TestClient):
@@ -306,6 +404,11 @@ class TestExceptionLogging:
 
         @app.get("/error")
         async def raise_error():
+            """Execute raise_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("logged error")
 
         client = TestClient(app, raise_server_exceptions=False)

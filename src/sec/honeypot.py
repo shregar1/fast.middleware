@@ -1,5 +1,4 @@
-"""
-Honeypot Middleware for FastMVC.
+"""Honeypot Middleware for FastMVC.
 
 Creates honeypot endpoints to detect and trap malicious requests.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class HoneypotConfig:
-    """
-    Configuration for honeypot middleware.
+    """Configuration for honeypot middleware.
 
     Attributes:
         honeypot_paths: Paths that act as honeypots.
@@ -26,6 +24,7 @@ class HoneypotConfig:
         block_duration: How long to block in seconds.
         log_access: Log honeypot access.
         fake_response: Response to return for honeypots.
+
     """
 
     honeypot_paths: set[str] = field(
@@ -50,8 +49,7 @@ class HoneypotConfig:
 
 
 class HoneypotMiddleware(FastMVCMiddleware):
-    """
-    Middleware that creates honeypot traps for attackers.
+    """Middleware that creates honeypot traps for attackers.
 
     Monitors access to fake sensitive endpoints and optionally
     blocks IPs that access them.
@@ -71,6 +69,7 @@ class HoneypotMiddleware(FastMVCMiddleware):
         # 2. Delayed (waste their time)
         # 3. Blocked from future requests
         ```
+
     """
 
     def __init__(
@@ -80,6 +79,14 @@ class HoneypotMiddleware(FastMVCMiddleware):
         honeypot_paths: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            honeypot_paths: The honeypot_paths parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or HoneypotConfig()
 
@@ -131,6 +138,15 @@ class HoneypotMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         client_ip = self.get_client_ip(request)
 
         # Check if IP is blocked

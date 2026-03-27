@@ -1,6 +1,4 @@
-"""
-Additional tests to achieve 100% code coverage.
-"""
+"""Additional tests to achieve 100% code coverage."""
 
 """
 Additional tests to achieve 100% code coverage.
@@ -26,6 +24,11 @@ class TestBaseMiddlewareCoverage:
 
     @pytest.fixture
     def app_with_base(self) -> FastAPI:
+        """Execute app_with_base operation.
+
+        Returns:
+            The result of the operation.
+        """
         from fastmiddleware import RequestIDMiddleware
 
         app = FastAPI()
@@ -33,11 +36,30 @@ class TestBaseMiddlewareCoverage:
 
         @app.get("/")
         async def root(request: Request):
+            """Execute root operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             from fastmiddleware.base import FastMVCMiddleware
 
             # Create a mock middleware to test get_client_ip
             class TestMiddleware(FastMVCMiddleware):
+                """Represents the TestMiddleware class."""
+
                 async def dispatch(self, request, call_next):
+                    """Execute dispatch operation.
+
+                    Args:
+                        request: The request parameter.
+                        call_next: The call_next parameter.
+
+                    Returns:
+                        The result of the operation.
+                    """
                     return await call_next(request)
 
             middleware = TestMiddleware(app)
@@ -55,10 +77,29 @@ class TestBaseMiddlewareCoverage:
 
         @app.get("/ip")
         async def get_ip(request: Request):
+            """Execute get_ip operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             from fastmiddleware.base import FastMVCMiddleware
 
             class TestMid(FastMVCMiddleware):
+                """Represents the TestMid class."""
+
                 async def dispatch(self, r, c):
+                    """Execute dispatch operation.
+
+                    Args:
+                        r: The r parameter.
+                        c: The c parameter.
+
+                    Returns:
+                        The result of the operation.
+                    """
                     return await c(r)
 
             m = TestMid(app)
@@ -77,10 +118,29 @@ class TestBaseMiddlewareCoverage:
 
         @app.get("/ip")
         async def get_ip(request: Request):
+            """Execute get_ip operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             from fastmiddleware.base import FastMVCMiddleware
 
             class TestMid(FastMVCMiddleware):
+                """Represents the TestMid class."""
+
                 async def dispatch(self, r, c):
+                    """Execute dispatch operation.
+
+                    Args:
+                        r: The r parameter.
+                        c: The c parameter.
+
+                    Returns:
+                        The result of the operation.
+                    """
                     return await c(r)
 
             m = TestMid(app)
@@ -124,6 +184,11 @@ class TestSecurityHeadersCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -151,6 +216,11 @@ class TestSecurityHeadersCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -183,6 +253,11 @@ class TestSecurityHeadersCoverage:
 
         @app.get("/skip")
         async def skip():
+            """Execute skip operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -288,6 +363,11 @@ class TestCacheCoverage:
 
         @app.get("/secret")
         async def secret():
+            """Execute secret operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"secret": "data"}
 
         client = TestClient(app)
@@ -311,6 +391,11 @@ class TestCacheCoverage:
 
         @app.get("/fresh")
         async def fresh():
+            """Execute fresh operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"fresh": "data"}
 
         client = TestClient(app)
@@ -332,6 +417,11 @@ class TestCacheCoverage:
 
         @app.get("/validate")
         async def validate():
+            """Execute validate operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"validate": "data"}
 
         client = TestClient(app)
@@ -353,6 +443,11 @@ class TestCacheCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -395,7 +490,9 @@ class TestRateLimitCoverage:
             await store.check_rate_limit("test-key", 10, 60)
 
         # Next request should be rate limited
-        allowed, remaining, _reset_time = await store.check_rate_limit("test-key", 10, 60)
+        allowed, remaining, _reset_time = await store.check_rate_limit(
+            "test-key", 10, 60
+        )
 
         assert allowed is False
         assert remaining == 0
@@ -516,6 +613,11 @@ class TestMaintenanceCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -544,6 +646,11 @@ class TestLoggingCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -562,6 +669,11 @@ class TestLoggingCoverage:
 
         @app.get("/skip")
         async def skip():
+            """Execute skip operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -590,6 +702,11 @@ class TestCompressionCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         client = TestClient(app)
@@ -605,6 +722,11 @@ class TestCompressionCoverage:
 
         @app.get("/binary")
         async def binary():
+            """Execute binary operation.
+
+            Returns:
+                The result of the operation.
+            """
             from starlette.responses import Response
 
             return Response(
@@ -639,6 +761,11 @@ class TestMetricsCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -654,6 +781,11 @@ class TestMetricsCoverage:
 
         @app.get("/error")
         async def error():
+            """Execute error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error")
 
         client = TestClient(app, raise_server_exceptions=False)
@@ -684,6 +816,11 @@ class TestTrustedHostCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -710,6 +847,11 @@ class TestErrorHandlerCoverage:
 
         @app.get("/not-found")
         async def not_found():
+            """Execute not_found operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise HTTPException(status_code=404, detail="Not found")
 
         client = TestClient(app)
@@ -727,7 +869,11 @@ class TestAuthMiddlewareFullCoverage:
 
     def test_auth_with_exclude_paths_and_methods(self):
         """Test auth with exclude paths and methods."""
-        from fastmiddleware import APIKeyAuthBackend, AuthConfig, AuthenticationMiddleware
+        from fastmiddleware import (
+            APIKeyAuthBackend,
+            AuthConfig,
+            AuthenticationMiddleware,
+        )
 
         app = FastAPI()
         backend = APIKeyAuthBackend(valid_keys={"test-key"})
@@ -745,10 +891,20 @@ class TestAuthMiddlewareFullCoverage:
 
         @app.get("/public")
         async def public():
+            """Execute public operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"public": True}
 
         @app.get("/health")
         async def health():
+            """Execute health operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"health": True}
 
         client = TestClient(app)
@@ -759,7 +915,11 @@ class TestAuthMiddlewareFullCoverage:
 
     def test_wrong_auth_scheme(self):
         """Test wrong auth scheme returns 401."""
-        from fastmiddleware import APIKeyAuthBackend, AuthConfig, AuthenticationMiddleware
+        from fastmiddleware import (
+            APIKeyAuthBackend,
+            AuthConfig,
+            AuthenticationMiddleware,
+        )
 
         app = FastAPI()
         backend = APIKeyAuthBackend(valid_keys={"test-key"})
@@ -768,6 +928,11 @@ class TestAuthMiddlewareFullCoverage:
 
         @app.get("/protected")
         async def protected():
+            """Execute protected operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -793,6 +958,11 @@ class TestTrustedHostWwwRedirect:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app, follow_redirects=False)
@@ -818,10 +988,20 @@ class TestMetricsFullCoverage:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 100}
 
         @app.get("/error")
         async def error():
+            """Execute error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error")
 
         client = TestClient(app, raise_server_exceptions=False)
@@ -852,7 +1032,18 @@ class TestCompressionEdgeCases:
 
         @app.get("/stream")
         async def stream():
+            """Execute stream operation.
+
+            Returns:
+                The result of the operation.
+            """
+
             async def generate():
+                """Execute generate operation.
+
+                Returns:
+                    The result of the operation.
+                """
                 for i in range(10):
                     yield f"chunk-{i}"
 
@@ -871,6 +1062,11 @@ class TestCompressionEdgeCases:
 
         @app.get("/random")
         async def random_data():
+            """Execute random_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             # Random data typically doesn't compress well
             import os
 
@@ -899,6 +1095,11 @@ class TestCacheEdgeCases:
 
         @app.get("/api/secret")
         async def secret():
+            """Execute secret operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"secret": "value"}
 
         client = TestClient(app)
@@ -923,6 +1124,11 @@ class TestRateLimitHourly:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -953,6 +1159,11 @@ class TestMaintenanceWithBypass:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -978,10 +1189,20 @@ class TestMaintenanceWithBypass:
 
         @app.get("/health")
         async def health():
+            """Execute health operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"status": "ok"}
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -1005,6 +1226,11 @@ class TestMaintenanceWithBypass:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -1029,6 +1255,11 @@ class TestLoggingExcludeMethod:
 
         @app.options("/")
         async def options():
+            """Execute options operation.
+
+            Returns:
+                The result of the operation.
+            """
             return Response(status_code=200)
 
         client = TestClient(app)
@@ -1051,6 +1282,11 @@ class TestSecurityRemoveServerHeader:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             from starlette.responses import Response
 
             return Response(
@@ -1062,7 +1298,10 @@ class TestSecurityRemoveServerHeader:
         response = client.get("/")
         assert response.status_code == 200
         # Server header should be removed
-        assert "Server" not in response.headers or response.headers.get("Server") != "evil-server"
+        assert (
+            "Server" not in response.headers
+            or response.headers.get("Server") != "evil-server"
+        )
 
 
 class TestIdempotencyEdgeCases:
@@ -1083,6 +1322,11 @@ class TestIdempotencyEdgeCases:
 
         @app.post("/")
         async def create():
+            """Execute create operation.
+
+            Returns:
+                The result of the operation.
+            """
             counter[0] += 1
             return {"count": counter[0]}
 
@@ -1118,10 +1362,20 @@ class TestMetricsCollectorDirectly:
 
         @app.get("/api/users")
         async def users():
+            """Execute users operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"users": ["a", "b", "c"]}
 
         @app.get("/error")
         async def error():
+            """Execute error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error")
 
         client = TestClient(app, raise_server_exceptions=False)
@@ -1187,6 +1441,11 @@ class TestCompressionAlreadyCompressed:
 
         @app.get("/small")
         async def small():
+            """Execute small operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"small": "data"}
 
         client = TestClient(app)
@@ -1212,6 +1471,11 @@ class TestCacheNoStorePath:
 
         @app.get("/cacheable")
         async def cacheable():
+            """Execute cacheable operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         client = TestClient(app)
@@ -1240,6 +1504,11 @@ class TestTrustedHostRedirect:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app, follow_redirects=False)
@@ -1269,6 +1538,11 @@ class TestLoggingExtraScenarios:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -1293,6 +1567,11 @@ class TestMetricsWithResponseSize:
 
         @app.get("/large")
         async def large():
+            """Execute large operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         client = TestClient(app)
@@ -1323,6 +1602,11 @@ class TestCacheBuildCacheControl:
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         client = TestClient(app)
@@ -1343,6 +1627,11 @@ class TestCacheBuildCacheControl:
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         client = TestClient(app)
@@ -1366,6 +1655,11 @@ class TestCompressionExcludedPaths:
 
         @app.get("/skip")
         async def skip():
+            """Execute skip operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         client = TestClient(app)
@@ -1387,7 +1681,18 @@ class TestStreamingResponseCompression:
 
         @app.get("/stream")
         async def stream():
+            """Execute stream operation.
+
+            Returns:
+                The result of the operation.
+            """
+
             async def generate():
+                """Execute generate operation.
+
+                Returns:
+                    The result of the operation.
+                """
                 for i in range(10):
                     yield f"chunk-{i}-"
 
@@ -1415,10 +1720,20 @@ class TestMetricsCollectorWithVariousData:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         @app.get("/server-error")
         async def server_error():
+            """Execute server_error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise Exception("Server error")
 
         client = TestClient(app, raise_server_exceptions=False)
@@ -1452,6 +1767,11 @@ class TestCacheVaryHeaders:
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         client = TestClient(app)
@@ -1476,6 +1796,11 @@ class TestIdempotencyMethods:
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         client = TestClient(app)
@@ -1527,6 +1852,11 @@ class TestCacheNoStoreConfig:
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "value"}
 
         client = TestClient(app)
@@ -1550,6 +1880,11 @@ class TestTrustedHostWildcard:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -1568,6 +1903,11 @@ class TestTrustedHostWildcard:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         client = TestClient(app)
@@ -1590,6 +1930,11 @@ class TestErrorHandlerExcluded:
 
         @app.get("/raw")
         async def raw():
+            """Execute raw operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Raw error")
 
         client = TestClient(app, raise_server_exceptions=False)
@@ -1614,6 +1959,11 @@ class TestErrorHandlerCustomConfig:
 
         @app.get("/error")
         async def error():
+            """Execute error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error")
 
         client = TestClient(app, raise_server_exceptions=False)

@@ -1,5 +1,4 @@
-"""
-Webhook Verification Middleware for FastMVC.
+"""Webhook Verification Middleware for FastMVC.
 
 Verifies webhook signatures from various providers.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class WebhookConfig:
-    """
-    Configuration for webhook verification middleware.
+    """Configuration for webhook verification middleware.
 
     Attributes:
         secret: Webhook signing secret.
@@ -45,6 +43,7 @@ class WebhookConfig:
             signature_header="Stripe-Signature",
         )
         ```
+
     """
 
     secret: str = ""
@@ -57,8 +56,7 @@ class WebhookConfig:
 
 
 class WebhookMiddleware(FastMVCMiddleware):
-    """
-    Middleware that verifies webhook signatures.
+    """Middleware that verifies webhook signatures.
 
     Ensures incoming webhooks are authentic by verifying
     HMAC signatures.
@@ -91,6 +89,7 @@ class WebhookMiddleware(FastMVCMiddleware):
             payload = await request.json()
             return {"received": True}
         ```
+
     """
 
     def __init__(
@@ -101,6 +100,15 @@ class WebhookMiddleware(FastMVCMiddleware):
         paths: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            secret: The secret parameter.
+            paths: The paths parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or WebhookConfig()
 
@@ -149,6 +157,15 @@ class WebhookMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

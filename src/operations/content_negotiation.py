@@ -1,5 +1,4 @@
-"""
-Content Negotiation Middleware for FastMVC.
+"""Content Negotiation Middleware for FastMVC.
 
 Handles Accept header parsing and content type negotiation.
 """
@@ -24,13 +23,13 @@ def get_negotiated_type() -> str | None:
 
 @dataclass
 class ContentNegotiationConfig:
-    """
-    Configuration for content negotiation middleware.
+    """Configuration for content negotiation middleware.
 
     Attributes:
         supported_types: List of supported content types in preference order.
         default_type: Default type if negotiation fails.
         strict: Return 406 if no acceptable type found.
+
     """
 
     supported_types: list[str] = field(
@@ -46,8 +45,7 @@ class ContentNegotiationConfig:
 
 
 class ContentNegotiationMiddleware(FastMVCMiddleware):
-    """
-    Middleware that handles content type negotiation.
+    """Middleware that handles content type negotiation.
 
     Parses Accept headers and determines the best content type
     to return based on client preferences and server capabilities.
@@ -68,6 +66,7 @@ class ContentNegotiationMiddleware(FastMVCMiddleware):
                 return xml_response()
             return json_response()
         ```
+
     """
 
     def __init__(
@@ -77,6 +76,14 @@ class ContentNegotiationMiddleware(FastMVCMiddleware):
         supported_types: list[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            supported_types: The supported_types parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ContentNegotiationConfig()
 
@@ -140,6 +147,15 @@ class ContentNegotiationMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

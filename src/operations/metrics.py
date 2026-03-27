@@ -1,5 +1,4 @@
-"""
-Metrics Middleware for FastMVC.
+"""Metrics Middleware for FastMVC.
 
 Provides request metrics collection with Prometheus-compatible format.
 """
@@ -17,8 +16,7 @@ from starlette.responses import PlainTextResponse, Response
 
 @dataclass
 class MetricsConfig:
-    """
-    Configuration for metrics middleware.
+    """Configuration for metrics middleware.
 
     Attributes:
         metrics_path: Path to expose metrics endpoint.
@@ -38,6 +36,7 @@ class MetricsConfig:
             histogram_buckets=[0.01, 0.05, 0.1, 0.5, 1.0, 5.0],
         )
         ```
+
     """
 
     metrics_path: str = "/metrics"
@@ -67,8 +66,7 @@ class MetricsConfig:
 
 
 class MetricsCollector:
-    """
-    Collects and stores metrics in memory.
+    """Collects and stores metrics in memory.
 
     Provides Prometheus-compatible metric formats:
     - Counters (total requests)
@@ -77,6 +75,11 @@ class MetricsCollector:
     """
 
     def __init__(self, config: MetricsConfig) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            config: The config parameter.
+        """
         self.config = config
         self._start_time = time.time()
 
@@ -147,7 +150,9 @@ class MetricsCollector:
 
         # Latency histogram
         if self.config.enable_latency_histogram and self._latencies:
-            lines.append("# HELP fast_http_request_duration_seconds HTTP request latency")
+            lines.append(
+                "# HELP fast_http_request_duration_seconds HTTP request latency"
+            )
             lines.append("# TYPE fast_http_request_duration_seconds histogram")
 
             for (method, path), latencies in sorted(self._latencies.items()):
@@ -221,8 +226,7 @@ class MetricsCollector:
 
 
 class MetricsMiddleware(BaseHTTPMiddleware):
-    """
-    Middleware that collects request metrics and exposes a Prometheus endpoint.
+    """Middleware that collects request metrics and exposes a Prometheus endpoint.
 
     Automatically collects metrics for all requests and provides a /metrics
     endpoint compatible with Prometheus scraping.
@@ -260,6 +264,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
             static_configs:
               - targets: ['localhost:8000']
         ```
+
     """
 
     def __init__(
@@ -269,14 +274,14 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         metrics_path: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the metrics middleware.
+        """Initialize the metrics middleware.
 
         Args:
             app: The ASGI application.
             config: Metrics configuration.
             metrics_path: Path for metrics endpoint (overrides config).
             exclude_paths: Paths to exclude from metrics collection.
+
         """
         super().__init__(app)
 
@@ -303,8 +308,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request and collect metrics.
+        """Process request and collect metrics.
 
         Args:
             request: The incoming HTTP request.
@@ -312,6 +316,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
 
         Returns:
             The HTTP response.
+
         """
         path = request.url.path
 

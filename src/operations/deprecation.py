@@ -1,5 +1,4 @@
-"""
-Deprecation Warning Middleware for FastMVC.
+"""Deprecation Warning Middleware for FastMVC.
 
 Adds deprecation warnings to API responses.
 """
@@ -26,8 +25,7 @@ class DeprecationInfo:
 
 @dataclass
 class DeprecationConfig:
-    """
-    Configuration for deprecation middleware.
+    """Configuration for deprecation middleware.
 
     Attributes:
         deprecated_paths: Map of deprecated paths to info.
@@ -49,6 +47,7 @@ class DeprecationConfig:
             },
         )
         ```
+
     """
 
     deprecated_paths: dict[str, DeprecationInfo] = field(default_factory=dict)
@@ -59,8 +58,7 @@ class DeprecationConfig:
 
 
 class DeprecationMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds deprecation warnings to responses.
+    """Middleware that adds deprecation warnings to responses.
 
     Helps communicate API deprecations to clients through
     standard HTTP headers.
@@ -95,6 +93,7 @@ class DeprecationMiddleware(FastMVCMiddleware):
         # Warning: 299 - "v1 API is deprecated"
         # Link: </api/v2/users>; rel="successor-version"
         ```
+
     """
 
     def __init__(
@@ -105,8 +104,7 @@ class DeprecationMiddleware(FastMVCMiddleware):
         deprecated_prefixes: dict[str, DeprecationInfo] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the deprecation middleware.
+        """Initialize the deprecation middleware.
 
         Args:
             app: The ASGI application.
@@ -114,6 +112,7 @@ class DeprecationMiddleware(FastMVCMiddleware):
             deprecated_paths: Deprecated paths (overrides config).
             deprecated_prefixes: Deprecated path prefixes.
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or DeprecationConfig()
@@ -144,7 +143,9 @@ class DeprecationMiddleware(FastMVCMiddleware):
         except ValueError:
             return date_str
 
-    def _add_deprecation_headers(self, response: Response, info: DeprecationInfo) -> None:
+    def _add_deprecation_headers(
+        self, response: Response, info: DeprecationInfo
+    ) -> None:
         """Add deprecation headers to response."""
         if self.config.add_deprecation_header:
             response.headers["Deprecation"] = "true"
@@ -169,8 +170,7 @@ class DeprecationMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request and add deprecation warnings.
+        """Process request and add deprecation warnings.
 
         Args:
             request: The incoming HTTP request.
@@ -178,6 +178,7 @@ class DeprecationMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with deprecation headers.
+
         """
         if self.should_skip(request):
             return await call_next(request)

@@ -1,5 +1,4 @@
-"""
-Conditional Request Middleware for FastMVC.
+"""Conditional Request Middleware for FastMVC.
 
 Handles If-None-Match, If-Modified-Since, etc.
 """
@@ -17,12 +16,12 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ConditionalRequestConfig:
-    """
-    Configuration for conditional request middleware.
+    """Configuration for conditional request middleware.
 
     Attributes:
         weak_etag: Generate weak ETags.
         add_last_modified: Add Last-Modified header.
+
     """
 
     weak_etag: bool = True
@@ -30,8 +29,7 @@ class ConditionalRequestConfig:
 
 
 class ConditionalRequestMiddleware(FastMVCMiddleware):
-    """
-    Middleware for handling conditional requests.
+    """Middleware for handling conditional requests.
 
     Handles If-None-Match and If-Modified-Since headers
     to return 304 Not Modified when appropriate.
@@ -46,6 +44,7 @@ class ConditionalRequestMiddleware(FastMVCMiddleware):
         # - If-None-Match matches ETag
         # - If-Modified-Since >= Last-Modified
         ```
+
     """
 
     def __init__(
@@ -54,6 +53,13 @@ class ConditionalRequestMiddleware(FastMVCMiddleware):
         config: ConditionalRequestConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ConditionalRequestConfig()
 
@@ -88,6 +94,15 @@ class ConditionalRequestMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

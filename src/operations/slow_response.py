@@ -1,5 +1,4 @@
-"""
-Slow Response Middleware for FastMVC.
+"""Slow Response Middleware for FastMVC.
 
 Artificially slows responses for testing.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class SlowResponseConfig:
-    """
-    Configuration for slow response middleware.
+    """Configuration for slow response middleware.
 
     Attributes:
         enabled: Enable slow responses.
@@ -26,6 +24,7 @@ class SlowResponseConfig:
         max_delay: Maximum delay in seconds.
         fixed_delay: Use fixed delay (overrides min/max).
         affected_paths: Only affect these paths.
+
     """
 
     enabled: bool = False  # Must be explicitly enabled
@@ -36,8 +35,7 @@ class SlowResponseConfig:
 
 
 class SlowResponseMiddleware(FastMVCMiddleware):
-    """
-    Middleware that artificially slows responses.
+    """Middleware that artificially slows responses.
 
     Useful for testing timeout handling, loading states,
     and client behavior under slow network conditions.
@@ -54,6 +52,7 @@ class SlowResponseMiddleware(FastMVCMiddleware):
             max_delay=3.0,
         )
         ```
+
     """
 
     def __init__(
@@ -63,6 +62,14 @@ class SlowResponseMiddleware(FastMVCMiddleware):
         enabled: bool = False,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            enabled: The enabled parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or SlowResponseConfig()
 
@@ -86,6 +93,15 @@ class SlowResponseMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if not self.config.enabled:
             return await call_next(request)
 

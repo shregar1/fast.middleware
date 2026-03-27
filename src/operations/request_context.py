@@ -1,5 +1,4 @@
-"""
-Request Context Middleware for FastMVC.
+"""Request Context Middleware for FastMVC.
 
 Provides request context management with context variables for async access.
 """
@@ -24,8 +23,7 @@ _request_context_var: ContextVar[dict[str, Any] | None] = ContextVar(
 
 
 def get_request_id() -> str | None:
-    """
-    Get the current request ID from context.
+    """Get the current request ID from context.
 
     This function can be called from anywhere in your async code
     to access the current request's ID.
@@ -41,13 +39,13 @@ def get_request_id() -> str | None:
             request_id = get_request_id()
             logger.info(f"Processing in request {request_id}")
         ```
+
     """
     return _request_id_var.get()
 
 
 def get_request_context() -> dict[str, Any]:
-    """
-    Get the current request context from context variables.
+    """Get the current request context from context variables.
 
     Returns a dictionary with request metadata that can be accessed
     from anywhere in your async code.
@@ -64,6 +62,7 @@ def get_request_context() -> dict[str, Any]:
             client_ip = ctx.get("client_ip")
             start_time = ctx.get("start_time")
         ```
+
     """
     ctx = _request_context_var.get()
     if ctx is None:
@@ -73,8 +72,7 @@ def get_request_context() -> dict[str, Any]:
 
 
 class RequestContextMiddleware(FastMVCMiddleware):
-    """
-    Middleware that manages request context using context variables.
+    """Middleware that manages request context using context variables.
 
     This middleware provides a way to access request information
     from anywhere in your async code without passing the request
@@ -118,6 +116,7 @@ class RequestContextMiddleware(FastMVCMiddleware):
             ctx = get_request_context()
             logger.info(f"Request {ctx['request_id']} from {ctx['client_ip']}")
         ```
+
     """
 
     def __init__(
@@ -130,8 +129,7 @@ class RequestContextMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the request context middleware.
+        """Initialize the request context middleware.
 
         Args:
             app: The ASGI application.
@@ -141,8 +139,11 @@ class RequestContextMiddleware(FastMVCMiddleware):
             trust_incoming_id: Whether to trust incoming request IDs.
             exclude_paths: Paths to exclude from context tracking.
             exclude_methods: HTTP methods to exclude from context tracking.
+
         """
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
         self.id_generator = id_generator or (lambda: str(uuid.uuid4()))
         self.request_id_header = request_id_header
         self.process_time_header = process_time_header
@@ -151,8 +152,7 @@ class RequestContextMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process the request with context management.
+        """Process the request with context management.
 
         Args:
             request: The incoming HTTP request.
@@ -160,6 +160,7 @@ class RequestContextMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response with context headers.
+
         """
         # Generate or get request ID
         request_id = None

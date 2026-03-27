@@ -1,3 +1,1 @@
-"""
-Tests for FastMVC Middleware package.
-"""
+"""Tests for FastMVC Middleware package."""

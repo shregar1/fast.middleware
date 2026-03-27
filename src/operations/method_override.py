@@ -1,5 +1,4 @@
-"""
-Method Override Middleware for FastMVC.
+"""Method Override Middleware for FastMVC.
 
 Allows HTTP method override via header or query param.
 """
@@ -15,25 +14,32 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class MethodOverrideConfig:
-    """
-    Configuration for method override middleware.
+    """Configuration for method override middleware.
 
     Attributes:
         header_name: Header to check for override.
         query_param: Query param to check.
         allowed_methods: Methods that can be overridden.
+
     """
 
     header_name: str = "X-HTTP-Method-Override"
     query_param: str = "_method"
     allowed_methods: set[str] = field(
-        default_factory=lambda: {"GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"}
+        default_factory=lambda: {
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "HEAD",
+            "OPTIONS",
+        }
     )
 
 
 class MethodOverrideMiddleware(FastMVCMiddleware):
-    """
-    Middleware that allows HTTP method override.
+    """Middleware that allows HTTP method override.
 
     Useful for clients that can't send PUT/DELETE directly,
     such as older browsers or certain proxies.
@@ -48,6 +54,7 @@ class MethodOverrideMiddleware(FastMVCMiddleware):
         # or POST /resource with X-HTTP-Method-Override: DELETE
         # becomes DELETE /resource
         ```
+
     """
 
     def __init__(
@@ -56,6 +63,13 @@ class MethodOverrideMiddleware(FastMVCMiddleware):
         config: MethodOverrideConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or MethodOverrideConfig()
 
@@ -76,6 +90,15 @@ class MethodOverrideMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

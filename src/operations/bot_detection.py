@@ -1,5 +1,4 @@
-"""
-Bot Detection Middleware for FastMVC.
+"""Bot Detection Middleware for FastMVC.
 
 Detects and handles bot/crawler traffic.
 """
@@ -26,8 +25,7 @@ class BotAction(Enum):
 
 @dataclass
 class BotConfig:
-    """
-    Configuration for bot detection middleware.
+    """Configuration for bot detection middleware.
 
     Attributes:
         action: What to do when bot is detected.
@@ -45,6 +43,7 @@ class BotConfig:
             allowed_bots={"googlebot", "bingbot"},
         )
         ```
+
     """
 
     action: BotAction = BotAction.TAG
@@ -91,8 +90,7 @@ class BotConfig:
 
 
 class BotDetectionMiddleware(FastMVCMiddleware):
-    """
-    Middleware that detects bot and crawler traffic.
+    """Middleware that detects bot and crawler traffic.
 
     Identifies bots based on User-Agent patterns and allows
     different handling strategies.
@@ -129,6 +127,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
                 # Handle bot differently
                 pass
         ```
+
     """
 
     def __init__(
@@ -140,8 +139,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
         blocked_bots: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the bot detection middleware.
+        """Initialize the bot detection middleware.
 
         Args:
             app: The ASGI application.
@@ -150,6 +148,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
             allowed_bots: Allowed bots (overrides config).
             blocked_bots: Blocked bots (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or BotConfig()
@@ -213,8 +212,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with bot detection.
+        """Process request with bot detection.
 
         Args:
             request: The incoming HTTP request.
@@ -222,6 +220,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with bot handling.
+
         """
         if self.should_skip(request):
             return await call_next(request)

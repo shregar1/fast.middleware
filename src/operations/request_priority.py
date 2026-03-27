@@ -1,5 +1,4 @@
-"""
-Request Priority Middleware for FastMVC.
+"""Request Priority Middleware for FastMVC.
 
 Prioritizes request processing based on rules.
 """
@@ -26,14 +25,14 @@ class Priority(IntEnum):
 
 @dataclass
 class PriorityConfig:
-    """
-    Configuration for priority middleware.
+    """Configuration for priority middleware.
 
     Attributes:
         priority_header: Header containing priority.
         path_priorities: Path-specific priorities.
         max_queue_size: Max queue size per priority.
         timeout: Max queue wait time.
+
     """
 
     priority_header: str = "X-Priority"
@@ -43,8 +42,7 @@ class PriorityConfig:
 
 
 class RequestPriorityMiddleware(FastMVCMiddleware):
-    """
-    Middleware that prioritizes request processing.
+    """Middleware that prioritizes request processing.
 
     Higher priority requests are processed first when
     the server is under load.
@@ -62,6 +60,7 @@ class RequestPriorityMiddleware(FastMVCMiddleware):
             },
         )
         ```
+
     """
 
     def __init__(
@@ -71,6 +70,14 @@ class RequestPriorityMiddleware(FastMVCMiddleware):
         path_priorities: dict[str, Priority] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            path_priorities: The path_priorities parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or PriorityConfig()
 
@@ -100,6 +107,15 @@ class RequestPriorityMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

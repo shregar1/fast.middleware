@@ -1,6 +1,4 @@
-"""
-Tests for CORS middleware.
-"""
+"""Tests for CORS middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -36,7 +34,9 @@ class TestCORSMiddleware:
         """Test that CORS headers are added for valid origins."""
         response = cors_client.get("/", headers={"Origin": "https://example.com"})
         assert response.status_code == 200
-        assert response.headers.get("access-control-allow-origin") == "https://example.com"
+        assert (
+            response.headers.get("access-control-allow-origin") == "https://example.com"
+        )
         assert response.headers.get("access-control-allow-credentials") == "true"
 
     def test_cors_preflight_request(self, cors_client: TestClient):
@@ -80,6 +80,8 @@ class TestCORSWildcard:
 
     def test_wildcard_allows_any_origin(self, wildcard_client: TestClient):
         """Test that wildcard allows any origin."""
-        response = wildcard_client.get("/", headers={"Origin": "https://any-domain.com"})
+        response = wildcard_client.get(
+            "/", headers={"Origin": "https://any-domain.com"}
+        )
         assert response.status_code == 200
         assert response.headers.get("access-control-allow-origin") == "*"

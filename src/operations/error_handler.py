@@ -1,5 +1,4 @@
-"""
-Error Handling Middleware for FastMVC.
+"""Error Handling Middleware for FastMVC.
 
 Provides consistent error response formatting and exception handling.
 """
@@ -21,8 +20,7 @@ logger = logging.getLogger("fastmvc.middleware.error")
 
 @dataclass
 class ErrorConfig:
-    """
-    Configuration for error handling middleware.
+    """Configuration for error handling middleware.
 
     Attributes:
         include_traceback: Include traceback in error responses (development).
@@ -48,6 +46,7 @@ class ErrorConfig:
             log_exceptions=True,
         )
         ```
+
     """
 
     include_traceback: bool = False
@@ -62,8 +61,7 @@ class ErrorConfig:
 
 
 class ErrorHandlerMiddleware(FastMVCMiddleware):
-    """
-    Middleware that catches exceptions and returns consistent error responses.
+    """Middleware that catches exceptions and returns consistent error responses.
 
     Provides a uniform error response format across your API, with configurable
     detail levels for development vs production environments.
@@ -114,6 +112,7 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
 
         app.add_middleware(ErrorHandlerMiddleware, config=config)
         ```
+
     """
 
     def __init__(
@@ -128,8 +127,7 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the error handler middleware.
+        """Initialize the error handler middleware.
 
         Args:
             app: The ASGI application.
@@ -141,8 +139,11 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
             custom_logger: Custom logger instance.
             exclude_paths: Paths to exclude from error handling.
             exclude_methods: HTTP methods to exclude from error handling.
+
         """
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
 
         self.config = config or ErrorConfig()
         self._logger = custom_logger or logger
@@ -196,8 +197,7 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process the request and handle any exceptions.
+        """Process the request and handle any exceptions.
 
         Args:
             request: The incoming HTTP request.
@@ -205,6 +205,7 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response, or an error response if an exception occurred.
+
         """
         try:
             return await call_next(request)

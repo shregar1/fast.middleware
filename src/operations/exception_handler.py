@@ -1,5 +1,4 @@
-"""
-Exception Handler Middleware for FastMVC.
+"""Exception Handler Middleware for FastMVC.
 
 Catches and handles uncaught exceptions.
 """
@@ -18,14 +17,14 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ExceptionHandlerConfig:
-    """
-    Configuration for exception handler middleware.
+    """Configuration for exception handler middleware.
 
     Attributes:
         debug: Include traceback in response.
         log_exceptions: Log exceptions.
         default_status: Default error status code.
         custom_handlers: Exception type to handler mapping.
+
     """
 
     debug: bool = False
@@ -35,8 +34,7 @@ class ExceptionHandlerConfig:
 
 
 class ExceptionHandlerMiddleware(FastMVCMiddleware):
-    """
-    Middleware that handles uncaught exceptions.
+    """Middleware that handles uncaught exceptions.
 
     Catches all exceptions and returns appropriate
     error responses.
@@ -57,6 +55,7 @@ class ExceptionHandlerMiddleware(FastMVCMiddleware):
                 content={"error": str(exc)},
             )
         ```
+
     """
 
     def __init__(
@@ -66,6 +65,14 @@ class ExceptionHandlerMiddleware(FastMVCMiddleware):
         debug: bool = False,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            debug: The debug parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ExceptionHandlerConfig()
 
@@ -79,6 +86,14 @@ class ExceptionHandlerMiddleware(FastMVCMiddleware):
         """Decorator to register exception handler."""
 
         def decorator(func):
+            """Execute decorator operation.
+
+            Args:
+                func: The func parameter.
+
+            Returns:
+                The result of the operation.
+            """
             self._handlers[exc_type] = func
             return func
 
@@ -112,12 +127,23 @@ class ExceptionHandlerMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         try:
             return await call_next(request)
         except Exception as exc:
             # Log exception
             if self.config.log_exceptions:
-                self._logger.exception(f"Unhandled exception: {type(exc).__name__}: {exc}")
+                self._logger.exception(
+                    f"Unhandled exception: {type(exc).__name__}: {exc}"
+                )
 
             # Try custom handler
             handler = self._find_handler(exc)

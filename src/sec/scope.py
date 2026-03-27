@@ -1,5 +1,4 @@
-"""
-Scope/Permission Middleware for FastMVC.
+"""Scope/Permission Middleware for FastMVC.
 
 Validates OAuth scopes and permissions.
 """
@@ -15,14 +14,14 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ScopeConfig:
-    """
-    Configuration for scope middleware.
+    """Configuration for scope middleware.
 
     Attributes:
         scope_header: Header containing scopes.
         scope_separator: Character separating scopes.
         route_scopes: Required scopes per route.
         require_all: Require all scopes (True) or any (False).
+
     """
 
     scope_header: str = "X-Scopes"
@@ -32,8 +31,7 @@ class ScopeConfig:
 
 
 class ScopeMiddleware(FastMVCMiddleware):
-    """
-    Middleware that validates OAuth/permission scopes.
+    """Middleware that validates OAuth/permission scopes.
 
     Checks that requests have required scopes/permissions
     for the requested endpoint.
@@ -52,6 +50,7 @@ class ScopeMiddleware(FastMVCMiddleware):
 
         # Requests must have required scopes in X-Scopes header
         ```
+
     """
 
     def __init__(
@@ -61,6 +60,14 @@ class ScopeMiddleware(FastMVCMiddleware):
         route_scopes: dict[str, list[str]] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            route_scopes: The route_scopes parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ScopeConfig()
 
@@ -94,6 +101,15 @@ class ScopeMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

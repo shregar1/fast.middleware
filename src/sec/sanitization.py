@@ -1,5 +1,4 @@
-"""
-Input Sanitization Middleware for FastMVC.
+"""Input Sanitization Middleware for FastMVC.
 
 Sanitizes request data to prevent injection attacks.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class SanitizationConfig:
-    """
-    Configuration for sanitization middleware.
+    """Configuration for sanitization middleware.
 
     Attributes:
         sanitize_query: Sanitize query parameters.
@@ -30,6 +28,7 @@ class SanitizationConfig:
         trim_whitespace: Trim leading/trailing whitespace.
         max_string_length: Max length for string values.
         blocked_patterns: Regex patterns to block.
+
     """
 
     sanitize_query: bool = True
@@ -49,8 +48,7 @@ class SanitizationConfig:
 
 
 class SanitizationMiddleware(FastMVCMiddleware):
-    """
-    Middleware that sanitizes input data.
+    """Middleware that sanitizes input data.
 
     Cleans and validates input to prevent XSS, injection,
     and other attacks.
@@ -68,6 +66,7 @@ class SanitizationMiddleware(FastMVCMiddleware):
         # All query params will be sanitized
         # <script>alert('xss')</script> becomes safe text
         ```
+
     """
 
     TAG_PATTERN = re.compile(r"<[^>]+>")
@@ -78,11 +77,19 @@ class SanitizationMiddleware(FastMVCMiddleware):
         config: SanitizationConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or SanitizationConfig()
 
         self._blocked_patterns = [
-            re.compile(p, re.IGNORECASE | re.DOTALL) for p in self.config.blocked_patterns
+            re.compile(p, re.IGNORECASE | re.DOTALL)
+            for p in self.config.blocked_patterns
         ]
 
     def _sanitize_string(self, value: str) -> str:
@@ -135,6 +142,15 @@ class SanitizationMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

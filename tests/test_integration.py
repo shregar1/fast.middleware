@@ -1,6 +1,4 @@
-"""
-Integration tests for multiple middlewares working together.
-"""
+"""Integration tests for multiple middlewares working together."""
 
 import pytest
 from fastapi import FastAPI, Request
@@ -83,14 +81,29 @@ class TestFullMiddlewareStack:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"message": "Hello"}
 
         @app.get("/data")
         async def get_data():
+            """Execute get_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"items": list(range(100)), "status": "success"}
 
         @app.get("/context")
         async def context():
+            """Execute context operation.
+
+            Returns:
+                The result of the operation.
+            """
             request_id = get_request_id()
             ctx = get_request_context()
             return {
@@ -101,12 +114,25 @@ class TestFullMiddlewareStack:
 
         @app.get("/error")
         async def error():
+            """Execute error operation.
+
+            Returns:
+                The result of the operation.
+            """
             raise ValueError("Test error")
 
         return app
 
     @pytest.fixture
     def full_stack_client(self, full_stack_app: FastAPI) -> TestClient:
+        """Execute full_stack_client operation.
+
+        Args:
+            full_stack_app: The full_stack_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(full_stack_app, raise_server_exceptions=False)
 
     def test_basic_request_works(self, full_stack_client: TestClient):
@@ -225,17 +251,32 @@ class TestCorsSecurityInteraction:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def cors_security_client(self, cors_security_app: FastAPI) -> TestClient:
+        """Execute cors_security_client operation.
+
+        Args:
+            cors_security_app: The cors_security_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(cors_security_app)
 
     def test_cors_and_security_headers_present(self, cors_security_client: TestClient):
         """Test that both CORS and security headers are present."""
-        response = cors_security_client.get("/", headers={"Origin": "http://example.com"})
+        response = cors_security_client.get(
+            "/", headers={"Origin": "http://example.com"}
+        )
 
         # Security headers
         assert "X-Content-Type-Options" in response.headers
@@ -254,6 +295,14 @@ class TestRateLimitWithAuth:
         app = FastAPI()
 
         def custom_key_func(request: Request) -> str:
+            """Execute custom_key_func operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             api_key = request.headers.get("X-API-Key", "anonymous")
             return f"key:{api_key}"
 
@@ -265,12 +314,25 @@ class TestRateLimitWithAuth:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def rate_limit_client(self, rate_limit_app: FastAPI) -> TestClient:
+        """Execute rate_limit_client operation.
+
+        Args:
+            rate_limit_app: The rate_limit_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(rate_limit_app)
 
     def test_different_keys_have_separate_limits(self, rate_limit_client: TestClient):
@@ -304,6 +366,14 @@ class TestRequestIdPropagation:
 
         @app.get("/")
         async def root(request: Request):
+            """Execute root operation.
+
+            Args:
+                request: The request parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return {
                 "state_id": request.state.request_id,
                 "context_id": get_request_id(),
@@ -313,6 +383,14 @@ class TestRequestIdPropagation:
 
     @pytest.fixture
     def propagation_client(self, propagation_app: FastAPI) -> TestClient:
+        """Execute propagation_client operation.
+
+        Args:
+            propagation_app: The propagation_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(propagation_app)
 
     def test_incoming_request_id_trusted(self, propagation_client: TestClient):
@@ -351,9 +429,19 @@ class TestHealthWithDependencies:
         database_healthy = True
 
         async def check_database():
+            """Execute check_database operation.
+
+            Returns:
+                The result of the operation.
+            """
             return database_healthy
 
         async def check_cache():
+            """Execute check_cache operation.
+
+            Returns:
+                The result of the operation.
+            """
             return True
 
         config = HealthConfig(
@@ -367,12 +455,25 @@ class TestHealthWithDependencies:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def health_client(self, health_app: FastAPI) -> TestClient:
+        """Execute health_client operation.
+
+        Args:
+            health_app: The health_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(health_app)
 
     def test_all_checks_healthy(self, health_client: TestClient):
@@ -417,20 +518,43 @@ class TestMultipleEndpointsWithMiddleware:
 
         @app.get("/static/file")
         async def static_file():
+            """Execute static_file operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "static"}
 
         @app.get("/api/data")
         async def api_data():
+            """Execute api_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "api"}
 
         @app.get("/default")
         async def default():
+            """Execute default operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"type": "default"}
 
         return app
 
     @pytest.fixture
     def multi_endpoint_client(self, multi_endpoint_app: FastAPI) -> TestClient:
+        """Execute multi_endpoint_client operation.
+
+        Args:
+            multi_endpoint_app: The multi_endpoint_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(multi_endpoint_app)
 
     def test_static_has_long_cache(self, multi_endpoint_client: TestClient):

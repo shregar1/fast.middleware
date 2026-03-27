@@ -1,5 +1,4 @@
-"""
-Proxy Middleware for FastMVC.
+"""Proxy Middleware for FastMVC.
 
 Proxies requests to other services.
 """
@@ -27,12 +26,12 @@ class ProxyRoute:
 
 @dataclass
 class ProxyConfig:
-    """
-    Configuration for proxy middleware.
+    """Configuration for proxy middleware.
 
     Attributes:
         routes: List of proxy routes.
         timeout: Request timeout in seconds.
+
     """
 
     routes: list[ProxyRoute] = field(default_factory=list)
@@ -41,8 +40,7 @@ class ProxyConfig:
 
 
 class ProxyMiddleware(FastMVCMiddleware):
-    """
-    Middleware that proxies requests to other services.
+    """Middleware that proxies requests to other services.
 
     Acts as a reverse proxy for specified path prefixes,
     forwarding requests to configured backend services.
@@ -69,6 +67,7 @@ class ProxyMiddleware(FastMVCMiddleware):
         # /api/v2/users -> http://new-api:8000/users
         # /legacy/data -> http://old-service:3000/legacy/data
         ```
+
     """
 
     def __init__(
@@ -78,6 +77,14 @@ class ProxyMiddleware(FastMVCMiddleware):
         routes: list[ProxyRoute] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            routes: The routes parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ProxyConfig()
 
@@ -107,6 +114,15 @@ class ProxyMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         route = self._find_route(request.url.path)
 
         if not route:

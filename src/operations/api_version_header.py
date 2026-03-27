@@ -1,5 +1,4 @@
-"""
-API Version Header Middleware for FastMVC.
+"""API Version Header Middleware for FastMVC.
 
 Adds API version information to responses.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class APIVersionHeaderConfig:
-    """
-    Configuration for API version header middleware.
+    """Configuration for API version header middleware.
 
     Attributes:
         version: Current API version.
@@ -24,6 +22,7 @@ class APIVersionHeaderConfig:
         deprecated_header: Header for deprecation notice.
         min_version: Minimum supported version.
         sunset_date: API sunset date.
+
     """
 
     version: str = "1.0.0"
@@ -34,8 +33,7 @@ class APIVersionHeaderConfig:
 
 
 class APIVersionHeaderMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds API version headers.
+    """Middleware that adds API version headers.
 
     Adds version, deprecation, and sunset information
     to all API responses.
@@ -51,6 +49,7 @@ class APIVersionHeaderMiddleware(FastMVCMiddleware):
             sunset_date="2025-12-31",
         )
         ```
+
     """
 
     def __init__(
@@ -60,6 +59,14 @@ class APIVersionHeaderMiddleware(FastMVCMiddleware):
         version: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            version: The version parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or APIVersionHeaderConfig()
 
@@ -69,6 +76,15 @@ class APIVersionHeaderMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

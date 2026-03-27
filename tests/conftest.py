@@ -1,5 +1,4 @@
-"""
-Pytest configuration and fixtures for FastMVC Middleware tests.
+"""Pytest configuration and fixtures for FastMVC Middleware tests.
 
 This file contains shared fixtures used across all test modules.
 """
@@ -40,27 +39,63 @@ def app_with_routes() -> FastAPI:
 
     @app.get("/")
     async def root():
+        """Execute root operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello, World!"}
 
     @app.get("/health")
     async def health():
+        """Execute health operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"status": "healthy"}
 
     @app.get("/ready")
     async def ready():
+        """Execute ready operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"ready": True}
 
     @app.get("/live")
     async def live():
+        """Execute live operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"alive": True}
 
     @app.get("/protected")
     async def protected(request: Request):
+        """Execute protected operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         auth = getattr(request.state, "auth", None)
         return {"auth": auth}
 
     @app.get("/context")
     async def context(request: Request):
+        """Execute context operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return {
             "request_id": getattr(request.state, "request_id", None),
             "start_time": str(getattr(request.state, "start_time", None)),
@@ -68,14 +103,32 @@ def app_with_routes() -> FastAPI:
 
     @app.get("/data")
     async def get_data():
+        """Execute get_data operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"items": list(range(10)), "status": "success"}
 
     @app.get("/large-data")
     async def get_large_data():
+        """Execute get_large_data operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"items": list(range(1000)), "data": "x" * 1000}
 
     @app.post("/data")
     async def post_data(request: Request):
+        """Execute post_data operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         try:
             body = await request.json()
             return {"received": body}
@@ -84,6 +137,15 @@ def app_with_routes() -> FastAPI:
 
     @app.put("/data/{item_id}")
     async def put_data(item_id: int, request: Request):
+        """Execute put_data operation.
+
+        Args:
+            item_id: The item_id parameter.
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         try:
             body = await request.json()
             return {"id": item_id, "updated": body}
@@ -92,14 +154,32 @@ def app_with_routes() -> FastAPI:
 
     @app.delete("/data/{item_id}")
     async def delete_data(item_id: int):
+        """Execute delete_data operation.
+
+        Args:
+            item_id: The item_id parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return {"id": item_id, "deleted": True}
 
     @app.get("/error")
     async def raise_error():
+        """Execute raise_error operation.
+
+        Returns:
+            The result of the operation.
+        """
         raise ValueError("Test error message")
 
     @app.get("/slow")
     async def slow():
+        """Execute slow operation.
+
+        Returns:
+            The result of the operation.
+        """
         import asyncio
 
         await asyncio.sleep(0.1)
@@ -107,6 +187,14 @@ def app_with_routes() -> FastAPI:
 
     @app.get("/users/{user_id}")
     async def get_user(user_id: int):
+        """Execute get_user operation.
+
+        Args:
+            user_id: The user_id parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return {"user_id": user_id}
 
     return app
@@ -129,19 +217,45 @@ def sample_routes(app: FastAPI):
 
     @app.get("/")
     async def root():
+        """Execute root operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello, World!"}
 
     @app.get("/health")
     async def health():
+        """Execute health operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"status": "healthy"}
 
     @app.get("/protected")
     async def protected(request: Request):
+        """Execute protected operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         auth = getattr(request.state, "auth", None)
         return {"auth": auth}
 
     @app.get("/context")
     async def context(request: Request):
+        """Execute context operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return {
             "request_id": getattr(request.state, "request_id", None),
             "start_time": str(getattr(request.state, "start_time", None)),
@@ -149,6 +263,14 @@ def sample_routes(app: FastAPI):
 
     @app.post("/data")
     async def post_data(request: Request):
+        """Execute post_data operation.
+
+        Args:
+            request: The request parameter.
+
+        Returns:
+            The result of the operation.
+        """
         body = await request.json()
         return {"received": body}
 
@@ -178,13 +300,26 @@ def mock_database():
     """Mock database connection for health checks."""
 
     class MockDatabase:
+        """Represents the MockDatabase class."""
+
         def __init__(self):
+            """Execute __init__ operation."""
             self.connected = True
 
         async def is_connected(self) -> bool:
+            """Execute is_connected operation.
+
+            Returns:
+                The result of the operation.
+            """
             return self.connected
 
         async def ping(self) -> bool:
+            """Execute ping operation.
+
+            Returns:
+                The result of the operation.
+            """
             return self.connected
 
     return MockDatabase()
@@ -195,19 +330,53 @@ def mock_redis():
     """Mock Redis connection for health checks."""
 
     class MockRedis:
+        """Represents the MockRedis class."""
+
         def __init__(self):
+            """Execute __init__ operation."""
             self.connected = True
 
         async def ping(self) -> bool:
+            """Execute ping operation.
+
+            Returns:
+                The result of the operation.
+            """
             return self.connected
 
         async def get(self, key: str) -> str | None:
+            """Execute get operation.
+
+            Args:
+                key: The key parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return None
 
         async def set(self, key: str, value: str, ttl: int | None = None) -> bool:
+            """Execute set operation.
+
+            Args:
+                key: The key parameter.
+                value: The value parameter.
+                ttl: The ttl parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return True
 
         async def delete(self, key: str) -> bool:
+            """Execute delete operation.
+
+            Args:
+                key: The key parameter.
+
+            Returns:
+                The result of the operation.
+            """
             return True
 
     return MockRedis()

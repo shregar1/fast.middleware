@@ -1,5 +1,4 @@
-"""
-HTTPS Redirect Middleware for FastMVC.
+"""HTTPS Redirect Middleware for FastMVC.
 
 Forces HTTPS connections by redirecting HTTP requests.
 """
@@ -15,8 +14,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class HTTPSRedirectConfig:
-    """
-    Configuration for HTTPS redirect middleware.
+    """Configuration for HTTPS redirect middleware.
 
     Attributes:
         redirect_code: HTTP status code for redirect (301 or 308).
@@ -33,6 +31,7 @@ class HTTPSRedirectConfig:
             exclude_hosts={"localhost", "127.0.0.1"},
         )
         ```
+
     """
 
     redirect_code: int = 308
@@ -42,8 +41,7 @@ class HTTPSRedirectConfig:
 
 
 class HTTPSRedirectMiddleware(FastMVCMiddleware):
-    """
-    Middleware that redirects HTTP requests to HTTPS.
+    """Middleware that redirects HTTP requests to HTTPS.
 
     Essential for production deployments to ensure all traffic
     is encrypted.
@@ -75,6 +73,7 @@ class HTTPSRedirectMiddleware(FastMVCMiddleware):
     Note:
         In development, localhost is excluded by default.
         Always enable in production!
+
     """
 
     def __init__(
@@ -85,8 +84,7 @@ class HTTPSRedirectMiddleware(FastMVCMiddleware):
         exclude_hosts: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the HTTPS redirect middleware.
+        """Initialize the HTTPS redirect middleware.
 
         Args:
             app: The ASGI application.
@@ -94,6 +92,7 @@ class HTTPSRedirectMiddleware(FastMVCMiddleware):
             redirect_code: HTTP status code for redirect.
             exclude_hosts: Hosts to exclude from redirect.
             exclude_paths: Paths to exclude from redirect.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or HTTPSRedirectConfig()
@@ -130,8 +129,7 @@ class HTTPSRedirectMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request and redirect to HTTPS if needed.
+        """Process request and redirect to HTTPS if needed.
 
         Args:
             request: The incoming HTTP request.
@@ -139,6 +137,7 @@ class HTTPSRedirectMiddleware(FastMVCMiddleware):
 
         Returns:
             Redirect response or original response.
+
         """
         if self.should_skip(request):
             return await call_next(request)

@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Trusted Host middleware.
-"""
+"""Comprehensive tests for Trusted Host middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -16,10 +14,20 @@ def sample_app() -> FastAPI:
 
     @app.get("/")
     async def root():
+        """Execute root operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello"}
 
     @app.get("/health")
     async def health():
+        """Execute health operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"status": "ok"}
 
     return app
@@ -39,6 +47,14 @@ class TestTrustedHostMiddleware:
 
     @pytest.fixture
     def trusted_host_client(self, trusted_host_app: FastAPI) -> TestClient:
+        """Execute trusted_host_client operation.
+
+        Args:
+            trusted_host_app: The trusted_host_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(trusted_host_app)
 
     def test_valid_host_allowed(self, trusted_host_client: TestClient):
@@ -83,6 +99,14 @@ class TestWildcardHost:
 
     @pytest.fixture
     def wildcard_client(self, wildcard_app: FastAPI) -> TestClient:
+        """Execute wildcard_client operation.
+
+        Args:
+            wildcard_app: The wildcard_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(wildcard_app)
 
     def test_subdomain_allowed(self, wildcard_client: TestClient):
@@ -115,6 +139,14 @@ class TestAllowAnyHost:
 
     @pytest.fixture
     def any_host_client(self, any_host_app: FastAPI) -> TestClient:
+        """Execute any_host_client operation.
+
+        Args:
+            any_host_app: The any_host_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(any_host_app)
 
     def test_any_host_allowed(self, any_host_client: TestClient):
@@ -142,6 +174,14 @@ class TestMixedHosts:
 
     @pytest.fixture
     def mixed_client(self, mixed_app: FastAPI) -> TestClient:
+        """Execute mixed_client operation.
+
+        Args:
+            mixed_app: The mixed_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(mixed_app)
 
     def test_exact_match_allowed(self, mixed_client: TestClient):
@@ -180,6 +220,14 @@ class TestPathExclusion:
 
     @pytest.fixture
     def excluded_client(self, excluded_app: FastAPI) -> TestClient:
+        """Execute excluded_client operation.
+
+        Args:
+            excluded_app: The excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(excluded_app)
 
     def test_excluded_path_allows_any_host(self, excluded_client: TestClient):
@@ -198,6 +246,14 @@ class TestEmptyHost:
 
     @pytest.fixture
     def app(self, sample_app) -> FastAPI:
+        """Execute app operation.
+
+        Args:
+            sample_app: The sample_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         sample_app.add_middleware(
             TrustedHostMiddleware,
             allowed_hosts=["example.com"],
@@ -206,6 +262,14 @@ class TestEmptyHost:
 
     @pytest.fixture
     def client(self, app: FastAPI) -> TestClient:
+        """Execute client operation.
+
+        Args:
+            app: The app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(app)
 
     def test_empty_host_rejected(self, client: TestClient):

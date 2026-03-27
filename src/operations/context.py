@@ -1,5 +1,4 @@
-"""
-Request Context Middleware for FastMVC.
+"""Request Context Middleware for FastMVC.
 
 Provides shared context for requests.
 """
@@ -15,7 +14,9 @@ from starlette.responses import Response
 from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 
-_context: ContextVar[dict[str, Any] | None] = ContextVar("request_context", default=None)
+_context: ContextVar[dict[str, Any] | None] = ContextVar(
+    "request_context", default=None
+)
 
 
 def get_context() -> dict[str, Any]:
@@ -40,13 +41,13 @@ def get_context_value(key: str, default: Any = None) -> Any:
 
 @dataclass
 class ContextConfig:
-    """
-    Configuration for context middleware.
+    """Configuration for context middleware.
 
     Attributes:
         extract_headers: Headers to extract into context.
         extract_query: Query params to extract.
         header_prefix: Strip this prefix from header names.
+
     """
 
     extract_headers: dict[str, str] = field(default_factory=dict)
@@ -55,8 +56,7 @@ class ContextConfig:
 
 
 class ContextMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides shared request context.
+    """Middleware that provides shared request context.
 
     Extracts values from request and makes them available
     throughout the request lifecycle.
@@ -75,6 +75,7 @@ class ContextMiddleware(FastMVCMiddleware):
             user_id = get_context_value("user_id")
             return {"user_id": user_id}
         ```
+
     """
 
     def __init__(
@@ -84,6 +85,14 @@ class ContextMiddleware(FastMVCMiddleware):
         extract_headers: dict[str, str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            extract_headers: The extract_headers parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ContextConfig()
 
@@ -116,6 +125,15 @@ class ContextMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

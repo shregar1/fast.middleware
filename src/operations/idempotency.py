@@ -1,5 +1,4 @@
-"""
-Idempotency Middleware for FastMVC.
+"""Idempotency Middleware for FastMVC.
 
 Provides idempotency key support for safe request retries.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class IdempotencyConfig:
-    """
-    Configuration for idempotency middleware.
+    """Configuration for idempotency middleware.
 
     Attributes:
         header_name: Name of the idempotency key header.
@@ -37,6 +35,7 @@ class IdempotencyConfig:
             required_methods={"POST", "PUT", "PATCH"},
         )
         ```
+
     """
 
     header_name: str = "Idempotency-Key"
@@ -45,13 +44,17 @@ class IdempotencyConfig:
     require_key: bool = False
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.required_methods is None:
             self.required_methods = {"POST", "PUT", "PATCH"}
 
 
 class IdempotencyStore(ABC):
-    """
-    Abstract base class for idempotency storage backends.
+    """Abstract base class for idempotency storage backends.
 
     Implement this class to create custom storage backends (Redis, etc.)
 
@@ -74,53 +77,54 @@ class IdempotencyStore(ABC):
                     json.dumps(response_data)
                 )
         ```
+
     """
 
     @abstractmethod
     async def get(self, key: str) -> dict[str, Any] | None:
-        """
-        Get cached response for idempotency key.
+        """Get cached response for idempotency key.
 
         Args:
             key: The idempotency key.
 
         Returns:
             Cached response data or None if not found.
+
         """
         pass
 
     @abstractmethod
     async def set(self, key: str, response_data: dict[str, Any], ttl: int) -> None:
-        """
-        Store response for idempotency key.
+        """Store response for idempotency key.
 
         Args:
             key: The idempotency key.
             response_data: Response data to cache.
             ttl: Time-to-live in seconds.
+
         """
         pass
 
     @abstractmethod
     async def delete(self, key: str) -> None:
-        """
-        Delete cached response for idempotency key.
+        """Delete cached response for idempotency key.
 
         Args:
             key: The idempotency key to delete.
+
         """
         pass
 
 
 class InMemoryIdempotencyStore(IdempotencyStore):
-    """
-    In-memory idempotency storage.
+    """In-memory idempotency storage.
 
     Suitable for single-instance deployments or development.
     For distributed systems, use Redis or another shared storage.
     """
 
     def __init__(self) -> None:
+        """Execute __init__ operation."""
         self._cache: dict[str, tuple[dict[str, Any], float]] = {}
 
     async def get(self, key: str) -> dict[str, Any] | None:
@@ -154,8 +158,7 @@ class InMemoryIdempotencyStore(IdempotencyStore):
 
 
 class IdempotencyMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides idempotency support for safe request retries.
+    r"""Middleware that provides idempotency support for safe request retries.
 
     Implements the idempotency-key pattern, allowing clients to safely retry
     requests without causing duplicate operations. The middleware caches
@@ -203,6 +206,7 @@ class IdempotencyMiddleware(FastMVCMiddleware):
 
     Response Headers:
         - X-Idempotent-Replayed: true (if response was cached)
+
     """
 
     def __init__(
@@ -213,8 +217,7 @@ class IdempotencyMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the idempotency middleware.
+        """Initialize the idempotency middleware.
 
         Args:
             app: The ASGI application.
@@ -222,8 +225,11 @@ class IdempotencyMiddleware(FastMVCMiddleware):
             store: Storage backend for cached responses.
             exclude_paths: Paths to exclude from idempotency handling.
             exclude_methods: HTTP methods to exclude.
+
         """
-        super().__init__(app, exclude_paths=exclude_paths, exclude_methods=exclude_methods)
+        super().__init__(
+            app, exclude_paths=exclude_paths, exclude_methods=exclude_methods
+        )
 
         self.config = config or IdempotencyConfig()
         self.store = store or InMemoryIdempotencyStore()
@@ -252,7 +258,9 @@ class IdempotencyMiddleware(FastMVCMiddleware):
 
         await self.store.set(key, response_data, self.config.ttl_seconds)
 
-    def _build_response(self, cached: dict[str, Any], replayed: bool = True) -> Response:
+    def _build_response(
+        self, cached: dict[str, Any], replayed: bool = True
+    ) -> Response:
         """Build response from cached data."""
         headers = dict(cached.get("headers", {}))
 
@@ -269,8 +277,7 @@ class IdempotencyMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with idempotency handling.
+        """Process request with idempotency handling.
 
         Args:
             request: The incoming HTTP request.
@@ -278,6 +285,7 @@ class IdempotencyMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response (cached or fresh).
+
         """
         # Skip if not a method that needs idempotency
         if not self._should_process(request):

@@ -1,5 +1,4 @@
-"""
-Response Signing Middleware for FastMVC.
+"""Response Signing Middleware for FastMVC.
 
 Signs responses for client verification.
 """
@@ -18,8 +17,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ResponseSignatureConfig:
-    """
-    Configuration for response signature middleware.
+    """Configuration for response signature middleware.
 
     Attributes:
         secret_key: Secret key for signing.
@@ -27,6 +25,7 @@ class ResponseSignatureConfig:
         timestamp_header: Header for timestamp.
         algorithm: Hash algorithm.
         include_status: Include status in signature.
+
     """
 
     secret_key: str = ""
@@ -37,8 +36,7 @@ class ResponseSignatureConfig:
 
 
 class ResponseSignatureMiddleware(FastMVCMiddleware):
-    """
-    Middleware that signs responses.
+    """Middleware that signs responses.
 
     Adds HMAC signature to responses so clients can
     verify response integrity.
@@ -56,6 +54,7 @@ class ResponseSignatureMiddleware(FastMVCMiddleware):
         # X-Response-Signature: {hmac}
         # X-Response-Timestamp: {timestamp}
         ```
+
     """
 
     ALGORITHMS = {
@@ -71,6 +70,14 @@ class ResponseSignatureMiddleware(FastMVCMiddleware):
         secret_key: str | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            secret_key: The secret_key parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ResponseSignatureConfig()
 
@@ -92,6 +99,15 @@ class ResponseSignatureMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

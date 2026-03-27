@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Maintenance Mode middleware.
-"""
+"""Comprehensive tests for Maintenance Mode middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -20,16 +18,34 @@ class TestMaintenanceModeDisabled:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"message": "Hello"}
 
         @app.post("/data")
         async def create_data():
+            """Execute create_data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"created": True}
 
         return app
 
     @pytest.fixture
     def disabled_client(self, disabled_app: FastAPI) -> TestClient:
+        """Execute disabled_client operation.
+
+        Args:
+            disabled_app: The disabled_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(disabled_app)
 
     def test_get_passes_through(self, disabled_client: TestClient):
@@ -69,16 +85,34 @@ class TestMaintenanceModeEnabled:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"message": "Hello"}
 
         @app.get("/health")
         async def health():
+            """Execute health operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"status": "ok"}
 
         return app
 
     @pytest.fixture
     def enabled_client(self, enabled_app: FastAPI) -> TestClient:
+        """Execute enabled_client operation.
+
+        Args:
+            enabled_app: The enabled_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(enabled_app)
 
     def test_returns_503(self, enabled_client: TestClient):
@@ -145,20 +179,43 @@ class TestMaintenanceBypass:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"message": "Hello"}
 
         @app.get("/health")
         async def health():
+            """Execute health operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"status": "ok"}
 
         @app.get("/status")
         async def status():
+            """Execute status operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"status": "running"}
 
         return app
 
     @pytest.fixture
     def bypass_client(self, bypass_app: FastAPI) -> TestClient:
+        """Execute bypass_client operation.
+
+        Args:
+            bypass_app: The bypass_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(bypass_app)
 
     def test_allowed_path_bypasses(self, bypass_client: TestClient):
@@ -176,14 +233,18 @@ class TestMaintenanceBypass:
 
     def test_bypass_token_works(self, bypass_client: TestClient):
         """Test that bypass token allows access."""
-        response = bypass_client.get("/", headers={"X-Maintenance-Bypass": "secret-token"})
+        response = bypass_client.get(
+            "/", headers={"X-Maintenance-Bypass": "secret-token"}
+        )
 
         assert response.status_code == 200
         assert response.json() == {"message": "Hello"}
 
     def test_wrong_bypass_token_blocked(self, bypass_client: TestClient):
         """Test that wrong bypass token is blocked."""
-        response = bypass_client.get("/", headers={"X-Maintenance-Bypass": "wrong-token"})
+        response = bypass_client.get(
+            "/", headers={"X-Maintenance-Bypass": "wrong-token"}
+        )
 
         assert response.status_code == 503
 
@@ -302,12 +363,25 @@ class TestHtmlMode:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def html_client(self, html_app: FastAPI) -> TestClient:
+        """Execute html_client operation.
+
+        Args:
+            html_app: The html_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(html_app)
 
     def test_returns_html(self, html_client: TestClient):
@@ -349,12 +423,25 @@ class TestCustomHtmlTemplate:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def custom_html_client(self, custom_html_app: FastAPI) -> TestClient:
+        """Execute custom_html_client operation.
+
+        Args:
+            custom_html_app: The custom_html_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(custom_html_app)
 
     def test_custom_template_used(self, custom_html_client: TestClient):
@@ -381,16 +468,34 @@ class TestPathExclusion:
 
         @app.get("/included")
         async def included():
+            """Execute included operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         @app.get("/excluded")
         async def excluded():
+            """Execute excluded operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         return app
 
     @pytest.fixture
     def excluded_client(self, excluded_app: FastAPI) -> TestClient:
+        """Execute excluded_client operation.
+
+        Args:
+            excluded_app: The excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(excluded_app)
 
     def test_excluded_path_bypasses(self, excluded_client: TestClient):
@@ -422,16 +527,34 @@ class TestMethodExclusion:
 
         @app.get("/")
         async def root():
+            """Execute root operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"ok": True}
 
         @app.options("/")
         async def options():
+            """Execute options operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {}
 
         return app
 
     @pytest.fixture
     def method_excluded_client(self, method_excluded_app: FastAPI) -> TestClient:
+        """Execute method_excluded_client operation.
+
+        Args:
+            method_excluded_app: The method_excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(method_excluded_app)
 
     def test_excluded_method_bypasses(self, method_excluded_client: TestClient):

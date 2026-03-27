@@ -1,5 +1,4 @@
-"""
-Path Rewriting Middleware for FastMVC.
+"""Path Rewriting Middleware for FastMVC.
 
 Rewrites request paths based on rules.
 """
@@ -23,6 +22,11 @@ class RewriteRule:
     is_regex: bool = False
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.is_regex:
             self._compiled = re.compile(self.pattern)
         else:
@@ -41,12 +45,12 @@ class RewriteRule:
 
 @dataclass
 class PathRewriteConfig:
-    """
-    Configuration for path rewrite middleware.
+    """Configuration for path rewrite middleware.
 
     Attributes:
         rules: List of rewrite rules.
         add_header: Add header with original path.
+
     """
 
     rules: list[RewriteRule] = field(default_factory=list)
@@ -55,8 +59,7 @@ class PathRewriteConfig:
 
 
 class PathRewriteMiddleware(FastMVCMiddleware):
-    r"""
-    Middleware that rewrites request paths.
+    r"""Middleware that rewrites request paths.
 
     Transforms request paths based on configured rules
     before routing.
@@ -73,6 +76,7 @@ class PathRewriteMiddleware(FastMVCMiddleware):
             ],
         )
         ```
+
     """
 
     def __init__(
@@ -82,6 +86,14 @@ class PathRewriteMiddleware(FastMVCMiddleware):
         rules: list[RewriteRule] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            rules: The rules parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or PathRewriteConfig()
 
@@ -99,6 +111,15 @@ class PathRewriteMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

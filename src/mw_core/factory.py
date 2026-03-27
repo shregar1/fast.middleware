@@ -1,5 +1,4 @@
-"""
-Middleware Factory for fastmiddleware.
+"""Middleware Factory for fastmiddleware.
 
 Provides utilities for creating custom middleware with minimal boilerplate.
 Includes duplicate detection to avoid wrapping the same middleware twice.
@@ -22,7 +21,9 @@ if TYPE_CHECKING:
 
 
 # Type for middleware dispatch function
-DispatchFunc = Callable[[Request, Callable[[Request], Awaitable[Response]]], Awaitable[Response]]
+DispatchFunc = Callable[
+    [Request, Callable[[Request], Awaitable[Response]]], Awaitable[Response]
+]
 
 # Registry of added middleware to prevent duplicates
 _middleware_registry: dict[int, set[str]] = {}
@@ -64,13 +65,13 @@ def clear_registry(app: ASGIApp | None = None) -> None:
 
 @dataclass
 class MiddlewareConfig:
-    """
-    Base configuration for custom middleware.
+    """Base configuration for custom middleware.
 
     Attributes:
         exclude_paths: Paths to skip middleware processing.
         exclude_methods: HTTP methods to skip.
         enabled: Whether the middleware is enabled.
+
     """
 
     exclude_paths: set[str] = field(default_factory=set)
@@ -85,8 +86,7 @@ def create_middleware(
     skip_if_exists: bool = True,
     config_class: type | None = None,
 ) -> type[FastMVCMiddleware]:
-    """
-    Create a new middleware class from a dispatch function.
+    """Create a new middleware class from a dispatch function.
 
     This is the simplest way to create custom middleware without
     writing a full class.
@@ -114,9 +114,12 @@ def create_middleware(
 
         app.add_middleware(MyMiddleware)
         ```
+
     """
 
     class CustomMiddleware(FastMVCMiddleware):
+        """Represents the CustomMiddleware class."""
+
         __middleware_name__ = name
         __skip_if_exists__ = skip_if_exists
 
@@ -127,19 +130,42 @@ def create_middleware(
             exclude_paths: set[str] | None = None,
             **kwargs: Any,
         ) -> None:
+            """Execute __init__ operation.
+
+            Args:
+                app: The app parameter.
+                config: The config parameter.
+                exclude_paths: The exclude_paths parameter.
+            """
             # Check if already registered
-            if self.__skip_if_exists__ and is_middleware_registered(app, self.__middleware_name__):
+            if self.__skip_if_exists__ and is_middleware_registered(
+                app, self.__middleware_name__
+            ):
                 # Create a passthrough - just wrap the app without processing
                 self._passthrough = True
                 self.app = app
             else:
                 self._passthrough = False
                 super().__init__(app, exclude_paths=exclude_paths)
-                self.config = config or (config_class() if config_class else MiddlewareConfig())
+                self.config = config or (
+                    config_class() if config_class else MiddlewareConfig()
+                )
                 self._extra_kwargs = kwargs
                 register_middleware(app, self.__middleware_name__)
 
-        async def __call__(self, scope: dict, receive: Callable, send: Callable) -> None:
+        async def __call__(
+            self, scope: dict, receive: Callable, send: Callable
+        ) -> None:
+            """Execute __call__ operation.
+
+            Args:
+                scope: The scope parameter.
+                receive: The receive parameter.
+                send: The send parameter.
+
+            Returns:
+                The result of the operation.
+            """
             if getattr(self, "_passthrough", False):
                 await self.app(scope, receive, send)
             else:
@@ -148,6 +174,15 @@ def create_middleware(
         async def dispatch(
             self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
         ) -> Response:
+            """Execute dispatch operation.
+
+            Args:
+                request: The request parameter.
+                call_next: The call_next parameter.
+
+            Returns:
+                The result of the operation.
+            """
             if hasattr(self, "config") and hasattr(self.config, "enabled"):
                 if not self.config.enabled:
                     return await call_next(request)
@@ -164,8 +199,7 @@ def middleware(
     *,
     skip_if_exists: bool = True,
 ) -> Callable[[DispatchFunc], type[FastMVCMiddleware]]:
-    """
-    Decorator to create middleware from a function.
+    """Decorator to create middleware from a function.
 
     Args:
         name: Middleware name (defaults to function name).
@@ -185,9 +219,18 @@ def middleware(
 
         app.add_middleware(request_timer)
         ```
+
     """
 
     def decorator(func: DispatchFunc) -> type[FastMVCMiddleware]:
+        """Execute decorator operation.
+
+        Args:
+            func: The func parameter.
+
+        Returns:
+            The result of the operation.
+        """
         middleware_name = name or func.__name__
         return create_middleware(
             middleware_name,
@@ -199,8 +242,7 @@ def middleware(
 
 
 class MiddlewareBuilder:
-    """
-    Builder pattern for creating middleware with more options.
+    """Builder pattern for creating middleware with more options.
 
     Example:
         ```python
@@ -216,20 +258,30 @@ class MiddlewareBuilder:
 
         app.add_middleware(MyMiddleware)
         ```
+
     """
 
     def __init__(self, name: str) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            name: The name parameter.
+        """
         self.name = name
         self._on_request: Callable[[Request], Awaitable[None] | None] | None = None
-        self._on_response: Callable[[Request, Response], Awaitable[Response] | Response] | None = (
-            None
-        )
-        self._on_error: Callable[[Request, Exception], Awaitable[Response] | Response] | None = None
+        self._on_response: (
+            Callable[[Request, Response], Awaitable[Response] | Response] | None
+        ) = None
+        self._on_error: (
+            Callable[[Request, Exception], Awaitable[Response] | Response] | None
+        ) = None
         self._skip_paths: set[str] = set()
         self._skip_methods: set[str] = set()
         self._skip_if_exists: bool = True
 
-    def on_request(self, handler: Callable[[Request], Awaitable[None] | None]) -> MiddlewareBuilder:
+    def on_request(
+        self, handler: Callable[[Request], Awaitable[None] | None]
+    ) -> MiddlewareBuilder:
         """Add a request handler called before processing."""
         self._on_request = handler
         return self
@@ -273,6 +325,15 @@ class MiddlewareBuilder:
         async def dispatch(
             request: Request, call_next: Callable[[Request], Awaitable[Response]]
         ) -> Response:
+            """Execute dispatch operation.
+
+            Args:
+                request: The request parameter.
+                call_next: The call_next parameter.
+
+            Returns:
+                The result of the operation.
+            """
             # Skip if path matches
             if request.url.path in skip_paths:
                 return await call_next(request)
@@ -316,8 +377,7 @@ def add_middleware_once(
     *args: Any,
     **kwargs: Any,
 ) -> bool:
-    """
-    Add middleware to app only if not already added.
+    """Add middleware to app only if not already added.
 
     Args:
         app: FastAPI or Starlette app.
@@ -341,6 +401,7 @@ def add_middleware_once(
         added = add_middleware_once(app, CORSMiddleware, allow_origins=["*"])
         print(added)  # False
         ```
+
     """
     middleware_name = getattr(
         middleware_class,
@@ -362,8 +423,7 @@ def quick_middleware(
     after: Callable[[Request, Response], Response] | None = None,
     name: str = "quick_middleware",
 ) -> type[FastMVCMiddleware]:
-    """
-    Create a simple middleware with before/after hooks.
+    """Create a simple middleware with before/after hooks.
 
     Args:
         before: Called before request processing.
@@ -386,11 +446,21 @@ def quick_middleware(
 
         app.add_middleware(TimingMiddleware)
         ```
+
     """
 
     async def dispatch(
         request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if before:
             result = before(request)
             if hasattr(result, "__await__"):

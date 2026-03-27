@@ -1,5 +1,4 @@
-"""
-Request Deduplication Middleware for FastMVC.
+"""Request Deduplication Middleware for FastMVC.
 
 Deduplicates identical concurrent requests.
 """
@@ -17,13 +16,13 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class RequestDedupConfig:
-    """
-    Configuration for request deduplication middleware.
+    """Configuration for request deduplication middleware.
 
     Attributes:
         window: Time window for deduplication in seconds.
         include_body: Include body in request hash.
         include_headers: Headers to include in hash.
+
     """
 
     window: float = 1.0
@@ -31,13 +30,17 @@ class RequestDedupConfig:
     include_headers: set[str] = None
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.include_headers is None:
             self.include_headers = set()
 
 
 class RequestDedupMiddleware(FastMVCMiddleware):
-    """
-    Middleware that deduplicates concurrent requests.
+    """Middleware that deduplicates concurrent requests.
 
     If identical requests arrive within a time window,
     only one is processed and the response is shared.
@@ -53,6 +56,7 @@ class RequestDedupMiddleware(FastMVCMiddleware):
 
         # Duplicate requests within 1 second share the same response
         ```
+
     """
 
     def __init__(
@@ -61,6 +65,13 @@ class RequestDedupMiddleware(FastMVCMiddleware):
         config: RequestDedupConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RequestDedupConfig()
         self._pending: dict[str, asyncio.Future] = {}
@@ -86,6 +97,15 @@ class RequestDedupMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

@@ -1,5 +1,4 @@
-"""
-Audit Logging Middleware for FastMVC.
+"""Audit Logging Middleware for FastMVC.
 
 Provides comprehensive audit logging for compliance and security.
 """
@@ -36,6 +35,11 @@ class AuditEvent:
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
+        """Execute to_dict operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {
             "timestamp": self.timestamp,
             "request_id": self.request_id,
@@ -54,8 +58,7 @@ class AuditEvent:
 
 @dataclass
 class AuditConfig:
-    """
-    Configuration for audit logging middleware.
+    """Configuration for audit logging middleware.
 
     Attributes:
         enabled: Whether audit logging is enabled.
@@ -76,6 +79,7 @@ class AuditConfig:
             sensitive_fields={"password", "token", "secret"},
         )
         ```
+
     """
 
     enabled: bool = True
@@ -120,8 +124,7 @@ class AuditConfig:
 
 
 class AuditMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides comprehensive audit logging.
+    """Middleware that provides comprehensive audit logging.
 
     Creates detailed audit trails for compliance, security,
     and debugging purposes.
@@ -161,6 +164,7 @@ class AuditMiddleware(FastMVCMiddleware):
 
     Compliance:
         Useful for SOC2, HIPAA, GDPR, and other compliance requirements.
+
     """
 
     def __init__(
@@ -170,6 +174,14 @@ class AuditMiddleware(FastMVCMiddleware):
         enabled: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            enabled: The enabled parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or AuditConfig()
 
@@ -186,7 +198,9 @@ class AuditMiddleware(FastMVCMiddleware):
         redacted = {}
         for key, value in data.items():
             key_lower = key.lower()
-            if any(sensitive in key_lower for sensitive in self.config.sensitive_fields):
+            if any(
+                sensitive in key_lower for sensitive in self.config.sensitive_fields
+            ):
                 redacted[key] = "[REDACTED]"
             elif isinstance(value, dict):
                 redacted[key] = self._redact_sensitive(value)
@@ -235,6 +249,15 @@ class AuditMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request) or not self._should_log(request):
             return await call_next(request)
 
@@ -250,7 +273,9 @@ class AuditMiddleware(FastMVCMiddleware):
             timestamp=datetime.now(timezone.utc).isoformat(),
             request_id=getattr(request.state, "request_id", None),
             user_id=self._get_user_id(request),
-            action=self.config.action_mapping.get(request.method, request.method.lower()),
+            action=self.config.action_mapping.get(
+                request.method, request.method.lower()
+            ),
             resource=self._extract_resource(request.url.path),
             method=request.method,
             path=request.url.path,

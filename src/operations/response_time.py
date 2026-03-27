@@ -1,5 +1,4 @@
-"""
-Response Time SLA Middleware for FastMVC.
+"""Response Time SLA Middleware for FastMVC.
 
 Monitors and enforces response time SLAs.
 """
@@ -27,8 +26,7 @@ class ResponseTimeSLA:
 
 @dataclass
 class ResponseTimeConfig:
-    """
-    Configuration for response time middleware.
+    """Configuration for response time middleware.
 
     Attributes:
         default_target_ms: Default target response time.
@@ -37,6 +35,7 @@ class ResponseTimeConfig:
         slas: Path-specific SLAs.
         log_slow: Log slow responses.
         add_header: Add timing header to response.
+
     """
 
     default_target_ms: float = 100.0
@@ -50,8 +49,7 @@ class ResponseTimeConfig:
 
 
 class ResponseTimeMiddleware(FastMVCMiddleware):
-    """
-    Middleware that monitors response time SLAs.
+    """Middleware that monitors response time SLAs.
 
     Tracks response times and logs warnings when
     SLA thresholds are exceeded.
@@ -68,6 +66,7 @@ class ResponseTimeMiddleware(FastMVCMiddleware):
             ],
         )
         ```
+
     """
 
     def __init__(
@@ -76,6 +75,13 @@ class ResponseTimeMiddleware(FastMVCMiddleware):
         config: ResponseTimeConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ResponseTimeConfig()
         self._logger = logging.getLogger(self.config.logger_name)
@@ -119,13 +125,24 @@ class ResponseTimeMiddleware(FastMVCMiddleware):
         for path, stats in self._stats.items():
             result[path] = {
                 **stats,
-                "avg_ms": stats["total_ms"] / stats["count"] if stats["count"] > 0 else 0,
+                "avg_ms": stats["total_ms"] / stats["count"]
+                if stats["count"] > 0
+                else 0,
             }
         return result
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

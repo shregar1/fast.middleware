@@ -1,5 +1,4 @@
-"""
-Data Masking Middleware for FastMVC.
+"""Data Masking Middleware for FastMVC.
 
 Masks sensitive data in responses for security and privacy.
 """
@@ -46,8 +45,7 @@ class MaskingRule:
 
 @dataclass
 class DataMaskingConfig:
-    """
-    Configuration for data masking middleware.
+    """Configuration for data masking middleware.
 
     Attributes:
         enabled: Whether masking is enabled.
@@ -68,6 +66,7 @@ class DataMaskingConfig:
             ],
         )
         ```
+
     """
 
     enabled: bool = True
@@ -100,8 +99,7 @@ class DataMaskingConfig:
 
 
 class DataMaskingMiddleware(FastMVCMiddleware):
-    """
-    Middleware that masks sensitive data in responses.
+    """Middleware that masks sensitive data in responses.
 
     Automatically detects and masks PII and sensitive data
     before sending responses to clients.
@@ -132,6 +130,7 @@ class DataMaskingMiddleware(FastMVCMiddleware):
                 "credit_card": "4111111111111111",  # Masked: ************1111
             }
         ```
+
     """
 
     def __init__(
@@ -141,6 +140,14 @@ class DataMaskingMiddleware(FastMVCMiddleware):
         fields: set[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            fields: The fields parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or DataMaskingConfig()
 
@@ -205,7 +212,8 @@ class DataMaskingMiddleware(FastMVCMiddleware):
         """Recursively mask sensitive data."""
         if isinstance(data, dict):
             return {
-                key: self._mask_data(self._mask_value(key, value)) for key, value in data.items()
+                key: self._mask_data(self._mask_value(key, value))
+                for key, value in data.items()
             }
         elif isinstance(data, list):
             return [self._mask_data(item) for item in data]
@@ -216,6 +224,15 @@ class DataMaskingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request) or not self.config.enabled:
             return await call_next(request)
 

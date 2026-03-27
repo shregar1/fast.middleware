@@ -1,5 +1,4 @@
-"""
-Replay Attack Prevention Middleware for FastMVC.
+"""Replay Attack Prevention Middleware for FastMVC.
 
 Prevents replay attacks using timestamps and nonces.
 """
@@ -17,14 +16,14 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ReplayPreventionConfig:
-    """
-    Configuration for replay prevention middleware.
+    """Configuration for replay prevention middleware.
 
     Attributes:
         timestamp_header: Header containing request timestamp.
         nonce_header: Header containing unique nonce.
         max_age: Maximum age of request in seconds.
         nonce_cache_size: Max number of nonces to cache.
+
     """
 
     timestamp_header: str = "X-Timestamp"
@@ -34,8 +33,7 @@ class ReplayPreventionConfig:
 
 
 class ReplayPreventionMiddleware(FastMVCMiddleware):
-    """
-    Middleware that prevents replay attacks.
+    """Middleware that prevents replay attacks.
 
     Validates request timestamps and tracks nonces to prevent
     request replays.
@@ -53,6 +51,7 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
         # X-Timestamp: 1704067200 (Unix timestamp)
         # X-Nonce: unique-random-string
         ```
+
     """
 
     def __init__(
@@ -61,6 +60,13 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
         config: ReplayPreventionConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ReplayPreventionConfig()
         self._used_nonces: dict[str, float] = {}
@@ -77,13 +83,24 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
         # Limit cache size
         if len(self._used_nonces) > self.config.nonce_cache_size:
             sorted_nonces = sorted(self._used_nonces.items(), key=lambda x: x[1])
-            to_remove = sorted_nonces[: len(sorted_nonces) - self.config.nonce_cache_size // 2]
+            to_remove = sorted_nonces[
+                : len(sorted_nonces) - self.config.nonce_cache_size // 2
+            ]
             for n, _ in to_remove:
                 del self._used_nonces[n]
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 
@@ -116,7 +133,10 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
         if abs(now - timestamp) > self.config.max_age:
             return JSONResponse(
                 status_code=400,
-                content={"error": True, "message": "Request timestamp expired or in future"},
+                content={
+                    "error": True,
+                    "message": "Request timestamp expired or in future",
+                },
             )
 
         # Create unique key from nonce + timestamp
@@ -126,7 +146,10 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
         if nonce_key in self._used_nonces:
             return JSONResponse(
                 status_code=400,
-                content={"error": True, "message": "Replay detected: nonce already used"},
+                content={
+                    "error": True,
+                    "message": "Replay detected: nonce already used",
+                },
             )
 
         # Store nonce

@@ -1,6 +1,4 @@
-"""
-Security-related HTTP response headers (HSTS, MIME sniffing, framing / CSP).
-"""
+"""Security-related HTTP response headers (HSTS, MIME sniffing, framing / CSP)."""
 
 from __future__ import annotations
 
@@ -14,9 +12,7 @@ from starlette.responses import Response
 
 @dataclass
 class SecurityHeadersConfig:
-    """
-    Defaults favour safe framing and MIME handling; HSTS is opt-in (set ``hsts_max_age``).
-    """
+    """Defaults favour safe framing and MIME handling; HSTS is opt-in (set ``hsts_max_age``)."""
 
     #: If True, set ``X-Content-Type-Options: nosniff``.
     x_content_type_options_nosniff: bool = True
@@ -31,8 +27,7 @@ class SecurityHeadersConfig:
 
 
 class SecurityHeadersMiddleware(BaseHTTPMiddleware):
-    """
-    Apply configurable security headers to every response.
+    """Apply configurable security headers to every response.
 
     * ``X-Content-Type-Options: nosniff`` — reduces MIME confusion attacks.
     * ``X-Frame-Options`` — legacy clickjacking mitigation (pair with CSP when possible).
@@ -46,10 +41,27 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
         *,
         config: Optional[SecurityHeadersConfig] = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+        """
         super().__init__(app)
         self._config = config or SecurityHeadersConfig()
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         response = await call_next(request)
         c = self._config
 
@@ -60,7 +72,9 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             response.headers["X-Frame-Options"] = c.x_frame_options
 
         if c.csp_frame_ancestors is not None:
-            response.headers["Content-Security-Policy"] = f"frame-ancestors {c.csp_frame_ancestors}"
+            response.headers["Content-Security-Policy"] = (
+                f"frame-ancestors {c.csp_frame_ancestors}"
+            )
 
         if c.hsts_max_age is not None:
             hsts = f"max-age={c.hsts_max_age}"

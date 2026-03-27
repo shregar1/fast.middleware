@@ -1,5 +1,4 @@
-"""
-Request Fingerprinting Middleware for FastMVC.
+"""Request Fingerprinting Middleware for FastMVC.
 
 Creates fingerprints for request identification.
 """
@@ -25,8 +24,7 @@ def get_fingerprint() -> str | None:
 
 @dataclass
 class FingerprintConfig:
-    """
-    Configuration for fingerprint middleware.
+    """Configuration for fingerprint middleware.
 
     Attributes:
         include_ip: Include IP in fingerprint.
@@ -34,6 +32,7 @@ class FingerprintConfig:
         include_headers: Additional headers to include.
         include_path: Include path in fingerprint.
         add_header: Add fingerprint to response.
+
     """
 
     include_ip: bool = True
@@ -50,8 +49,7 @@ class FingerprintConfig:
 
 
 class RequestFingerprintMiddleware(FastMVCMiddleware):
-    """
-    Middleware that creates request fingerprints.
+    """Middleware that creates request fingerprints.
 
     Generates a fingerprint based on various request
     attributes for identification and analytics.
@@ -68,6 +66,7 @@ class RequestFingerprintMiddleware(FastMVCMiddleware):
             # Use fingerprint for analytics, rate limiting, etc.
             return {"fingerprint": fp}
         ```
+
     """
 
     def __init__(
@@ -76,6 +75,13 @@ class RequestFingerprintMiddleware(FastMVCMiddleware):
         config: FingerprintConfig | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or FingerprintConfig()
 
@@ -101,6 +107,15 @@ class RequestFingerprintMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

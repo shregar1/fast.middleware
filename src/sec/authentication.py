@@ -1,5 +1,4 @@
-"""
-Authentication Middleware for FastMVC.
+"""Authentication Middleware for FastMVC.
 
 Provides pluggable authentication with support for JWT, API keys, and custom backends.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class AuthConfig:
-    """
-    Configuration for authentication middleware.
+    """Configuration for authentication middleware.
 
     Attributes:
         exclude_paths: Paths that don't require authentication.
@@ -38,6 +36,7 @@ class AuthConfig:
             header_scheme="Bearer",
         )
         ```
+
     """
 
     exclude_paths: set[str] = field(
@@ -51,8 +50,7 @@ class AuthConfig:
 
 
 class AuthBackend(ABC):
-    """
-    Abstract base class for authentication backends.
+    """Abstract base class for authentication backends.
 
     Implement this class to create custom authentication strategies
     (JWT, API keys, OAuth, etc.)
@@ -69,12 +67,14 @@ class AuthBackend(ABC):
                     return {"user_id": user.id, "email": user.email}
                 return None
         ```
+
     """
 
     @abstractmethod
-    async def authenticate(self, request: Request, credentials: str) -> dict[str, Any] | None:
-        """
-        Authenticate the request using the provided credentials.
+    async def authenticate(
+        self, request: Request, credentials: str
+    ) -> dict[str, Any] | None:
+        """Authenticate the request using the provided credentials.
 
         Args:
             request: The incoming HTTP request.
@@ -82,13 +82,13 @@ class AuthBackend(ABC):
 
         Returns:
             User/auth data dict if authenticated, None otherwise.
+
         """
         pass
 
 
 class JWTAuthBackend(AuthBackend):
-    """
-    JWT authentication backend.
+    """JWT authentication backend.
 
     Validates JWT tokens and extracts user information.
 
@@ -110,6 +110,7 @@ class JWTAuthBackend(AuthBackend):
 
     Note:
         Requires `pyjwt` package: `pip install pyjwt`
+
     """
 
     def __init__(
@@ -120,8 +121,7 @@ class JWTAuthBackend(AuthBackend):
         audience: str | None = None,
         issuer: str | None = None,
     ) -> None:
-        """
-        Initialize the JWT backend.
+        """Initialize the JWT backend.
 
         Args:
             secret: The secret key for token verification.
@@ -129,6 +129,7 @@ class JWTAuthBackend(AuthBackend):
             verify_exp: Whether to verify token expiration.
             audience: Expected audience claim.
             issuer: Expected issuer claim.
+
         """
         self.secret = secret
         self.algorithm = algorithm
@@ -136,9 +137,10 @@ class JWTAuthBackend(AuthBackend):
         self.audience = audience
         self.issuer = issuer
 
-    async def authenticate(self, request: Request, credentials: str) -> dict[str, Any] | None:
-        """
-        Authenticate using JWT token.
+    async def authenticate(
+        self, request: Request, credentials: str
+    ) -> dict[str, Any] | None:
+        """Authenticate using JWT token.
 
         Args:
             request: The incoming HTTP request.
@@ -146,6 +148,7 @@ class JWTAuthBackend(AuthBackend):
 
         Returns:
             Decoded token payload if valid, None otherwise.
+
         """
         try:
             import jwt
@@ -172,8 +175,7 @@ class JWTAuthBackend(AuthBackend):
 
 
 class APIKeyAuthBackend(AuthBackend):
-    """
-    API key authentication backend.
+    """API key authentication backend.
 
     Validates API keys against a set of valid keys or a validation function.
 
@@ -195,6 +197,7 @@ class APIKeyAuthBackend(AuthBackend):
 
         backend = APIKeyAuthBackend(validator=validate_key)
         ```
+
     """
 
     def __init__(
@@ -202,12 +205,12 @@ class APIKeyAuthBackend(AuthBackend):
         valid_keys: set[str] | None = None,
         validator: Callable[[str], Awaitable[dict[str, Any] | None]] | None = None,
     ) -> None:
-        """
-        Initialize the API key backend.
+        """Initialize the API key backend.
 
         Args:
             valid_keys: Set of valid API keys.
             validator: Async function to validate keys dynamically.
+
         """
         if not valid_keys and not validator:
             raise ValueError("Either valid_keys or validator must be provided")
@@ -215,9 +218,10 @@ class APIKeyAuthBackend(AuthBackend):
         self.valid_keys = valid_keys or set()
         self.validator = validator
 
-    async def authenticate(self, request: Request, credentials: str) -> dict[str, Any] | None:
-        """
-        Authenticate using API key.
+    async def authenticate(
+        self, request: Request, credentials: str
+    ) -> dict[str, Any] | None:
+        """Authenticate using API key.
 
         Args:
             request: The incoming HTTP request.
@@ -225,6 +229,7 @@ class APIKeyAuthBackend(AuthBackend):
 
         Returns:
             Auth data dict if valid, None otherwise.
+
         """
         if self.validator:
             return await self.validator(credentials)
@@ -236,8 +241,7 @@ class APIKeyAuthBackend(AuthBackend):
 
 
 class AuthenticationMiddleware(FastMVCMiddleware):
-    """
-    Authentication middleware with pluggable backends.
+    """Authentication middleware with pluggable backends.
 
     Extracts credentials from requests and validates them using
     configurable authentication backends.
@@ -276,6 +280,7 @@ class AuthenticationMiddleware(FastMVCMiddleware):
             user_data = request.state.auth
             return {"user": user_data}
         ```
+
     """
 
     def __init__(
@@ -286,8 +291,7 @@ class AuthenticationMiddleware(FastMVCMiddleware):
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the authentication middleware.
+        """Initialize the authentication middleware.
 
         Args:
             app: The ASGI application.
@@ -295,6 +299,7 @@ class AuthenticationMiddleware(FastMVCMiddleware):
             config: Authentication configuration.
             exclude_paths: Additional paths to exclude (merged with config).
             exclude_methods: Additional methods to exclude (merged with config).
+
         """
         self.config = config or AuthConfig()
 
@@ -307,18 +312,20 @@ class AuthenticationMiddleware(FastMVCMiddleware):
         if exclude_methods:
             _exclude_methods.update(exclude_methods)
 
-        super().__init__(app, exclude_paths=_exclude_paths, exclude_methods=_exclude_methods)
+        super().__init__(
+            app, exclude_paths=_exclude_paths, exclude_methods=_exclude_methods
+        )
         self.backend = backend
 
     def _extract_credentials(self, request: Request) -> str | None:
-        """
-        Extract credentials from the request.
+        """Extract credentials from the request.
 
         Args:
             request: The incoming HTTP request.
 
         Returns:
             The credentials string, or None if not found.
+
         """
         auth_header = request.headers.get(self.config.header_name)
         if not auth_header:
@@ -338,8 +345,7 @@ class AuthenticationMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process the request with authentication.
+        """Process the request with authentication.
 
         Args:
             request: The incoming HTTP request.
@@ -347,6 +353,7 @@ class AuthenticationMiddleware(FastMVCMiddleware):
 
         Returns:
             The HTTP response, or a 401 error if authentication fails.
+
         """
         # Skip authentication for excluded paths/methods
         if self.should_skip(request):
@@ -368,13 +375,15 @@ class AuthenticationMiddleware(FastMVCMiddleware):
         return await call_next(request)
 
     def _unauthorized_response(self) -> Response:
-        """
-        Create an unauthorized (401) response.
+        """Create an unauthorized (401) response.
 
         Returns:
             A 401 Unauthorized response.
+
         """
-        headers = {"WWW-Authenticate": f'{self.config.header_scheme} realm="{self.config.realm}"'}
+        headers = {
+            "WWW-Authenticate": f'{self.config.header_scheme} realm="{self.config.realm}"'
+        }
 
         return JSONResponse(
             content={"detail": self.config.error_message},

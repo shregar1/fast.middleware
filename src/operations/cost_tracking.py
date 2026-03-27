@@ -1,5 +1,4 @@
-"""
-Cost Tracking Middleware for FastMVC.
+"""Cost Tracking Middleware for FastMVC.
 
 Tracks request costs for billing and quotas.
 """
@@ -31,13 +30,13 @@ def add_cost(cost: float) -> None:
 
 @dataclass
 class CostTrackingConfig:
-    """
-    Configuration for cost tracking middleware.
+    """Configuration for cost tracking middleware.
 
     Attributes:
         path_costs: Base cost per path.
         method_multipliers: Cost multiplier per method.
         add_header: Add cost header to response.
+
     """
 
     path_costs: dict[str, float] = field(default_factory=dict)
@@ -56,8 +55,7 @@ class CostTrackingConfig:
 
 
 class CostTrackingMiddleware(FastMVCMiddleware):
-    """
-    Middleware for tracking request costs.
+    """Middleware for tracking request costs.
 
     Assigns costs to requests for billing, quotas,
     or resource management.
@@ -81,6 +79,7 @@ class CostTrackingMiddleware(FastMVCMiddleware):
             add_cost(2.0)  # Database query
             return result
         ```
+
     """
 
     def __init__(
@@ -90,6 +89,14 @@ class CostTrackingMiddleware(FastMVCMiddleware):
         path_costs: dict[str, float] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            path_costs: The path_costs parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or CostTrackingConfig()
 
@@ -120,6 +127,15 @@ class CostTrackingMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

@@ -1,5 +1,4 @@
-"""
-Accept-Language Middleware for FastMVC.
+"""Accept-Language Middleware for FastMVC.
 
 Parses and handles Accept-Language headers.
 """
@@ -24,13 +23,13 @@ def get_language() -> str | None:
 
 @dataclass
 class AcceptLanguageConfig:
-    """
-    Configuration for accept language middleware.
+    """Configuration for accept language middleware.
 
     Attributes:
         supported_languages: List of supported languages.
         default_language: Default language if none match.
         add_header: Add Content-Language header.
+
     """
 
     supported_languages: list[str] = field(default_factory=lambda: ["en"])
@@ -39,8 +38,7 @@ class AcceptLanguageConfig:
 
 
 class AcceptLanguageMiddleware(FastMVCMiddleware):
-    """
-    Middleware that handles Accept-Language negotiation.
+    """Middleware that handles Accept-Language negotiation.
 
     Parses Accept-Language headers and selects the best
     matching language from supported options.
@@ -60,6 +58,7 @@ class AcceptLanguageMiddleware(FastMVCMiddleware):
             lang = get_language()
             return get_translations(lang)
         ```
+
     """
 
     def __init__(
@@ -69,6 +68,14 @@ class AcceptLanguageMiddleware(FastMVCMiddleware):
         supported_languages: list[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            supported_languages: The supported_languages parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or AcceptLanguageConfig()
 
@@ -113,7 +120,10 @@ class AcceptLanguageMiddleware(FastMVCMiddleware):
             # Prefix match (e.g., en-US matches en)
             lang_prefix = lang.split("-")[0]
             for i, supported in enumerate(supported_lower):
-                if supported.startswith(lang_prefix) or lang_prefix == supported.split("-")[0]:
+                if (
+                    supported.startswith(lang_prefix)
+                    or lang_prefix == supported.split("-")[0]
+                ):
                     return self.config.supported_languages[i]
 
         return self.config.default_language
@@ -121,6 +131,15 @@ class AcceptLanguageMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

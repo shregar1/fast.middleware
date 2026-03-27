@@ -1,6 +1,4 @@
-"""
-Resolve the client IP behind reverse proxies (``X-Forwarded-For``, ``X-Real-IP``).
-"""
+"""Resolve the client IP behind reverse proxies (``X-Forwarded-For``, ``X-Real-IP``)."""
 
 from __future__ import annotations
 
@@ -17,8 +15,7 @@ def get_client_ip(
     trusted_proxy_depth: int = 1,
     use_x_real_ip: bool = True,
 ) -> str:
-    """
-    Best-effort client IP for logging and rate limiting.
+    """Best-effort client IP for logging and rate limiting.
 
     * **trusted_proxy_depth** — Number of trusted proxies in front of the app. When
       ``X-Forwarded-For`` is present, the **leftmost** address is treated as the original
@@ -29,7 +26,9 @@ def get_client_ip(
     The TCP peer from ASGI (``request.client.host``) is used when headers do not apply.
     """
     if trusted_proxy_depth > 0:
-        xff = request.headers.get("x-forwarded-for") or request.headers.get("X-Forwarded-For")
+        xff = request.headers.get("x-forwarded-for") or request.headers.get(
+            "X-Forwarded-For"
+        )
         if xff:
             parts = [p.strip() for p in xff.split(",") if p.strip()]
             if parts:
@@ -44,8 +43,7 @@ def get_client_ip(
 
 
 class ClientIPMiddleware(BaseHTTPMiddleware):
-    """
-    Store :func:`get_client_ip` on ``request.state`` for handlers and downstream middleware.
+    r"""Store :func:`get_client_ip` on ``request.state`` for handlers and downstream middleware.
 
     Uses attribute name :data:`STATE_CLIENT_IP` (``\"fast_client_ip\"``).
     """
@@ -57,11 +55,29 @@ class ClientIPMiddleware(BaseHTTPMiddleware):
         trusted_proxy_depth: int = 1,
         use_x_real_ip: bool = True,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            trusted_proxy_depth: The trusted_proxy_depth parameter.
+            use_x_real_ip: The use_x_real_ip parameter.
+        """
         super().__init__(app)
         self.trusted_proxy_depth = trusted_proxy_depth
         self.use_x_real_ip = use_x_real_ip
 
-    async def dispatch(self, request: Request, call_next: RequestResponseEndpoint) -> Response:
+    async def dispatch(
+        self, request: Request, call_next: RequestResponseEndpoint
+    ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         ip = get_client_ip(
             request,
             trusted_proxy_depth=self.trusted_proxy_depth,

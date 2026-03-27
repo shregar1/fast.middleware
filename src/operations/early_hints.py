@@ -1,5 +1,4 @@
-"""
-Early Hints (103) Middleware for FastMVC.
+"""Early Hints (103) Middleware for FastMVC.
 
 Sends HTTP 103 Early Hints for preloading resources.
 """
@@ -25,12 +24,12 @@ class EarlyHint:
 
 @dataclass
 class EarlyHintsConfig:
-    """
-    Configuration for early hints middleware.
+    """Configuration for early hints middleware.
 
     Attributes:
         hints: Dict of path patterns to hints.
         global_hints: Hints applied to all responses.
+
     """
 
     hints: dict[str, list[EarlyHint]] = field(default_factory=dict)
@@ -38,8 +37,7 @@ class EarlyHintsConfig:
 
 
 class EarlyHintsMiddleware(FastMVCMiddleware):
-    """
-    Middleware that adds Link headers for early hints.
+    """Middleware that adds Link headers for early hints.
 
     While it cannot send 103 responses in ASGI directly,
     it adds Link headers that can be used by proxies/CDNs
@@ -57,6 +55,7 @@ class EarlyHintsMiddleware(FastMVCMiddleware):
             ],
         )
         ```
+
     """
 
     def __init__(
@@ -66,6 +65,14 @@ class EarlyHintsMiddleware(FastMVCMiddleware):
         global_hints: list[EarlyHint] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            global_hints: The global_hints parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or EarlyHintsConfig()
 
@@ -99,6 +106,15 @@ class EarlyHintsMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

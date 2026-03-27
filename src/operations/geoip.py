@@ -1,5 +1,4 @@
-"""
-GeoIP Middleware for FastMVC.
+"""GeoIP Middleware for FastMVC.
 
 Provides geolocation information based on client IP.
 """
@@ -20,8 +19,7 @@ _geo_ctx: ContextVar[dict[str, Any] | None] = ContextVar("geo_data", default=Non
 
 
 def get_geo_data() -> dict[str, Any] | None:
-    """
-    Get the current request's geolocation data.
+    """Get the current request's geolocation data.
 
     Returns:
         Geo data dict or None if not available.
@@ -35,14 +33,14 @@ def get_geo_data() -> dict[str, Any] | None:
             geo = get_geo_data()
             country = geo.get("country") if geo else "Unknown"
         ```
+
     """
     return _geo_ctx.get()
 
 
 @dataclass
 class GeoIPConfig:
-    """
-    Configuration for GeoIP middleware.
+    """Configuration for GeoIP middleware.
 
     Attributes:
         header_prefix: Prefix for geo headers (from CDN/proxy).
@@ -62,6 +60,7 @@ class GeoIPConfig:
             country_header="CF-IPCountry",
         )
         ```
+
     """
 
     header_prefix: str = "X-Geo-"
@@ -87,8 +86,7 @@ class GeoIPConfig:
 
 
 class GeoIPMiddleware(FastMVCMiddleware):
-    """
-    Middleware that extracts geolocation data from request.
+    """Middleware that extracts geolocation data from request.
 
     Works with CDN geo headers (Cloudflare, AWS CloudFront, etc.)
     to provide location information.
@@ -124,6 +122,7 @@ class GeoIPMiddleware(FastMVCMiddleware):
         This middleware does NOT perform GeoIP lookups itself.
         It extracts data from headers set by CDNs/proxies.
         For direct lookups, integrate with MaxMind GeoIP2.
+
     """
 
     def __init__(
@@ -133,14 +132,14 @@ class GeoIPMiddleware(FastMVCMiddleware):
         trust_headers: bool | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the GeoIP middleware.
+        """Initialize the GeoIP middleware.
 
         Args:
             app: The ASGI application.
             config: GeoIP configuration.
             trust_headers: Trust CDN headers (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or GeoIPConfig()
@@ -168,8 +167,7 @@ class GeoIPMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with geo data extraction.
+        """Process request with geo data extraction.
 
         Args:
             request: The incoming HTTP request.
@@ -177,6 +175,7 @@ class GeoIPMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with geo data handling.
+
         """
         if self.should_skip(request):
             return await call_next(request)
@@ -196,7 +195,9 @@ class GeoIPMiddleware(FastMVCMiddleware):
             # Optionally add to response headers
             if self.config.add_response_headers and geo_data:
                 for key, value in geo_data.items():
-                    response.headers[f"{self.config.header_prefix}{key.title()}"] = str(value)
+                    response.headers[f"{self.config.header_prefix}{key.title()}"] = str(
+                        value
+                    )
 
             return response
         finally:

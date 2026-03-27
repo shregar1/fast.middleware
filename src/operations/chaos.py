@@ -1,5 +1,4 @@
-"""
-Chaos Engineering Middleware for FastMVC.
+"""Chaos Engineering Middleware for FastMVC.
 
 Injects faults for testing resilience.
 """
@@ -17,8 +16,7 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 @dataclass
 class ChaosConfig:
-    """
-    Configuration for chaos middleware.
+    """Configuration for chaos middleware.
 
     Attributes:
         enabled: Enable chaos injection.
@@ -28,6 +26,7 @@ class ChaosConfig:
         max_latency: Maximum latency in seconds.
         error_codes: List of error codes to return.
         affected_paths: Only affect these paths (empty = all).
+
     """
 
     enabled: bool = False  # Must be explicitly enabled
@@ -39,6 +38,11 @@ class ChaosConfig:
     affected_paths: set[str] = None
 
     def __post_init__(self):
+        """Execute __post_init__ operation.
+
+        Returns:
+            The result of the operation.
+        """
         if self.error_codes is None:
             self.error_codes = [500, 502, 503, 504]
         if self.affected_paths is None:
@@ -46,8 +50,7 @@ class ChaosConfig:
 
 
 class ChaosMiddleware(FastMVCMiddleware):
-    """
-    Middleware for chaos engineering.
+    """Middleware for chaos engineering.
 
     Randomly injects failures and latency to test
     application resilience. NEVER enable in production!
@@ -64,6 +67,7 @@ class ChaosMiddleware(FastMVCMiddleware):
             latency_rate=0.2,  # 20% latency injection
         )
         ```
+
     """
 
     def __init__(
@@ -73,6 +77,14 @@ class ChaosMiddleware(FastMVCMiddleware):
         enabled: bool = False,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            enabled: The enabled parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or ChaosConfig()
 
@@ -90,6 +102,15 @@ class ChaosMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if not self.config.enabled:
             return await call_next(request)
 

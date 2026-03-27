@@ -1,6 +1,4 @@
-"""
-Tests for Security Headers middleware.
-"""
+"""Tests for Security Headers middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -33,7 +31,9 @@ class TestSecurityHeadersMiddleware:
         assert response.headers.get("X-Content-Type-Options") == "nosniff"
         assert response.headers.get("X-Frame-Options") == "DENY"
         assert response.headers.get("X-XSS-Protection") == "1; mode=block"
-        assert response.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
+        assert (
+            response.headers.get("Referrer-Policy") == "strict-origin-when-cross-origin"
+        )
         assert "Content-Security-Policy" in response.headers
         assert "Permissions-Policy" in response.headers
 

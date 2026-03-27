@@ -1,5 +1,4 @@
-"""
-Real IP Middleware for FastMVC.
+"""Real IP Middleware for FastMVC.
 
 Extracts real client IP from various proxy headers.
 """
@@ -24,12 +23,12 @@ def get_real_ip() -> str | None:
 
 @dataclass
 class RealIPConfig:
-    """
-    Configuration for real IP middleware.
+    """Configuration for real IP middleware.
 
     Attributes:
         headers: Headers to check for real IP (in order).
         trusted_proxies: Trusted proxy IP addresses.
+
     """
 
     headers: list[str] = field(
@@ -44,8 +43,7 @@ class RealIPConfig:
 
 
 class RealIPMiddleware(FastMVCMiddleware):
-    """
-    Middleware that extracts real client IP.
+    """Middleware that extracts real client IP.
 
     Checks various proxy headers to find the real
     client IP address behind proxies and CDNs.
@@ -61,6 +59,7 @@ class RealIPMiddleware(FastMVCMiddleware):
             ip = get_real_ip()
             return {"your_ip": ip}
         ```
+
     """
 
     def __init__(
@@ -70,6 +69,14 @@ class RealIPMiddleware(FastMVCMiddleware):
         headers: list[str] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            headers: The headers parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or RealIPConfig()
 
@@ -94,6 +101,15 @@ class RealIPMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
         if self.should_skip(request):
             return await call_next(request)
 

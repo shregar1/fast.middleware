@@ -1,5 +1,4 @@
-"""
-Feature Flag Middleware for FastMVC.
+"""Feature Flag Middleware for FastMVC.
 
 Provides feature flag and toggle support.
 """
@@ -15,12 +14,13 @@ from fastmiddleware.mw_core.base import FastMVCMiddleware
 
 
 # Context variable for feature flags
-_flags_ctx: ContextVar[dict[str, bool] | None] = ContextVar("feature_flags", default=None)
+_flags_ctx: ContextVar[dict[str, bool] | None] = ContextVar(
+    "feature_flags", default=None
+)
 
 
 def get_feature_flags() -> dict[str, bool]:
-    """
-    Get the current feature flags.
+    """Get the current feature flags.
 
     Returns:
         Dict of feature flag states.
@@ -34,19 +34,20 @@ def get_feature_flags() -> dict[str, bool]:
             if is_feature_enabled("new_dashboard"):
                 return redirect_to_new_dashboard()
         ```
+
     """
     return _flags_ctx.get() or {}
 
 
 def is_feature_enabled(flag: str) -> bool:
-    """
-    Check if a feature flag is enabled.
+    """Check if a feature flag is enabled.
 
     Args:
         flag: Feature flag name.
 
     Returns:
         True if enabled, False otherwise.
+
     """
     flags = get_feature_flags()
     return flags.get(flag, False)
@@ -54,8 +55,7 @@ def is_feature_enabled(flag: str) -> bool:
 
 @dataclass
 class FeatureFlagConfig:
-    """
-    Configuration for feature flag middleware.
+    """Configuration for feature flag middleware.
 
     Attributes:
         flags: Static feature flag values.
@@ -76,6 +76,7 @@ class FeatureFlagConfig:
             header_overrides=True,  # Enable for testing
         )
         ```
+
     """
 
     flags: dict[str, bool] = field(default_factory=dict)
@@ -87,8 +88,7 @@ class FeatureFlagConfig:
 
 
 class FeatureFlagMiddleware(FastMVCMiddleware):
-    """
-    Middleware that provides feature flag support.
+    """Middleware that provides feature flag support.
 
     Enables feature toggles for gradual rollouts, A/B testing,
     and feature gating.
@@ -125,6 +125,7 @@ class FeatureFlagMiddleware(FastMVCMiddleware):
         ```bash
         curl -H "X-Feature-Flags: experimental_api=true" ...
         ```
+
     """
 
     def __init__(
@@ -134,14 +135,14 @@ class FeatureFlagMiddleware(FastMVCMiddleware):
         flags: dict[str, bool] | None = None,
         exclude_paths: set[str] | None = None,
     ) -> None:
-        """
-        Initialize the feature flag middleware.
+        """Initialize the feature flag middleware.
 
         Args:
             app: The ASGI application.
             config: Feature flag configuration.
             flags: Static flags (overrides config).
             exclude_paths: Paths to exclude.
+
         """
         super().__init__(app, exclude_paths=exclude_paths)
         self.config = config or FeatureFlagConfig()
@@ -185,8 +186,7 @@ class FeatureFlagMiddleware(FastMVCMiddleware):
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
     ) -> Response:
-        """
-        Process request with feature flags.
+        """Process request with feature flags.
 
         Args:
             request: The incoming HTTP request.
@@ -194,6 +194,7 @@ class FeatureFlagMiddleware(FastMVCMiddleware):
 
         Returns:
             The response with feature flag handling.
+
         """
         if self.should_skip(request):
             return await call_next(request)

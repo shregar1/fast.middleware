@@ -1,6 +1,4 @@
-"""
-Comprehensive tests for Compression middleware.
-"""
+"""Comprehensive tests for Compression middleware."""
 
 import pytest
 from fastapi import FastAPI
@@ -18,32 +16,68 @@ def compression_app() -> FastAPI:
 
     @app.get("/")
     async def root():
+        """Execute root operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"message": "Hello"}
 
     @app.get("/large")
     async def large():
+        """Execute large operation.
+
+        Returns:
+            The result of the operation.
+        """
         # Return large response that should be compressed
         return {"data": "x" * 1000, "items": list(range(100))}
 
     @app.get("/small")
     async def small():
+        """Execute small operation.
+
+        Returns:
+            The result of the operation.
+        """
         return {"ok": True}
 
     @app.get("/html")
     async def html():
+        """Execute html operation.
+
+        Returns:
+            The result of the operation.
+        """
         from starlette.responses import HTMLResponse
 
         return HTMLResponse("<html><body>" + "x" * 1000 + "</body></html>")
 
     @app.get("/binary")
     async def binary():
+        """Execute binary operation.
+
+        Returns:
+            The result of the operation.
+        """
         from starlette.responses import Response
 
         return Response(content=b"\x00" * 1000, media_type="application/octet-stream")
 
     @app.get("/stream")
     async def stream():
+        """Execute stream operation.
+
+        Returns:
+            The result of the operation.
+        """
+
         async def generate():
+            """Execute generate operation.
+
+            Returns:
+                The result of the operation.
+            """
             for i in range(10):
                 yield f"chunk {i}\n"
 
@@ -61,9 +95,13 @@ def compression_client(compression_app: FastAPI) -> TestClient:
 class TestCompressionMiddleware:
     """Tests for CompressionMiddleware."""
 
-    def test_compresses_large_response_when_accepted(self, compression_client: TestClient):
+    def test_compresses_large_response_when_accepted(
+        self, compression_client: TestClient
+    ):
         """Test that large responses are compressed when client accepts gzip."""
-        response = compression_client.get("/large", headers={"Accept-Encoding": "gzip, deflate"})
+        response = compression_client.get(
+            "/large", headers={"Accept-Encoding": "gzip, deflate"}
+        )
 
         assert response.status_code == 200
         assert response.headers.get("Vary") == "Accept-Encoding"
@@ -93,7 +131,9 @@ class TestCompressionMiddleware:
 
     def test_streaming_response_not_compressed(self, compression_client: TestClient):
         """Test that streaming responses are not compressed."""
-        response = compression_client.get("/stream", headers={"Accept-Encoding": "gzip"})
+        response = compression_client.get(
+            "/stream", headers={"Accept-Encoding": "gzip"}
+        )
 
         assert response.status_code == 200
         # Streaming responses should pass through
@@ -150,17 +190,32 @@ class TestCompressionLevels:
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         return app
 
     @pytest.fixture
     def high_compression_client(self, high_compression_app: FastAPI) -> TestClient:
+        """Execute high_compression_client operation.
+
+        Args:
+            high_compression_app: The high_compression_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(high_compression_app)
 
     def test_high_compression_works(self, high_compression_client: TestClient):
         """Test that high compression level works."""
-        response = high_compression_client.get("/data", headers={"Accept-Encoding": "gzip"})
+        response = high_compression_client.get(
+            "/data", headers={"Accept-Encoding": "gzip"}
+        )
 
         assert response.status_code == 200
 
@@ -180,21 +235,41 @@ class TestCompressionExclusion:
 
         @app.get("/compress")
         async def compress():
+            """Execute compress operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         @app.get("/no-compress")
         async def no_compress():
+            """Execute no_compress operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         return app
 
     @pytest.fixture
     def excluded_client(self, excluded_app: FastAPI) -> TestClient:
+        """Execute excluded_client operation.
+
+        Args:
+            excluded_app: The excluded_app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(excluded_app)
 
     def test_excluded_path_not_compressed(self, excluded_client: TestClient):
         """Test that excluded paths are not compressed."""
-        response = excluded_client.get("/no-compress", headers={"Accept-Encoding": "gzip"})
+        response = excluded_client.get(
+            "/no-compress", headers={"Accept-Encoding": "gzip"}
+        )
 
         assert response.status_code == 200
         # Should not have compression
@@ -205,17 +280,35 @@ class TestAcceptEncodingParsing:
 
     @pytest.fixture
     def app(self) -> FastAPI:
+        """Execute app operation.
+
+        Returns:
+            The result of the operation.
+        """
         app = FastAPI()
         app.add_middleware(CompressionMiddleware, minimum_size=100)
 
         @app.get("/data")
         async def data():
+            """Execute data operation.
+
+            Returns:
+                The result of the operation.
+            """
             return {"data": "x" * 1000}
 
         return app
 
     @pytest.fixture
     def client(self, app: FastAPI) -> TestClient:
+        """Execute client operation.
+
+        Args:
+            app: The app parameter.
+
+        Returns:
+            The result of the operation.
+        """
         return TestClient(app)
 
     def test_gzip_only(self, client: TestClient):
@@ -225,7 +318,9 @@ class TestAcceptEncodingParsing:
 
     def test_gzip_with_quality(self, client: TestClient):
         """Test Accept-Encoding with quality values."""
-        response = client.get("/data", headers={"Accept-Encoding": "gzip;q=1.0, deflate;q=0.5"})
+        response = client.get(
+            "/data", headers={"Accept-Encoding": "gzip;q=1.0, deflate;q=0.5"}
+        )
         assert response.status_code == 200
 
     def test_deflate_only(self, client: TestClient):
