@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -28,8 +29,8 @@ class ReplayPreventionConfig:
 
     timestamp_header: str = "X-Timestamp"
     nonce_header: str = "X-Nonce"
-    max_age: int = 300  # 5 minutes
-    nonce_cache_size: int = 10000
+    max_age: int = FIVE_MINUTES_SECONDS  # 5 minutes
+    nonce_cache_size: int = DEFAULT_MAX_ENTRIES
 
 
 class ReplayPreventionMiddleware(FastMVCMiddleware):
@@ -113,10 +114,10 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
 
         if not timestamp_str or not nonce:
             return JSONResponse(
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
                 content={
-                    "error": True,
-                    "message": f"Missing required headers: {self.config.timestamp_header}, {self.config.nonce_header}",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: f"Missing required headers: {self.config.timestamp_header}, {self.config.nonce_header}",
                 },
             )
 
@@ -125,17 +126,17 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
             timestamp = int(timestamp_str)
         except ValueError:
             return JSONResponse(
-                status_code=400,
-                content={"error": True, "message": "Invalid timestamp format"},
+                status_code=HTTP_400_BAD_REQUEST,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Invalid timestamp format"},
             )
 
         now = time.time()
         if abs(now - timestamp) > self.config.max_age:
             return JSONResponse(
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
                 content={
-                    "error": True,
-                    "message": "Request timestamp expired or in future",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Request timestamp expired or in future",
                 },
             )
 
@@ -145,10 +146,10 @@ class ReplayPreventionMiddleware(FastMVCMiddleware):
         # Check for replay
         if nonce_key in self._used_nonces:
             return JSONResponse(
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
                 content={
-                    "error": True,
-                    "message": "Replay detected: nonce already used",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Replay detected: nonce already used",
                 },
             )
 

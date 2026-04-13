@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -48,10 +49,10 @@ class WebhookConfig:
 
     secret: str = ""
     signature_header: str = "X-Signature"
-    algorithm: str = "sha256"
+    algorithm: str = ALGORITHM_SHA256
     signature_prefix: str = ""
     timestamp_header: str | None = None
-    timestamp_tolerance: int = 300  # 5 minutes
+    timestamp_tolerance: int = FIVE_MINUTES_SECONDS  # 5 minutes
     paths: set[str] = field(default_factory=set)  # Only verify these paths
 
 
@@ -119,13 +120,13 @@ class WebhookMiddleware(FastMVCMiddleware):
 
     def _compute_signature(self, body: bytes) -> str:
         """Compute HMAC signature."""
-        if self.config.algorithm == "sha256":
+        if self.config.algorithm == ALGORITHM_SHA256:
             return hmac.new(
                 self.config.secret.encode(),
                 body,
                 hashlib.sha256,
             ).hexdigest()
-        elif self.config.algorithm == "sha1":
+        elif self.config.algorithm == ALGORITHM_SHA1:
             return hmac.new(
                 self.config.secret.encode(),
                 body,
@@ -177,10 +178,10 @@ class WebhookMiddleware(FastMVCMiddleware):
         signature = request.headers.get(self.config.signature_header)
         if not signature:
             return JSONResponse(
-                status_code=401,
+                status_code=HTTP_401_UNAUTHORIZED,
                 content={
-                    "error": True,
-                    "message": "Missing webhook signature",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Missing webhook signature",
                 },
             )
 
@@ -190,10 +191,10 @@ class WebhookMiddleware(FastMVCMiddleware):
         # Verify signature
         if not self._verify_signature(body, signature):
             return JSONResponse(
-                status_code=401,
+                status_code=HTTP_401_UNAUTHORIZED,
                 content={
-                    "error": True,
-                    "message": "Invalid webhook signature",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Invalid webhook signature",
                 },
             )
 

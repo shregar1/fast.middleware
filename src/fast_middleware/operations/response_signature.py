@@ -12,7 +12,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -31,7 +32,7 @@ class ResponseSignatureConfig:
     secret_key: str = ""
     signature_header: str = "X-Response-Signature"
     timestamp_header: str = "X-Response-Timestamp"
-    algorithm: str = "sha256"
+    algorithm: str = ALGORITHM_SHA256
     include_status: bool = True
 
 
@@ -58,9 +59,9 @@ class ResponseSignatureMiddleware(FastMVCMiddleware):
     """
 
     ALGORITHMS = {
-        "sha256": hashlib.sha256,
-        "sha512": hashlib.sha512,
-        "sha1": hashlib.sha1,
+        ALGORITHM_SHA256: hashlib.sha256,
+        ALGORITHM_SHA512: hashlib.sha512,
+        ALGORITHM_SHA1: hashlib.sha1,
     }
 
     def __init__(

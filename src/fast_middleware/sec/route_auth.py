@@ -10,7 +10,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -37,7 +38,7 @@ class RouteAuthConfig:
 
     routes: list[RouteAuth] = field(default_factory=list)
     default_require_auth: bool = False
-    user_state_key: str = "user"
+    user_state_key: str = STATE_USER
 
 
 class RouteAuthMiddleware(FastMVCMiddleware):
@@ -138,22 +139,22 @@ class RouteAuthMiddleware(FastMVCMiddleware):
 
         if not user:
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Authentication required"},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: MSG_AUTHENTICATION_REQUIRED},
             )
 
         if route_auth.required_roles:
             if not self._check_roles(user, route_auth.required_roles):
                 return JSONResponse(
-                    status_code=403,
-                    content={"error": True, "message": "Insufficient role"},
+                    status_code=HTTP_403_FORBIDDEN,
+                    content={FIELD_ERROR: True, FIELD_MESSAGE: "Insufficient role"},
                 )
 
         if route_auth.required_scopes:
             if not self._check_scopes(user, route_auth.required_scopes):
                 return JSONResponse(
-                    status_code=403,
-                    content={"error": True, "message": "Insufficient scope"},
+                    status_code=HTTP_403_FORBIDDEN,
+                    content={FIELD_ERROR: True, FIELD_MESSAGE: "Insufficient scope"},
                 )
 
         return await call_next(request)

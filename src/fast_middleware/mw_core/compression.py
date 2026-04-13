@@ -9,6 +9,7 @@ from __future__ import annotations
 from pydantic import BaseModel, Field
 
 from starlette.middleware.gzip import GZipMiddleware
+from fast_middleware.constants import DEFAULT_MIN_GZIP_SIZE
 
 
 class CompressionPreset(BaseModel):
@@ -19,7 +20,7 @@ class CompressionPreset(BaseModel):
 
     enabled: bool = True
     minimum_size: int = Field(
-        default=500, ge=0, description="Minimum response bytes to gzip."
+        default=DEFAULT_MIN_GZIP_SIZE, ge=0, description="Minimum response bytes to gzip."
     )
 
     def add_to_app(self, app) -> None:

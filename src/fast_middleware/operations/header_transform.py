@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -29,10 +30,10 @@ class HeaderTransformConfig:
 
         config = HeaderTransformConfig(
             add_response_headers={
-                "X-Powered-By": "FastMVC",
+                HEADER_X_POWERED_BY: "FastMVC",
                 "X-Version": "1.0.0",
             },
-            remove_response_headers={"Server"},
+            remove_response_headers={HEADER_SERVER},
         )
         ```
 
@@ -67,10 +68,10 @@ class HeaderTransformMiddleware(FastMVCMiddleware):
         app.add_middleware(
             HeaderTransformMiddleware,
             add_response_headers={
-                "X-Frame-Options": "DENY",
-                "X-Powered-By": "FastMVC",
+                HEADER_X_FRAME_OPTIONS: "DENY",
+                HEADER_X_POWERED_BY: "FastMVC",
             },
-            remove_response_headers={"Server"},
+            remove_response_headers={HEADER_SERVER},
         )
 
         # All responses will have:

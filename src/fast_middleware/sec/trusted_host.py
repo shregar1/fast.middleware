@@ -9,7 +9,8 @@ from collections.abc import Awaitable, Callable, Sequence
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 class TrustedHostMiddleware(FastMVCMiddleware):
@@ -139,12 +140,12 @@ class TrustedHostMiddleware(FastMVCMiddleware):
         if self.should_skip(request):
             return await call_next(request)
 
-        host = request.headers.get("Host", "")
+        host = request.headers.get(HEADER_HOST, "")
 
         if not self._is_valid_host(host):
             return PlainTextResponse(
                 "Invalid host header",
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
             )
 
         # Handle www redirect if enabled
@@ -156,7 +157,7 @@ class TrustedHostMiddleware(FastMVCMiddleware):
                 # Redirect to primary host
                 url = request.url.replace(netloc=self.primary_host)
                 return Response(
-                    status_code=301,
+                    status_code=HTTP_301_MOVED_PERMANENTLY,
                     headers={"Location": str(url)},
                 )
 

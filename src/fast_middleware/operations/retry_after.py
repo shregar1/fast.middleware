@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -122,8 +123,8 @@ class RetryAfterMiddleware(FastMVCMiddleware):
 
         # Check if should add Retry-After
         if response.status_code in self.config.status_codes:
-            if "Retry-After" not in response.headers:
+            if HEADER_RETRY_AFTER not in response.headers:
                 retry_time = self._get_retry_time(response.status_code)
-                response.headers["Retry-After"] = str(retry_time)
+                response.headers[HEADER_RETRY_AFTER] = str(retry_time)
 
         return response

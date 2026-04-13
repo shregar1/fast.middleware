@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -110,7 +111,7 @@ class HTTPSRedirectMiddleware(FastMVCMiddleware):
 
         # Check proxy header
         if self.config.trust_proxy:
-            proto = request.headers.get("X-Forwarded-Proto", "")
+            proto = request.headers.get(HEADER_X_FORWARDED_PROTO, "")
             if proto.lower() == "https":
                 return True
 

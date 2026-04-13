@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import HTMLResponse, JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -43,7 +44,7 @@ class MaintenanceConfig:
 
     enabled: bool = False
     message: str = "Service temporarily unavailable for maintenance"
-    retry_after: int = 300  # 5 minutes
+    retry_after: int = FIVE_MINUTES_SECONDS  # 5 minutes
     allowed_ips: set[str] | None = None
     allowed_paths: set[str] | None = None
     bypass_header: str = "X-Maintenance-Bypass"
@@ -92,8 +93,8 @@ class MaintenanceMiddleware(FastMVCMiddleware):
     Response (JSON):
         ```json
         {
-            "error": true,
-            "message": "Service temporarily unavailable for maintenance",
+            FIELD_ERROR: true,
+            FIELD_MESSAGE: "Service temporarily unavailable for maintenance",
             "maintenance": true,
             "retry_after": 300
         }
@@ -288,24 +289,24 @@ class MaintenanceMiddleware(FastMVCMiddleware):
 
         # Return maintenance response
         headers = {
-            "Retry-After": str(self.config.retry_after),
-            "X-Maintenance-Mode": "true",
+            HEADER_RETRY_AFTER: str(self.config.retry_after),
+            HEADER_X_MAINTENANCE_MODE: "true",
         }
 
         if self.config.use_html:
             return HTMLResponse(
                 content=self._get_html_response(),
-                status_code=503,
+                status_code=HTTP_503_SERVICE_UNAVAILABLE,
                 headers=headers,
             )
 
         return JSONResponse(
             content={
-                "error": True,
-                "message": self.config.message,
+                FIELD_ERROR: True,
+                FIELD_MESSAGE: self.config.message,
                 "maintenance": True,
                 "retry_after": self.config.retry_after,
             },
-            status_code=503,
+            status_code=HTTP_503_SERVICE_UNAVAILABLE,
             headers=headers,
         )

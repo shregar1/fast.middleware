@@ -10,7 +10,8 @@ import httpx
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -35,7 +36,7 @@ class ProxyConfig:
     """
 
     routes: list[ProxyRoute] = field(default_factory=list)
-    timeout: float = 30.0
+    timeout: float = DEFAULT_TIMEOUT_SECONDS
     follow_redirects: bool = False
 
 
@@ -140,18 +141,18 @@ class ProxyMiddleware(FastMVCMiddleware):
         headers.pop("host", None)
 
         if route.preserve_host:
-            headers["X-Forwarded-Host"] = request.headers.get("host", "")
+            headers[HEADER_X_FORWARDED_HOST] = request.headers.get("host", "")
 
         headers.update(route.add_headers)
 
         # Forward client info
         client_ip = self.get_client_ip(request)
-        if "X-Forwarded-For" in headers:
-            headers["X-Forwarded-For"] += f", {client_ip}"
+        if HEADER_X_FORWARDED_FOR in headers:
+            headers[HEADER_X_FORWARDED_FOR] += f", {client_ip}"
         else:
-            headers["X-Forwarded-For"] = client_ip
+            headers[HEADER_X_FORWARDED_FOR] = client_ip
 
-        headers["X-Forwarded-Proto"] = request.url.scheme
+        headers[HEADER_X_FORWARDED_PROTO] = request.url.scheme
 
         # Get request body
         body = await request.body()
@@ -171,11 +172,11 @@ class ProxyMiddleware(FastMVCMiddleware):
                 from starlette.responses import JSONResponse
 
                 return JSONResponse(
-                    status_code=502,
+                    status_code=HTTP_502_BAD_GATEWAY,
                     content={
-                        "error": True,
-                        "message": "Bad Gateway",
-                        "detail": str(e),
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: "Bad Gateway",
+                        FIELD_DETAIL: str(e),
                     },
                 )
 

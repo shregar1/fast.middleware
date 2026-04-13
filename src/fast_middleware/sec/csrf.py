@@ -12,7 +12,10 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
+
+
 
 
 @dataclass
@@ -50,7 +53,7 @@ class CSRFConfig:
     cookie_secure: bool = False
     cookie_httponly: bool = True
     cookie_samesite: str = "strict"
-    cookie_max_age: int = 3600
+    cookie_max_age: int = ONE_HOUR_SECONDS
 
     def __post_init__(self):
         """Execute __post_init__ operation.
@@ -195,29 +198,29 @@ class CSRFMiddleware(FastMVCMiddleware):
         # Both must be present and match
         if not cookie_token or not header_token:
             return JSONResponse(
-                status_code=403,
+                status_code=HTTP_403_FORBIDDEN,
                 content={
-                    "error": True,
-                    "message": "CSRF token missing",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "CSRF token missing",
                 },
             )
 
         if cookie_token != header_token:
             return JSONResponse(
-                status_code=403,
+                status_code=HTTP_403_FORBIDDEN,
                 content={
-                    "error": True,
-                    "message": "CSRF token mismatch",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "CSRF token mismatch",
                 },
             )
 
         # Validate token signature
         if not self._validate_token(cookie_token):
             return JSONResponse(
-                status_code=403,
+                status_code=HTTP_403_FORBIDDEN,
                 content={
-                    "error": True,
-                    "message": "Invalid CSRF token",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Invalid CSRF token",
                 },
             )
 

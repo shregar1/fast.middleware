@@ -10,7 +10,8 @@ from enum import Enum
 from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import HTTP_308_PERMANENT_REDIRECT
 
 
 class SlashAction(Enum):
@@ -46,7 +47,7 @@ class TrailingSlashConfig:
 
     action: SlashAction = SlashAction.REMOVE
     redirect: bool = True
-    redirect_code: int = 308
+    redirect_code: int = HTTP_308_PERMANENT_REDIRECT
     exclude_extensions: set[str] = None  # type: ignore
 
     def __post_init__(self):

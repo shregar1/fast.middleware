@@ -10,7 +10,8 @@ from urllib.parse import urlparse
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -150,13 +151,13 @@ class OriginMiddleware(FastMVCMiddleware):
     def _extract_origin(self, request: Request) -> str | None:
         """Extract origin from request."""
         # Try Origin header first
-        origin = request.headers.get("Origin")
+        origin = request.headers.get(HEADER_ORIGIN)
         if origin:
             return origin
 
         # Fall back to Referer
         if self.config.check_referer:
-            referer = request.headers.get("Referer")
+            referer = request.headers.get(HEADER_REFERER)
             if referer:
                 parsed = urlparse(referer)
                 if parsed.scheme and parsed.netloc:
@@ -189,10 +190,10 @@ class OriginMiddleware(FastMVCMiddleware):
         if not origin:
             if self.config.strict_mode:
                 return JSONResponse(
-                    status_code=403,
+                    status_code=HTTP_403_FORBIDDEN,
                     content={
-                        "error": True,
-                        "message": "Origin header required",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: "Origin header required",
                     },
                 )
             return await call_next(request)
@@ -200,10 +201,10 @@ class OriginMiddleware(FastMVCMiddleware):
         # Validate origin
         if not self._is_origin_allowed(origin):
             return JSONResponse(
-                status_code=403,
+                status_code=HTTP_403_FORBIDDEN,
                 content={
-                    "error": True,
-                    "message": "Origin not allowed",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Origin not allowed",
                 },
             )
 

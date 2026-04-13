@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -28,9 +29,9 @@ class ContentTypeConfig:
 
         config = ContentTypeConfig(
             allowed_types={
-                "POST": {"application/json", "multipart/form-data"},
-                "PUT": {"application/json"},
-                "PATCH": {"application/json"},
+                "POST": {CONTENT_TYPE_JSON, CONTENT_TYPE_MULTIPART},
+                "PUT": {CONTENT_TYPE_JSON},
+                "PATCH": {CONTENT_TYPE_JSON},
             },
         )
         ```
@@ -40,9 +41,9 @@ class ContentTypeConfig:
     allowed_types: dict[str, set[str]] = field(default_factory=dict)
     default_allowed: set[str] = field(
         default_factory=lambda: {
-            "application/json",
-            "application/x-www-form-urlencoded",
-            "multipart/form-data",
+            CONTENT_TYPE_JSON,
+            CONTENT_TYPE_FORM_URLENCODED,
+            CONTENT_TYPE_MULTIPART,
         }
     )
     strict: bool = False
@@ -79,8 +80,8 @@ class ContentTypeMiddleware(FastMVCMiddleware):
         app.add_middleware(
             ContentTypeMiddleware,
             allowed_types={
-                "POST": {"application/json"},
-                "PUT": {"application/json"},
+                "POST": {CONTENT_TYPE_JSON},
+                "PUT": {CONTENT_TYPE_JSON},
             },
         )
         ```
@@ -149,17 +150,17 @@ class ContentTypeMiddleware(FastMVCMiddleware):
         if not self._requires_body(request):
             return await call_next(request)
 
-        content_type = request.headers.get("Content-Type", "")
+        content_type = request.headers.get(HEADER_CONTENT_TYPE, "")
         base_type = self._extract_content_type(content_type)
 
         # Check if Content-Type is required
         if not base_type:
             if self.config.strict:
                 return JSONResponse(
-                    status_code=415,
+                    status_code=HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                     content={
-                        "error": True,
-                        "message": "Content-Type header is required",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: "Content-Type header is required",
                     },
                 )
             # Not strict, allow
@@ -169,10 +170,10 @@ class ContentTypeMiddleware(FastMVCMiddleware):
         allowed = self._get_allowed_types(request.method)
         if base_type not in allowed:
             return JSONResponse(
-                status_code=415,
+                status_code=HTTP_415_UNSUPPORTED_MEDIA_TYPE,
                 content={
-                    "error": True,
-                    "message": f"Unsupported Content-Type: {base_type}",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: f"Unsupported Content-Type: {base_type}",
                     "allowed": list(allowed),
                 },
             )

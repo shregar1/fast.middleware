@@ -11,7 +11,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -49,7 +50,7 @@ class CacheConfig:
     enable_last_modified: bool = False
     cacheable_methods: set[str] = field(default_factory=lambda: {"GET", "HEAD"})
     cacheable_status_codes: set[int] = field(default_factory=lambda: {200, 301, 304})
-    vary_headers: tuple[str, ...] = ("Accept", "Accept-Encoding")
+    vary_headers: tuple[str, ...] = (HEADER_ACCEPT, HEADER_ACCEPT_ENCODING)
     private: bool = False
     no_store: bool = False
 
@@ -212,7 +213,7 @@ class CacheMiddleware(FastMVCMiddleware):
             return await call_next(request)
 
         # Get If-None-Match header for conditional requests
-        if_none_match = request.headers.get("If-None-Match")
+        if_none_match = request.headers.get(HEADER_IF_NONE_MATCH)
 
         # Process the request
         response = await call_next(request)
@@ -234,10 +235,10 @@ class CacheMiddleware(FastMVCMiddleware):
             # Check for conditional request (304 Not Modified)
             if if_none_match and if_none_match == etag:
                 return Response(
-                    status_code=304,
+                    status_code=HTTP_304_NOT_MODIFIED,
                     headers={
-                        "ETag": etag,
-                        "Cache-Control": self._build_cache_control(request.url.path),
+                        HEADER_ETAG: etag,
+                        HEADER_CACHE_CONTROL: self._build_cache_control(request.url.path),
                     },
                 )
 
@@ -245,15 +246,15 @@ class CacheMiddleware(FastMVCMiddleware):
         headers = dict(response.headers)
 
         # Add Cache-Control
-        headers["Cache-Control"] = self._build_cache_control(request.url.path)
+        headers[HEADER_CACHE_CONTROL] = self._build_cache_control(request.url.path)
 
         # Add ETag
         if etag:
-            headers["ETag"] = etag
+            headers[HEADER_ETAG] = etag
 
         # Add Vary headers
         if self.config.vary_headers:
-            headers["Vary"] = ", ".join(self.config.vary_headers)
+            headers[HEADER_VARY] = ", ".join(self.config.vary_headers)
 
         return Response(
             content=body,

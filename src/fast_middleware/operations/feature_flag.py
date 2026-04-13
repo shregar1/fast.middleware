@@ -10,12 +10,13 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 # Context variable for feature flags
 _flags_ctx: ContextVar[dict[str, bool] | None] = ContextVar(
-    "feature_flags", default=None
+    STATE_FEATURE_FLAGS, default=None
 )
 
 

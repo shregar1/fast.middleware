@@ -10,7 +10,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -123,7 +124,7 @@ class WarmupMiddleware(FastMVCMiddleware):
             elapsed = time.time() - self._start_time
 
             return JSONResponse(
-                status_code=200 if ready else 503,
+                status_code=HTTP_200_OK if ready else 503,
                 content={
                     "ready": ready,
                     "uptime": elapsed,
@@ -134,12 +135,12 @@ class WarmupMiddleware(FastMVCMiddleware):
         # For normal requests, check readiness
         if not self._is_ready() and not self.should_skip(request):
             return JSONResponse(
-                status_code=503,
+                status_code=HTTP_503_SERVICE_UNAVAILABLE,
                 content={
-                    "error": True,
-                    "message": "Service is warming up",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Service is warming up",
                 },
-                headers={"Retry-After": "5"},
+                headers={HEADER_RETRY_AFTER: "5"},
             )
 
         return await call_next(request)

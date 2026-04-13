@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -24,7 +25,7 @@ class PayloadSizeConfig:
 
     """
 
-    max_request_size: int = 10 * 1024 * 1024  # 10 MB
+    max_request_size: int = DEFAULT_MAX_CHAIN_LENGTH * BYTES_PER_MIB  # 10 MB
     max_response_size: int | None = None  # None = no limit
     check_content_length: bool = True
     add_header: bool = True
@@ -94,16 +95,16 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
 
         # Check request size via Content-Length
         if self.config.check_content_length:
-            content_length = request.headers.get("Content-Length")
+            content_length = request.headers.get(HEADER_CONTENT_LENGTH)
             if content_length:
                 try:
                     size = int(content_length)
                     if size > self.config.max_request_size:
                         return JSONResponse(
-                            status_code=413,
+                            status_code=HTTP_413_PAYLOAD_TOO_LARGE,
                             content={
-                                "error": True,
-                                "message": "Request payload too large",
+                                FIELD_ERROR: True,
+                                FIELD_MESSAGE: MSG_PAYLOAD_TOO_LARGE,
                                 "max_size": self._format_size(
                                     self.config.max_request_size
                                 ),
@@ -117,16 +118,16 @@ class PayloadSizeMiddleware(FastMVCMiddleware):
 
         # Check response size
         if self.config.max_response_size:
-            content_length = response.headers.get("Content-Length")
+            content_length = response.headers.get(HEADER_CONTENT_LENGTH)
             if content_length:
                 try:
                     size = int(content_length)
                     if size > self.config.max_response_size:
                         return JSONResponse(
-                            status_code=500,
+                            status_code=HTTP_500_INTERNAL_SERVER_ERROR,
                             content={
-                                "error": True,
-                                "message": "Response too large",
+                                FIELD_ERROR: True,
+                                FIELD_MESSAGE: "Response too large",
                             },
                         )
                 except ValueError:

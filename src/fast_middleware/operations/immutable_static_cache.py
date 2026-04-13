@@ -8,7 +8,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -107,6 +108,6 @@ class ImmutableStaticCacheMiddleware(FastMVCMiddleware):
         response = await call_next(request)
 
         if request.method in {"GET", "HEAD"} and self._matches(request.url.path):
-            response.headers["Cache-Control"] = self._cache_control_value()
+            response.headers[HEADER_CACHE_CONTROL] = self._cache_control_value()
 
         return response

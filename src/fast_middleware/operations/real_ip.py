@@ -10,10 +10,11 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
-_real_ip_ctx: ContextVar[str | None] = ContextVar("real_ip", default=None)
+_real_ip_ctx: ContextVar[str | None] = ContextVar(STATE_REAL_IP, default=None)
 
 
 def get_real_ip() -> str | None:
@@ -34,9 +35,9 @@ class RealIPConfig:
     headers: list[str] = field(
         default_factory=lambda: [
             "CF-Connecting-IP",  # Cloudflare
-            "X-Real-IP",  # nginx
+            HEADER_X_REAL_IP,  # nginx
             "True-Client-IP",  # Akamai
-            "X-Forwarded-For",  # Standard
+            HEADER_X_FORWARDED_FOR,  # Standard
         ]
     )
     trusted_proxies: set[str] = field(default_factory=set)
@@ -96,7 +97,7 @@ class RealIPMiddleware(FastMVCMiddleware):
 
         # Fall back to direct connection IP
         client = request.scope.get("client")
-        return client[0] if client else "unknown"
+        return client[0] if client else DEFAULT_UNKNOWN
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]

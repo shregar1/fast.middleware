@@ -14,7 +14,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -31,12 +32,12 @@ class RequestLoggerConfig:
 
     """
 
-    format: str = "combined"
-    logger_name: str = "access"
+    format: str = LOG_FORMAT_COMBINED
+    logger_name: str = LOGGER_ACCESS
     log_level: int = logging.INFO
     include_headers: bool = False
     mask_headers: set[str] = field(
-        default_factory=lambda: {"Authorization", "Cookie", "X-API-Key"}
+        default_factory=lambda: {HEADER_AUTHORIZATION, HEADER_COOKIE, HEADER_X_API_KEY}
     )
     skip_paths: set[str] = field(
         default_factory=lambda: {"/health", "/ready", "/metrics"}
@@ -104,8 +105,8 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
         protocol = f"HTTP/{request.scope.get('http_version', '1.1')}"
         status = response.status_code
         size = response.headers.get("content-length", "-")
-        referer = request.headers.get("Referer", "-")
-        user_agent = request.headers.get("User-Agent", "-")
+        referer = request.headers.get(HEADER_REFERER, "-")
+        user_agent = request.headers.get(HEADER_USER_AGENT, "-")
 
         return (
             f'{client_ip} - - [{timestamp}] "{method} {path} {protocol}" '
@@ -132,14 +133,14 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
         """Format as JSON."""
         data: dict[str, Any] = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
-            "client_ip": self.get_client_ip(request),
+            STATE_CLIENT_IP: self.get_client_ip(request),
             "method": request.method,
             "path": request.url.path,
             "query": str(request.url.query) if request.url.query else None,
             "status": response.status_code,
             "duration_ms": round(duration * 1000, 2),
-            "user_agent": request.headers.get("User-Agent"),
-            "referer": request.headers.get("Referer"),
+            "user_agent": request.headers.get(HEADER_USER_AGENT),
+            "referer": request.headers.get(HEADER_REFERER),
         }
 
         if self.config.include_headers:
@@ -157,7 +158,7 @@ class RequestLoggerMiddleware(FastMVCMiddleware):
         """Format log entry."""
         if self.config.format == "json":
             return self._format_json(request, response, duration)
-        elif self.config.format == "common":
+        elif self.config.format == LOG_FORMAT_COMMON:
             return self._format_common(request, response, duration)
         else:  # combined
             return self._format_combined(request, response, duration)

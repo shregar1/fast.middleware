@@ -10,11 +10,12 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 # Context variable for locale
-_locale_ctx: ContextVar[str | None] = ContextVar("locale", default=None)
+_locale_ctx: ContextVar[str | None] = ContextVar(STATE_LOCALE, default=None)
 
 
 def get_locale() -> str | None:
@@ -30,7 +31,7 @@ def get_locale() -> str | None:
         @app.get("/")
         async def root():
             locale = get_locale()
-            return {"message": translate("hello", locale)}
+            return {FIELD_MESSAGE: translate("hello", locale)}
         ```
 
     """
@@ -63,9 +64,9 @@ class LocaleConfig:
 
     default_locale: str = "en"
     supported_locales: list[str] = field(default_factory=lambda: ["en"])
-    locale_header: str = "Accept-Language"
+    locale_header: str = HEADER_ACCEPT_LANGUAGE
     locale_query_param: str = "lang"
-    locale_cookie: str = "locale"
+    locale_cookie: str = STATE_LOCALE
     fallback_chain: bool = True
     set_cookie: bool = True
 

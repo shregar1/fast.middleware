@@ -9,6 +9,7 @@ from __future__ import annotations
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
+from fast_middleware.constants import *
 
 
 class BodySizeLimitMiddleware(BaseHTTPMiddleware):
@@ -48,14 +49,14 @@ class BodySizeLimitMiddleware(BaseHTTPMiddleware):
                 length = int(raw)
             except ValueError:
                 return JSONResponse(
-                    {"detail": "Invalid Content-Length"},
-                    status_code=400,
+                    {FIELD_DETAIL: "Invalid Content-Length"},
+                    status_code=HTTP_400_BAD_REQUEST,
                 )
             if length > self.max_bytes:
                 return JSONResponse(
                     {
-                        "detail": f"Request body exceeds maximum of {self.max_bytes} bytes"
+                        FIELD_DETAIL: f"Request body exceeds maximum of {self.max_bytes} bytes"
                     },
-                    status_code=413,
+                    status_code=HTTP_413_PAYLOAD_TOO_LARGE,
                 )
         return await call_next(request)

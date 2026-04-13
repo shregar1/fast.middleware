@@ -11,7 +11,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -77,7 +78,7 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
         #   "success": true,
         #   "data": { ... original response ... },
         #   "meta": {
-        #     "request_id": "...",
+        #     STATE_REQUEST_ID: "...",
         #     "timestamp": "..."
         #   }
         # }
@@ -114,9 +115,9 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
         meta = {}
 
         if self.config.add_request_id:
-            request_id = getattr(request.state, "request_id", None)
+            request_id = getattr(request.state, STATE_REQUEST_ID, None)
             if request_id:
-                meta["request_id"] = request_id
+                meta[STATE_REQUEST_ID] = request_id
 
         if self.config.add_timestamp:
             meta["timestamp"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
@@ -128,8 +129,8 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
 
     def _is_json_response(self, response: Response) -> bool:
         """Check if response is JSON."""
-        content_type = response.headers.get("Content-Type", "")
-        return "application/json" in content_type
+        content_type = response.headers.get(HEADER_CONTENT_TYPE, "")
+        return CONTENT_TYPE_JSON in content_type
 
     async def dispatch(
         self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
@@ -180,7 +181,7 @@ class ResponseFormatMiddleware(FastMVCMiddleware):
             )
 
         # Wrap response
-        is_success = 200 <= response.status_code < 400
+        is_success = 200 <= response.status_code < HTTP_400_BAD_REQUEST
 
         wrapped = {
             "success": is_success,

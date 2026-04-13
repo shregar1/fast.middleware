@@ -13,7 +13,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -42,7 +43,7 @@ class SessionConfig:
     """
 
     cookie_name: str = "session_id"
-    max_age: int = 3600  # 1 hour
+    max_age: int = ONE_HOUR_SECONDS  # 1 hour
     cookie_secure: bool = False
     cookie_httponly: bool = True
     cookie_samesite: str = "lax"

@@ -11,11 +11,12 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 # Context variable for correlation ID
-_correlation_id_ctx: ContextVar[str | None] = ContextVar("correlation_id", default=None)
+_correlation_id_ctx: ContextVar[str | None] = ContextVar(STATE_CORRELATION_ID, default=None)
 
 
 def get_correlation_id() -> str | None:
@@ -31,7 +32,7 @@ def get_correlation_id() -> str | None:
         @app.get("/")
         async def root():
             correlation_id = get_correlation_id()
-            logger.info(f"Processing request", extra={"correlation_id": correlation_id})
+            logger.info(f"Processing request", extra={STATE_CORRELATION_ID: correlation_id})
         ```
 
     """
@@ -54,14 +55,14 @@ class CorrelationConfig:
         from fastmiddleware import CorrelationConfig
 
         config = CorrelationConfig(
-            header_name="X-Correlation-ID",
+            header_name=HEADER_X_CORRELATION_ID,
             response_header=True,
         )
         ```
 
     """
 
-    header_name: str = "X-Correlation-ID"
+    header_name: str = HEADER_X_CORRELATION_ID
     response_header: bool = True
     generate_if_missing: bool = True
     validate_format: bool = False
@@ -97,7 +98,7 @@ class CorrelationMiddleware(FastMVCMiddleware):
             async with httpx.AsyncClient() as client:
                 response = await client.get(
                     "http://other-service/api",
-                    headers={"X-Correlation-ID": corr_id}
+                    headers={HEADER_X_CORRELATION_ID: corr_id}
                 )
         ```
 

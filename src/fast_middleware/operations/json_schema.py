@@ -11,7 +11,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -202,19 +203,19 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
             if not body:
                 if self.config.strict:
                     return JSONResponse(
-                        status_code=400,
-                        content={"error": True, "message": "Request body required"},
+                        status_code=HTTP_400_BAD_REQUEST,
+                        content={FIELD_ERROR: True, FIELD_MESSAGE: "Request body required"},
                     )
                 return await call_next(request)
 
             data = json.loads(body)
         except json.JSONDecodeError as e:
             return JSONResponse(
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
                 content={
-                    "error": True,
-                    "message": "Invalid JSON",
-                    "detail": str(e),
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: MSG_INVALID_JSON,
+                    FIELD_DETAIL: str(e),
                 },
             )
 
@@ -223,10 +224,10 @@ class JSONSchemaMiddleware(FastMVCMiddleware):
 
         if not valid and self.config.strict:
             return JSONResponse(
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
                 content={
-                    "error": True,
-                    "message": "Validation failed",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Validation failed",
                     "errors": errors,
                 },
             )

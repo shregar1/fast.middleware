@@ -13,7 +13,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -30,7 +31,7 @@ class RateLimitConfig:
         requests_per_hour: Maximum requests allowed per hour.
         burst_limit: Maximum burst requests (for token bucket).
         window_size: Size of the rate limit window in seconds.
-        strategy: Rate limiting strategy ("sliding", "fixed", "token_bucket").
+        strategy: Rate limiting strategy (RATE_LIMIT_STRATEGY_SLIDING, RATE_LIMIT_STRATEGY_FIXED, RATE_LIMIT_STRATEGY_TOKEN_BUCKET).
         key_func: Custom function to generate rate limit keys.
 
     Example:
@@ -51,10 +52,10 @@ class RateLimitConfig:
     """
 
     requests_per_minute: int = 60
-    requests_per_hour: int = 1000
-    burst_limit: int = 10
+    requests_per_hour: int = DEFAULT_MAX_ENTRIES
+    burst_limit: int = DEFAULT_MAX_CHAIN_LENGTH
     window_size: int = 60
-    strategy: str = "sliding"  # sliding, fixed, token_bucket
+    strategy: str = RATE_LIMIT_STRATEGY_SLIDING  # sliding, fixed, token_bucket
     key_func: Callable[[Request], str] | None = None
 
 
@@ -156,7 +157,7 @@ class InMemoryRateLimitStore(RateLimitStore):
 
             return True, remaining, reset_time
 
-    async def cleanup(self, max_age: int = 3600) -> None:
+    async def cleanup(self, max_age: int = ONE_HOUR_SECONDS) -> None:
         """Clean up expired rate limit entries.
 
         Args:
@@ -238,7 +239,7 @@ class RateLimitMiddleware(FastMVCMiddleware):
         store: RateLimitStore | None = None,
         exclude_paths: set[str] | None = None,
         exclude_methods: set[str] | None = None,
-        error_message: str = "Rate limit exceeded. Please try again later.",
+        error_message: str = MSG_RATE_LIMIT_EXCEEDED,
         include_headers: bool = True,
     ) -> None:
         """Initialize the rate limiting middleware.
@@ -352,9 +353,9 @@ class RateLimitMiddleware(FastMVCMiddleware):
 
         # Add rate limit headers
         if self.include_headers:
-            response.headers["X-RateLimit-Limit"] = str(self.config.requests_per_minute)
-            response.headers["X-RateLimit-Remaining"] = str(remaining)
-            response.headers["X-RateLimit-Reset"] = str(reset_time)
+            response.headers[HEADER_X_RATELIMIT_LIMIT] = str(self.config.requests_per_minute)
+            response.headers[HEADER_X_RATELIMIT_REMAINING] = str(remaining)
+            response.headers[HEADER_X_RATELIMIT_RESET] = str(reset_time)
 
         return response
 
@@ -375,19 +376,19 @@ class RateLimitMiddleware(FastMVCMiddleware):
         retry_after = max(1, reset_time - int(time.time()))
 
         headers = {
-            "Retry-After": str(retry_after),
-            "X-RateLimit-Limit": str(limit),
-            "X-RateLimit-Remaining": "0",
-            "X-RateLimit-Reset": str(reset_time),
+            HEADER_RETRY_AFTER: str(retry_after),
+            HEADER_X_RATELIMIT_LIMIT: str(limit),
+            HEADER_X_RATELIMIT_REMAINING: "0",
+            HEADER_X_RATELIMIT_RESET: str(reset_time),
         }
 
         content = {
-            "detail": self.error_message,
+            FIELD_DETAIL: self.error_message,
             "retry_after": retry_after,
         }
 
         return JSONResponse(
             content=content,
-            status_code=429,
+            status_code=HTTP_429_TOO_MANY_REQUESTS,
             headers=headers,
         )

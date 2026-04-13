@@ -27,15 +27,34 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fast-middleware"
-version = "1.5.0"
+name = "fastx-middleware"
+version = "1.6.0"
 description = "HTTP middleware utilities (request ID, security headers, timing, CORS/body/IP/compression) for FastMVC / Starlette apps."
 readme = "README.md"
 license = { text = "MIT" }
 requires-python = ">=3.10"
+authors = [
+    {name = "Shivansh Sengar", email = "sengarsinghshivansh@gmail.com"},
+    {name = "Shreyansh Sengar", email = "sengarsinghshreyansh@gmail.com"},
+]
+keywords = ["fastapi", "middleware", "starlette", "security", "cors", "rate-limiting", "fastmvc"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Typing :: Typed",
+]
 dependencies = [
     "starlette>=0.27.0",
-    "fast-platform>=1.5.0",
+    "fastx-platform>=1.6.0",
     "pydantic>=2.0.0",
 ]
 

@@ -11,7 +11,8 @@ from enum import Enum
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 class BotAction(Enum):
@@ -191,7 +192,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
         if match:
             return match.group(0)
 
-        return "unknown"
+        return DEFAULT_UNKNOWN
 
     def _is_allowed_bot(self, bot_name: str | None) -> bool:
         """Check if bot is in the allowed list."""
@@ -225,7 +226,7 @@ class BotDetectionMiddleware(FastMVCMiddleware):
         if self.should_skip(request):
             return await call_next(request)
 
-        user_agent = request.headers.get("User-Agent", "")
+        user_agent = request.headers.get(HEADER_USER_AGENT, "")
         is_bot = self._is_bot(user_agent)
         bot_name = self._get_bot_name(user_agent) if is_bot else None
 
@@ -242,20 +243,20 @@ class BotDetectionMiddleware(FastMVCMiddleware):
             # Check blocked list
             if self._is_blocked_bot(bot_name):
                 return JSONResponse(
-                    status_code=403,
+                    status_code=HTTP_403_FORBIDDEN,
                     content={
-                        "error": True,
-                        "message": "Bot access denied",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: MSG_BOT_ACCESS_DENIED,
                     },
                 )
 
             # Apply action
             if self.config.action == BotAction.BLOCK:
                 return JSONResponse(
-                    status_code=403,
+                    status_code=HTTP_403_FORBIDDEN,
                     content={
-                        "error": True,
-                        "message": "Bot access denied",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: MSG_BOT_ACCESS_DENIED,
                     },
                 )
 

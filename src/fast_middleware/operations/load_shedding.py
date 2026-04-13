@@ -13,7 +13,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -42,13 +43,13 @@ class LoadSheddingConfig:
 
     """
 
-    max_concurrent: int = 100
-    max_queue_size: int = 50
+    max_concurrent: int = DEFAULT_LIMIT_100
+    max_queue_size: int = DEFAULT_LIMIT_50
     window_size: float = 60.0
-    max_requests_per_window: int = 1000
+    max_requests_per_window: int = DEFAULT_MAX_ENTRIES
     shed_probability: float = 0.5
     priority_header: str = "X-Priority"
-    high_priority_reserved: int = 10
+    high_priority_reserved: int = DEFAULT_MAX_CHAIN_LENGTH
 
 
 class LoadSheddingMiddleware(FastMVCMiddleware):
@@ -83,8 +84,8 @@ class LoadSheddingMiddleware(FastMVCMiddleware):
     Response (when shedding):
         ```json
         {
-            "error": true,
-            "message": "Service overloaded, please retry",
+            FIELD_ERROR: true,
+            FIELD_MESSAGE: "Service overloaded, please retry",
             "retry_after": 5
         }
         ```
@@ -192,15 +193,15 @@ class LoadSheddingMiddleware(FastMVCMiddleware):
         # Try to acquire slot
         if not await self._acquire(is_high_priority):
             return JSONResponse(
-                status_code=503,
+                status_code=HTTP_503_SERVICE_UNAVAILABLE,
                 content={
-                    "error": True,
-                    "message": "Service overloaded, please retry",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Service overloaded, please retry",
                     "retry_after": 5,
                 },
                 headers={
-                    "Retry-After": "5",
-                    "X-Load-Shedding": "true",
+                    HEADER_RETRY_AFTER: "5",
+                    HEADER_X_LOAD_SHEDDING: "true",
                 },
             )
 

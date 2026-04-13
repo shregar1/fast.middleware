@@ -12,7 +12,8 @@ from enum import Enum
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 class CircuitState(Enum):
@@ -50,7 +51,7 @@ class CircuitBreakerConfig:
 
     failure_threshold: int = 5
     success_threshold: int = 2
-    timeout: float = 60.0
+    timeout: float = DEFAULT_TIMEOUT_60S
     failure_status_codes: set[int] = field(default_factory=lambda: {500, 502, 503, 504})
     excluded_status_codes: set[int] = field(
         default_factory=lambda: {400, 401, 403, 404, 422}
@@ -169,15 +170,15 @@ class CircuitBreakerMiddleware(FastMVCMiddleware):
 
         # Still open, reject
         return JSONResponse(
-            status_code=503,
+            status_code=HTTP_503_SERVICE_UNAVAILABLE,
             content={
-                "error": True,
-                "message": "Service temporarily unavailable",
+                FIELD_ERROR: True,
+                FIELD_MESSAGE: MSG_SERVICE_UNAVAILABLE,
                 "circuit": "open",
                 "retry_after": int(self.config.timeout - elapsed),
             },
             headers={
-                "Retry-After": str(int(self.config.timeout - elapsed)),
+                HEADER_RETRY_AFTER: str(int(self.config.timeout - elapsed)),
                 "X-Circuit-State": "open",
             },
         )

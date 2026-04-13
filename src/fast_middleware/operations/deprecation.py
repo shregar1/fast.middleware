@@ -10,7 +10,7 @@ from datetime import datetime
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
 
 
 @dataclass

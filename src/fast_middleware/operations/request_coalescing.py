@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -26,7 +27,7 @@ class CoalescingConfig:
     """
 
     window: float = 0.1
-    max_coalesced: int = 100
+    max_coalesced: int = DEFAULT_LIMIT_100
 
 
 class RequestCoalescingMiddleware(FastMVCMiddleware):

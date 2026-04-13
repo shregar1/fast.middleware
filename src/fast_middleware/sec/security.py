@@ -9,7 +9,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -252,7 +253,7 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
             )
 
         if self.config.x_frame_options:
-            response.headers["X-Frame-Options"] = self.config.x_frame_options
+            response.headers[HEADER_X_FRAME_OPTIONS] = self.config.x_frame_options
 
         if self.config.x_xss_protection:
             response.headers["X-XSS-Protection"] = self.config.x_xss_protection
@@ -301,7 +302,7 @@ class SecurityHeadersMiddleware(FastMVCMiddleware):
             )
 
         # Remove Server header if configured
-        if self.config.remove_server_header and "Server" in response.headers:
-            del response.headers["Server"]
+        if self.config.remove_server_header and HEADER_SERVER in response.headers:
+            del response.headers[HEADER_SERVER]
 
         return response

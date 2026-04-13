@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 _timings: ContextVar[list[dict] | None] = ContextVar("server_timings", default=None)
@@ -168,7 +169,7 @@ class ServerTimingMiddleware(FastMVCMiddleware):
 
             header_value = self._build_header(timings_list, total_ms)
             if header_value:
-                response.headers["Server-Timing"] = header_value
+                response.headers[HEADER_SERVER_TIMING] = header_value
 
             return response
         finally:

@@ -11,7 +11,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -32,7 +33,7 @@ class AuthConfig:
 
         config = AuthConfig(
             exclude_paths={"/health", "/login", "/register"},
-            header_name="Authorization",
+            header_name=HEADER_AUTHORIZATION,
             header_scheme="Bearer",
         )
         ```
@@ -43,9 +44,9 @@ class AuthConfig:
         default_factory=lambda: {"/health", "/healthz", "/docs", "/openapi.json"}
     )
     exclude_methods: set[str] = field(default_factory=lambda: {"OPTIONS"})
-    header_name: str = "Authorization"
+    header_name: str = HEADER_AUTHORIZATION
     header_scheme: str = "Bearer"
-    error_message: str = "Authentication required"
+    error_message: str = MSG_AUTHENTICATION_REQUIRED
     realm: str = "api"
 
 
@@ -278,7 +279,7 @@ class AuthenticationMiddleware(FastMVCMiddleware):
         @app.get("/protected")
         async def protected(request: Request):
             user_data = request.state.auth
-            return {"user": user_data}
+            return {STATE_USER: user_data}
         ```
 
     """
@@ -382,11 +383,11 @@ class AuthenticationMiddleware(FastMVCMiddleware):
 
         """
         headers = {
-            "WWW-Authenticate": f'{self.config.header_scheme} realm="{self.config.realm}"'
+            HEADER_WWW_AUTHENTICATE: f'{self.config.header_scheme} realm="{self.config.realm}"'
         }
 
         return JSONResponse(
-            content={"detail": self.config.error_message},
-            status_code=401,
+            content={FIELD_DETAIL: self.config.error_message},
+            status_code=HTTP_401_UNAUTHORIZED,
             headers=headers,
         )

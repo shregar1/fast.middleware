@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -239,8 +240,8 @@ class DataMaskingMiddleware(FastMVCMiddleware):
         response = await call_next(request)
 
         # Only process JSON responses
-        content_type = response.headers.get("Content-Type", "")
-        if "application/json" not in content_type:
+        content_type = response.headers.get(HEADER_CONTENT_TYPE, "")
+        if CONTENT_TYPE_JSON not in content_type:
             return response
 
         # Read body
@@ -258,7 +259,7 @@ class DataMaskingMiddleware(FastMVCMiddleware):
                 content=masked_body,
                 status_code=response.status_code,
                 headers=dict(response.headers),
-                media_type="application/json",
+                media_type=CONTENT_TYPE_JSON,
             )
         except (json.JSONDecodeError, ValueError):
             return Response(

@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -101,14 +102,14 @@ class NoCacheMiddleware(FastMVCMiddleware):
         response = await call_next(request)
 
         if self._should_apply(request.url.path, request.method):
-            response.headers["Cache-Control"] = (
+            response.headers[HEADER_CACHE_CONTROL] = (
                 "no-store, no-cache, must-revalidate, private"
             )
 
             if self.config.pragma:
-                response.headers["Pragma"] = "no-cache"
+                response.headers[HEADER_PRAGMA] = "no-cache"
 
             if self.config.expires:
-                response.headers["Expires"] = "0"
+                response.headers[HEADER_EXPIRES] = "0"
 
         return response

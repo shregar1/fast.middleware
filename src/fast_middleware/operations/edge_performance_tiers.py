@@ -31,7 +31,8 @@ from enum import Enum
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 class EdgePerformanceTier(str, Enum):
@@ -66,7 +67,7 @@ class EdgeTierDefinition:
     default_cache_control: str
     cdn_cache_control: str | None = None
     surrogate_control: str | None = None
-    vary: str = "Accept-Encoding"
+    vary: str = HEADER_ACCEPT_ENCODING
     path_overrides: tuple[tuple[str, str], ...] = ()
 
 
@@ -153,7 +154,7 @@ def tier_definition(tier: EdgePerformanceTier) -> EdgeTierDefinition:
             default_cache_control="public, max-age=0, s-maxage=5, must-revalidate",
             cdn_cache_control="public, max-age=0, s-maxage=5, must-revalidate",
             surrogate_control="max-age=5",
-            vary="Accept-Encoding",
+            vary=HEADER_ACCEPT_ENCODING,
             path_overrides=(
                 ("/api/live/", "no-store"),
                 ("/api/presence/", "private, max-age=0, s-maxage=2, must-revalidate"),
@@ -306,7 +307,7 @@ class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
             _longest_prefix_match(path, self._def.path_overrides)
             or self._def.default_cache_control
         )
-        response.headers["Cache-Control"] = cc
+        response.headers[HEADER_CACHE_CONTROL] = cc
 
         if self.config.set_cdn_headers:
             if self._def.cdn_cache_control:
@@ -319,7 +320,7 @@ class EdgeTierCacheHeadersMiddleware(FastMVCMiddleware):
                 )
 
         if self._def.vary and not response.headers.get("vary"):
-            response.headers["Vary"] = self._def.vary
+            response.headers[HEADER_VARY] = self._def.vary
 
         return response
 

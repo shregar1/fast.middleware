@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -39,7 +40,7 @@ class IdempotencyConfig:
     """
 
     header_name: str = "Idempotency-Key"
-    ttl_seconds: int = 86400  # 24 hours
+    ttl_seconds: int = ONE_DAY_SECONDS  # 24 hours
     required_methods: set[str] = None  # type: ignore
     require_key: bool = False
 
@@ -269,7 +270,7 @@ class IdempotencyMiddleware(FastMVCMiddleware):
 
         return Response(
             content=cached.get("body", ""),
-            status_code=cached.get("status_code", 200),
+            status_code=cached.get("status_code", HTTP_200_OK),
             headers=headers,
             media_type=cached.get("media_type"),
         )
@@ -303,10 +304,10 @@ class IdempotencyMiddleware(FastMVCMiddleware):
             if self.config.require_key:
                 return JSONResponse(
                     content={
-                        "error": True,
-                        "message": f"Missing {self.config.header_name} header",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: f"Missing {self.config.header_name} header",
                     },
-                    status_code=400,
+                    status_code=HTTP_400_BAD_REQUEST,
                 )
             # If key not required, just process normally
             return await call_next(request)
@@ -320,7 +321,7 @@ class IdempotencyMiddleware(FastMVCMiddleware):
         response = await call_next(request)
 
         # Cache successful responses
-        if 200 <= response.status_code < 300:
+        if 200 <= response.status_code < HTTP_300_MULTIPLE_CHOICES:
             # Read body for caching
             body = b""
             async for chunk in response.body_iterator:

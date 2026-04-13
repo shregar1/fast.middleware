@@ -10,7 +10,11 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import RedirectResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import (
+    HTTP_301_MOVED_PERMANENTLY,
+    HTTP_302_FOUND,
+)
 
 
 @dataclass
@@ -19,7 +23,7 @@ class RedirectRule:
 
     source: str  # Path or pattern
     destination: str  # Target URL
-    code: int = 301  # Redirect status code
+    code: int = HTTP_301_MOVED_PERMANENTLY  # Redirect status code
     is_regex: bool = False  # Whether source is a regex
     preserve_query: bool = True  # Preserve query string
 
@@ -133,11 +137,11 @@ class RedirectMiddleware(FastMVCMiddleware):
         """Find redirect destination for path."""
         # Check simple permanent redirects
         if path in self.config.permanent_redirects:
-            return self.config.permanent_redirects[path], 301
+            return self.config.permanent_redirects[path], HTTP_301_MOVED_PERMANENTLY
 
         # Check simple temporary redirects
         if path in self.config.temporary_redirects:
-            return self.config.temporary_redirects[path], 302
+            return self.config.temporary_redirects[path], HTTP_302_FOUND
 
         # Check rules
         for pattern, rule in self._compiled_rules:

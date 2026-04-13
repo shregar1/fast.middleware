@@ -10,7 +10,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -47,7 +48,7 @@ class IPFilterConfig:
     blacklist: set[str] = field(default_factory=set)
     whitelist_only: bool = False
     block_response_code: int = 403
-    block_message: str = "Access denied"
+    block_message: str = MSG_ACCESS_DENIED
     trust_proxy: bool = True
 
 
@@ -141,11 +142,11 @@ class IPFilterMiddleware(FastMVCMiddleware):
     def _get_client_ip(self, request: Request) -> str:
         """Get client IP address."""
         if self.config.trust_proxy:
-            forwarded = request.headers.get("X-Forwarded-For")
+            forwarded = request.headers.get(HEADER_X_FORWARDED_FOR)
             if forwarded:
                 return forwarded.split(",")[0].strip()
 
-            real_ip = request.headers.get("X-Real-IP")
+            real_ip = request.headers.get(HEADER_X_REAL_IP)
             if real_ip:
                 return real_ip
 
@@ -184,8 +185,8 @@ class IPFilterMiddleware(FastMVCMiddleware):
             return JSONResponse(
                 status_code=self.config.block_response_code,
                 content={
-                    "error": True,
-                    "message": self.config.block_message,
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: self.config.block_message,
                 },
             )
 
@@ -195,8 +196,8 @@ class IPFilterMiddleware(FastMVCMiddleware):
                 return JSONResponse(
                     status_code=self.config.block_response_code,
                     content={
-                        "error": True,
-                        "message": self.config.block_message,
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: self.config.block_message,
                     },
                 )
 

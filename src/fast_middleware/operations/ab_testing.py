@@ -12,7 +12,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 # Context variable for A/B test assignments
@@ -172,7 +173,7 @@ class ABTestMiddleware(FastMVCMiddleware):
             return user_id
 
         # Try request state
-        user = getattr(request.state, "user", None)
+        user = getattr(request.state, STATE_USER, None)
         if user:
             if isinstance(user, dict):
                 return user.get("id")

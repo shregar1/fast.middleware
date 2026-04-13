@@ -5,12 +5,13 @@ Implements bulkhead pattern for isolation.
 
 import asyncio
 from collections.abc import Awaitable, Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -26,11 +27,11 @@ class BulkheadConfig:
 
     """
 
-    max_concurrent: int = 100
-    max_waiting: int = 50
-    timeout: float = 30.0
+    max_concurrent: int = DEFAULT_LIMIT_100
+    max_waiting: int = DEFAULT_LIMIT_50
+    timeout: float = DEFAULT_TIMEOUT_SECONDS
     per_path: bool = False
-    path_limits: dict[str, int] = None
+    path_limits: dict[str, int] = field(default_factory=dict)
 
     def __post_init__(self):
         """Execute __post_init__ operation.
@@ -121,13 +122,13 @@ class BulkheadMiddleware(FastMVCMiddleware):
         # Check waiting queue
         if self._waiting >= self.config.max_waiting:
             return JSONResponse(
-                status_code=503,
+                status_code=HTTP_503_SERVICE_UNAVAILABLE,
                 content={
-                    "error": True,
-                    "message": "Service overloaded",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Service overloaded",
                     "retry_after": 5,
                 },
-                headers={"Retry-After": "5"},
+                headers={HEADER_RETRY_AFTER: "5"},
             )
 
         self._waiting += 1
@@ -138,10 +139,10 @@ class BulkheadMiddleware(FastMVCMiddleware):
             )
         except asyncio.TimeoutError:
             return JSONResponse(
-                status_code=503,
+                status_code=HTTP_503_SERVICE_UNAVAILABLE,
                 content={
-                    "error": True,
-                    "message": "Request timeout waiting for resources",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Request timeout waiting for resources",
                 },
             )
         finally:

@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -37,7 +38,7 @@ class SanitizationConfig:
     strip_tags: bool = True
     remove_null_bytes: bool = True
     trim_whitespace: bool = True
-    max_string_length: int = 10000
+    max_string_length: int = DEFAULT_MAX_STRING_LENGTH
     blocked_patterns: list[str] = field(
         default_factory=lambda: [
             r"<script[^>]*>.*?</script>",

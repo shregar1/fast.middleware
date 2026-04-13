@@ -10,7 +10,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -37,7 +38,7 @@ class ETagConfig:
     """
 
     weak_etag: bool = False
-    hash_algorithm: str = "md5"
+    hash_algorithm: str = ALGORITHM_MD5
     cacheable_methods: set[str] = field(default_factory=lambda: {"GET", "HEAD"})
     handle_if_match: bool = True
     handle_if_none_match: bool = True
@@ -98,11 +99,11 @@ class ETagMiddleware(FastMVCMiddleware):
 
     def _generate_etag(self, body: bytes) -> str:
         """Generate ETag from response body."""
-        if self.config.hash_algorithm == "md5":
+        if self.config.hash_algorithm == ALGORITHM_MD5:
             hash_value = hashlib.md5(body).hexdigest()
-        elif self.config.hash_algorithm == "sha1":
+        elif self.config.hash_algorithm == ALGORITHM_SHA1:
             hash_value = hashlib.sha1(body).hexdigest()
-        elif self.config.hash_algorithm == "sha256":
+        elif self.config.hash_algorithm == ALGORITHM_SHA256:
             hash_value = hashlib.sha256(body).hexdigest()
         else:
             hash_value = hashlib.md5(body).hexdigest()
@@ -149,13 +150,13 @@ class ETagMiddleware(FastMVCMiddleware):
             return await call_next(request)
 
         # Get conditional headers
-        if_none_match = request.headers.get("If-None-Match")
-        if_match = request.headers.get("If-Match")
+        if_none_match = request.headers.get(HEADER_IF_NONE_MATCH)
+        if_match = request.headers.get(HEADER_IF_MATCH)
 
         response = await call_next(request)
 
         # Only process successful responses
-        if not (200 <= response.status_code < 300):
+        if not (200 <= response.status_code < HTTP_300_MULTIPLE_CHOICES):
             return response
 
         # Read response body
@@ -178,21 +179,21 @@ class ETagMiddleware(FastMVCMiddleware):
         if self.config.handle_if_none_match and if_none_match:
             if self._etag_matches(etag, if_none_match):
                 return Response(
-                    status_code=304,
-                    headers={"ETag": etag},
+                    status_code=HTTP_304_NOT_MODIFIED,
+                    headers={HEADER_ETAG: etag},
                 )
 
         # Handle If-Match (412 Precondition Failed)
         if self.config.handle_if_match and if_match:
             if not self._etag_matches(etag, if_match):
                 return Response(
-                    status_code=412,
-                    headers={"ETag": etag},
+                    status_code=HTTP_412_PRECONDITION_FAILED,
+                    headers={HEADER_ETAG: etag},
                 )
 
         # Return response with ETag
         headers = dict(response.headers)
-        headers["ETag"] = etag
+        headers[HEADER_ETAG] = etag
 
         return Response(
             content=body,

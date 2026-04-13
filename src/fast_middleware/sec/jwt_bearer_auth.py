@@ -16,6 +16,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from core.utils.request_id_context import RequestIdContext
+from fast_middleware.constants import *
 
 ErrorKind = Literal[
     "missing_bearer",
@@ -31,13 +32,13 @@ def default_resolve_request_urn(request: Request) -> str:
     urn = getattr(request.state, "urn", None)
     if urn:
         return str(urn)
-    rid = getattr(request.state, "request_id", None)
+    rid = getattr(request.state, STATE_REQUEST_ID, None)
     if rid:
         return str(rid)
     ctx = RequestIdContext.get()
     if ctx:
         return ctx
-    return "unknown"
+    return DEFAULT_UNKNOWN
 
 
 class JWTBearerAuthMiddleware(BaseHTTPMiddleware):

@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -131,8 +132,8 @@ class ChaosMiddleware(FastMVCMiddleware):
             return JSONResponse(
                 status_code=error_code,
                 content={
-                    "error": True,
-                    "message": f"Chaos injection: {error_code}",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: f"Chaos injection: {error_code}",
                     "chaos": True,
                 },
             )

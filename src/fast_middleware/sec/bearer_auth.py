@@ -10,7 +10,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -26,7 +27,7 @@ class BearerAuthConfig:
     """
 
     tokens: dict[str, dict[str, Any]] = field(default_factory=dict)
-    header_name: str = "Authorization"
+    header_name: str = HEADER_AUTHORIZATION
     realm: str = "API"
     return_error_detail: bool = False
 
@@ -45,7 +46,7 @@ class BearerAuthMiddleware(FastMVCMiddleware):
             BearerAuthMiddleware,
             tokens={
                 "token123": {"user_id": 1, "role": "admin"},
-                "token456": {"user_id": 2, "role": "user"},
+                "token456": {"user_id": 2, "role": STATE_USER},
             },
         )
         ```
@@ -121,22 +122,22 @@ class BearerAuthMiddleware(FastMVCMiddleware):
 
         if not token:
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Missing authentication token"},
-                headers={"WWW-Authenticate": f'Bearer realm="{self.config.realm}"'},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Missing authentication token"},
+                headers={HEADER_WWW_AUTHENTICATE: f'Bearer realm="{self.config.realm}"'},
             )
 
         user_info = self._validate_token(token)
 
         if not user_info:
-            content = {"error": True, "message": "Invalid token"}
+            content = {FIELD_ERROR: True, FIELD_MESSAGE: "Invalid token"}
             if self.config.return_error_detail:
-                content["detail"] = "Token not found or expired"
+                content[FIELD_DETAIL] = "Token not found or expired"
 
             return JSONResponse(
-                status_code=401,
+                status_code=HTTP_401_UNAUTHORIZED,
                 content=content,
-                headers={"WWW-Authenticate": f'Bearer realm="{self.config.realm}"'},
+                headers={HEADER_WWW_AUTHENTICATE: f'Bearer realm="{self.config.realm}"'},
             )
 
         request.state.user = user_info

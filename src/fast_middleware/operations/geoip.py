@@ -11,7 +11,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import STATE_GEO
 
 
 # Context variable for geo data
@@ -187,7 +188,7 @@ class GeoIPMiddleware(FastMVCMiddleware):
         token = _geo_ctx.set(geo_data)
 
         # Store in request state
-        request.state.geo = geo_data
+        setattr(request.state, STATE_GEO, geo_data)
 
         try:
             response = await call_next(request)

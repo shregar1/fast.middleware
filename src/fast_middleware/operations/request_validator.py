@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -54,9 +55,9 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
                 ValidationRule(
                     path="/api/upload",
                     method="POST",
-                    required_headers=["Content-Type"],
-                    content_types=["multipart/form-data"],
-                    max_body_size=10 * 1024 * 1024,  # 10MB
+                    required_headers=[HEADER_CONTENT_TYPE],
+                    content_types=[CONTENT_TYPE_MULTIPART],
+                    max_body_size=10 * BYTES_PER_MIB,  # 10MB
                 ),
             ],
         )
@@ -113,7 +114,7 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
 
             # Check content type
             if rule.content_types:
-                content_type = request.headers.get("Content-Type", "")
+                content_type = request.headers.get(HEADER_CONTENT_TYPE, "")
                 if not any(ct in content_type for ct in rule.content_types):
                     errors.append(
                         f"Invalid Content-Type. Expected one of: {rule.content_types}"
@@ -121,7 +122,7 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
 
             # Check content length
             if rule.max_body_size is not None:
-                content_length = request.headers.get("Content-Length")
+                content_length = request.headers.get(HEADER_CONTENT_LENGTH)
                 if content_length:
                     try:
                         size = int(content_length)
@@ -158,10 +159,10 @@ class RequestValidatorMiddleware(FastMVCMiddleware):
 
         if errors and self.config.strict:
             return JSONResponse(
-                status_code=400,
+                status_code=HTTP_400_BAD_REQUEST,
                 content={
-                    "error": True,
-                    "message": "Request validation failed",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Request validation failed",
                     "errors": errors,
                 },
             )

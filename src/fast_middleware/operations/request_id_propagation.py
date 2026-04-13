@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 _request_ids_ctx: ContextVar[list[str] | None] = ContextVar("request_ids", default=None)
@@ -42,14 +43,14 @@ class RequestIDPropagationConfig:
 
     headers: list[str] = field(
         default_factory=lambda: [
-            "X-Request-ID",
-            "X-Correlation-ID",
-            "X-Trace-ID",
+            HEADER_X_REQUEST_ID,
+            HEADER_X_CORRELATION_ID,
+            HEADER_X_TRACE_ID,
         ]
     )
-    response_header: str = "X-Request-ID"
+    response_header: str = HEADER_X_REQUEST_ID
     generate_if_missing: bool = True
-    max_chain: int = 10
+    max_chain: int = DEFAULT_MAX_CHAIN_LENGTH
 
 
 class RequestIDPropagationMiddleware(FastMVCMiddleware):

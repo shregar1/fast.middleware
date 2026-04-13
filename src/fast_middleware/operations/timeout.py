@@ -10,7 +10,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -28,7 +29,7 @@ class TimeoutConfig:
         from fastmiddleware import TimeoutConfig
 
         config = TimeoutConfig(
-            default_timeout=30.0,
+            default_timeout=DEFAULT_TIMEOUT_SECONDS,
             path_timeouts={
                 "/upload": 120.0,
                 "/export": 300.0,
@@ -38,9 +39,9 @@ class TimeoutConfig:
 
     """
 
-    default_timeout: float = 30.0
+    default_timeout: float = DEFAULT_TIMEOUT_SECONDS
     path_timeouts: dict[str, float] = field(default_factory=dict)
-    timeout_response_code: int = 504
+    timeout_response_code: int = HTTP_504_GATEWAY_TIMEOUT
     timeout_message: str = "Request timed out"
 
 
@@ -64,11 +65,11 @@ class TimeoutMiddleware(FastMVCMiddleware):
         app = FastAPI()
 
         # 30 second default timeout
-        app.add_middleware(TimeoutMiddleware, timeout=30.0)
+        app.add_middleware(TimeoutMiddleware, timeout=DEFAULT_TIMEOUT_SECONDS)
 
         # With path-specific timeouts
         config = TimeoutConfig(
-            default_timeout=30.0,
+            default_timeout=DEFAULT_TIMEOUT_SECONDS,
             path_timeouts={
                 "/upload": 120.0,
                 "/long-process": 300.0,
@@ -132,8 +133,8 @@ class TimeoutMiddleware(FastMVCMiddleware):
             return JSONResponse(
                 status_code=self.config.timeout_response_code,
                 content={
-                    "error": True,
-                    "message": self.config.timeout_message,
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: self.config.timeout_message,
                     "timeout_seconds": timeout,
                 },
                 headers={"X-Timeout": str(timeout)},

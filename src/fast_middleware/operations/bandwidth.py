@@ -10,7 +10,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import Response, StreamingResponse
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -24,8 +25,8 @@ class BandwidthConfig:
 
     """
 
-    bytes_per_second: int = 1024 * 1024  # 1 MB/s
-    chunk_size: int = 8192
+    bytes_per_second: int = BYTES_PER_MIB  # 1 MB/s
+    chunk_size: int = DEFAULT_CHUNK_SIZE_BYTES
     per_client: bool = False
 
 

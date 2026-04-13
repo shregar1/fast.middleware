@@ -11,7 +11,8 @@ from datetime import datetime, timezone
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -130,25 +131,25 @@ class ConditionalRequestMiddleware(FastMVCMiddleware):
             )
 
         # Compute/get ETag
-        etag = response.headers.get("ETag")
+        etag = response.headers.get(HEADER_ETAG)
         if not etag:
             etag = self._compute_etag(body)
-            response.headers["ETag"] = etag
+            response.headers[HEADER_ETAG] = etag
 
         # Check If-None-Match
-        if_none_match = request.headers.get("If-None-Match")
+        if_none_match = request.headers.get(HEADER_IF_NONE_MATCH)
         if if_none_match:
             # Can be comma-separated list
             for tag in if_none_match.split(","):
                 if tag.strip() == "*" or self._etag_matches(tag, etag):
                     return Response(
-                        status_code=304,
-                        headers={"ETag": etag},
+                        status_code=HTTP_304_NOT_MODIFIED,
+                        headers={HEADER_ETAG: etag},
                     )
 
         # Check If-Modified-Since
-        if_modified_since = request.headers.get("If-Modified-Since")
-        last_modified = response.headers.get("Last-Modified")
+        if_modified_since = request.headers.get(HEADER_IF_MODIFIED_SINCE)
+        last_modified = response.headers.get(HEADER_LAST_MODIFIED)
 
         if if_modified_since and last_modified:
             ims = self._parse_date(if_modified_since)
@@ -156,8 +157,8 @@ class ConditionalRequestMiddleware(FastMVCMiddleware):
 
             if ims and lm and lm <= ims:
                 return Response(
-                    status_code=304,
-                    headers={"ETag": etag, "Last-Modified": last_modified},
+                    status_code=HTTP_304_NOT_MODIFIED,
+                    headers={HEADER_ETAG: etag, HEADER_LAST_MODIFIED: last_modified},
                 )
 
         return response

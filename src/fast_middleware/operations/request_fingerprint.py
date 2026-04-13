@@ -11,10 +11,11 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
-_fingerprint_ctx: ContextVar[str | None] = ContextVar("fingerprint", default=None)
+_fingerprint_ctx: ContextVar[str | None] = ContextVar(STATE_FINGERPRINT, default=None)
 
 
 def get_fingerprint() -> str | None:
@@ -39,8 +40,8 @@ class FingerprintConfig:
     include_ua: bool = True
     include_headers: list[str] = field(
         default_factory=lambda: [
-            "Accept-Language",
-            "Accept-Encoding",
+            HEADER_ACCEPT_LANGUAGE,
+            HEADER_ACCEPT_ENCODING,
         ]
     )
     include_path: bool = False
@@ -64,7 +65,7 @@ class RequestFingerprintMiddleware(FastMVCMiddleware):
         async def handler():
             fp = get_fingerprint()
             # Use fingerprint for analytics, rate limiting, etc.
-            return {"fingerprint": fp}
+            return {STATE_FINGERPRINT: fp}
         ```
 
     """
@@ -93,7 +94,7 @@ class RequestFingerprintMiddleware(FastMVCMiddleware):
             parts.append(self.get_client_ip(request))
 
         if self.config.include_ua:
-            parts.append(request.headers.get("User-Agent", ""))
+            parts.append(request.headers.get(HEADER_USER_AGENT, ""))
 
         for header in self.config.include_headers:
             parts.append(request.headers.get(header, ""))

@@ -12,6 +12,7 @@ from typing import Any
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import PlainTextResponse, Response
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -113,7 +114,7 @@ class MetricsCollector:
         if self.config.enable_response_size:
             self._response_sizes[(method, path)].append(response_size)
 
-        if status_code >= 500:
+        if status_code >= DEFAULT_MIN_GZIP_SIZE:
             self._error_count[(method, path)] += 1
 
     def _calculate_histogram_buckets(
@@ -337,7 +338,7 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         latency = time.perf_counter() - start_time
 
         # Get response size from headers
-        response_size = int(response.headers.get("Content-Length", 0))
+        response_size = int(response.headers.get(HEADER_CONTENT_LENGTH, 0))
 
         # Normalize path for grouping
         normalized_path = self._normalize_path(path)

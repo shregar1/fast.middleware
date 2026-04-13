@@ -12,10 +12,11 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
-logger = logging.getLogger("fastmvc.middleware.error")
+logger = logging.getLogger(LOGGER_FASTMVC_ERROR)
 
 
 @dataclass
@@ -54,7 +55,7 @@ class ErrorConfig:
     log_exceptions: bool = True
     log_level: int = logging.ERROR
     default_message: str = "An internal error occurred"
-    status_code: int = 500
+    status_code: int = DEFAULT_MIN_GZIP_SIZE
 
     # Custom error handlers: {ExceptionType: (status_code, message)}
     error_handlers: dict[type[Exception], tuple[int, str]] = field(default_factory=dict)
@@ -76,10 +77,10 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
     Response Format:
         ```json
         {
-            "error": true,
-            "message": "Error description",
-            "status_code": 500,
-            "request_id": "abc-123",
+            FIELD_ERROR: true,
+            FIELD_MESSAGE: "Error description",
+            "status_code": HTTP_500_INTERNAL_SERVER_ERROR,
+            STATE_REQUEST_ID: "abc-123",
             "type": "ValueError",
             "traceback": ["..."]
         }
@@ -173,20 +174,20 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
 
         # Build response body
         body: dict[str, Any] = {
-            "error": True,
-            "message": message,
+            FIELD_ERROR: True,
+            FIELD_MESSAGE: message,
             "status_code": status_code,
         }
 
         # Add request ID if available
-        request_id = getattr(request.state, "request_id", None)
+        request_id = getattr(request.state, STATE_REQUEST_ID, None)
         if request_id:
-            body["request_id"] = request_id
+            body[STATE_REQUEST_ID] = request_id
 
         # Add exception type if configured
         if self.config.include_exception_type:
             body["type"] = exc_type.__name__
-            body["detail"] = str(exc)
+            body[FIELD_DETAIL] = str(exc)
 
         # Add traceback if configured
         if self.config.include_traceback:
@@ -212,13 +213,13 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
         except Exception as exc:
             # Log the exception
             if self.config.log_exceptions:
-                request_id = getattr(request.state, "request_id", None)
+                request_id = getattr(request.state, STATE_REQUEST_ID, None)
                 self._logger.log(
                     self.config.log_level,
                     f"Unhandled exception in {request.method} {request.url.path}",
                     exc_info=exc,
                     extra={
-                        "request_id": request_id,
+                        STATE_REQUEST_ID: request_id,
                         "method": request.method,
                         "path": request.url.path,
                         "exception_type": type(exc).__name__,

@@ -11,7 +11,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -24,7 +25,7 @@ class GracefulShutdownConfig:
 
     """
 
-    timeout: float = 30.0
+    timeout: float = DEFAULT_TIMEOUT_SECONDS
     check_path: str = "/_shutdown"
 
 
@@ -38,7 +39,7 @@ class GracefulShutdownMiddleware(FastMVCMiddleware):
         ```python
         from fastmiddleware import GracefulShutdownMiddleware
 
-        shutdown_mw = GracefulShutdownMiddleware(app, timeout=30.0)
+        shutdown_mw = GracefulShutdownMiddleware(app, timeout=DEFAULT_TIMEOUT_SECONDS)
 
         # When receiving SIGTERM:
         await shutdown_mw.shutdown()
@@ -127,10 +128,10 @@ class GracefulShutdownMiddleware(FastMVCMiddleware):
         # Reject new requests during shutdown
         if self._shutting_down:
             return JSONResponse(
-                status_code=503,
+                status_code=HTTP_503_SERVICE_UNAVAILABLE,
                 content={
-                    "error": True,
-                    "message": "Service is shutting down",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Service is shutting down",
                 },
                 headers={"Connection": "close"},
             )

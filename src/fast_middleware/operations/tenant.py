@@ -11,11 +11,12 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 # Context variable for tenant
-_tenant_ctx: ContextVar[dict[str, Any] | None] = ContextVar("tenant", default=None)
+_tenant_ctx: ContextVar[dict[str, Any] | None] = ContextVar(STATE_TENANT, default=None)
 
 
 def get_tenant() -> dict[str, Any] | None:
@@ -160,7 +161,7 @@ class TenantMiddleware(FastMVCMiddleware):
 
     def _extract_from_subdomain(self, request: Request) -> str | None:
         """Extract tenant from subdomain."""
-        host = request.headers.get("Host", "")
+        host = request.headers.get(HEADER_HOST, "")
         parts = host.split(".")
 
         # Need at least: tenant.domain.tld
@@ -243,10 +244,10 @@ class TenantMiddleware(FastMVCMiddleware):
         if not tenant_id:
             if self.config.require_tenant:
                 return JSONResponse(
-                    status_code=400,
+                    status_code=HTTP_400_BAD_REQUEST,
                     content={
-                        "error": True,
-                        "message": "Tenant identifier required",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: "Tenant identifier required",
                     },
                 )
             return await call_next(request)
@@ -256,10 +257,10 @@ class TenantMiddleware(FastMVCMiddleware):
 
         if not tenant_data and self.config.require_tenant:
             return JSONResponse(
-                status_code=404,
+                status_code=HTTP_404_NOT_FOUND,
                 content={
-                    "error": True,
-                    "message": "Tenant not found",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: "Tenant not found",
                 },
             )
 

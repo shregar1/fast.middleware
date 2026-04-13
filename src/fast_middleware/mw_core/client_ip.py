@@ -5,6 +5,7 @@ from __future__ import annotations
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
+from fast_middleware.constants import *
 
 STATE_CLIENT_IP = "fast_client_ip"
 
@@ -27,14 +28,14 @@ def get_client_ip(
     """
     if trusted_proxy_depth > 0:
         xff = request.headers.get("x-forwarded-for") or request.headers.get(
-            "X-Forwarded-For"
+            HEADER_X_FORWARDED_FOR
         )
         if xff:
             parts = [p.strip() for p in xff.split(",") if p.strip()]
             if parts:
                 return parts[0]
         if use_x_real_ip:
-            xr = request.headers.get("x-real-ip") or request.headers.get("X-Real-IP")
+            xr = request.headers.get("x-real-ip") or request.headers.get(HEADER_X_REAL_IP)
             if xr:
                 return xr.strip()
     if request.client and request.client.host:

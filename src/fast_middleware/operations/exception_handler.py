@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -29,8 +30,8 @@ class ExceptionHandlerConfig:
 
     debug: bool = False
     log_exceptions: bool = True
-    default_status: int = 500
-    logger_name: str = "exceptions"
+    default_status: int = DEFAULT_MIN_GZIP_SIZE
+    logger_name: str = LOGGER_EXCEPTIONS
 
 
 class ExceptionHandlerMiddleware(FastMVCMiddleware):
@@ -51,8 +52,8 @@ class ExceptionHandlerMiddleware(FastMVCMiddleware):
         @handler.register(ValueError)
         def handle_value_error(exc):
             return JSONResponse(
-                status_code=400,
-                content={"error": str(exc)},
+                status_code=HTTP_400_BAD_REQUEST,
+                content={FIELD_ERROR: str(exc)},
             )
         ```
 
@@ -109,8 +110,8 @@ class ExceptionHandlerMiddleware(FastMVCMiddleware):
     def _build_error_response(self, exc: Exception, request: Request) -> JSONResponse:
         """Build error response."""
         content: dict[str, Any] = {
-            "error": True,
-            "message": str(exc) if self.config.debug else "Internal server error",
+            FIELD_ERROR: True,
+            FIELD_MESSAGE: str(exc) if self.config.debug else "Internal server error",
             "type": type(exc).__name__,
         }
 

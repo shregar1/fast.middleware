@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
 
 
 _cost_ctx: ContextVar[float] = ContextVar("request_cost", default=0.0)

@@ -13,7 +13,7 @@ from typing import TYPE_CHECKING, Any, TypeVar
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
 
 
 if TYPE_CHECKING:
@@ -102,7 +102,7 @@ def create_middleware(
 
     Example:
         ```python
-        from fastmiddleware.mw_core.factory import create_middleware
+        from fast_middleware.mw_core.factory import create_middleware
 
         async def my_dispatch(request, call_next):
             # Add custom header
@@ -207,7 +207,7 @@ def middleware(
 
     Example:
         ```python
-        from fastmiddleware.mw_core.factory import middleware
+        from fast_middleware.mw_core.factory import middleware
 
         @middleware("request_timer")
         async def request_timer(request, call_next):
@@ -246,7 +246,7 @@ class MiddlewareBuilder:
 
     Example:
         ```python
-        from fastmiddleware.mw_core.factory import MiddlewareBuilder
+        from fast_middleware.mw_core.factory import MiddlewareBuilder
 
         MyMiddleware = (
             MiddlewareBuilder("my_middleware")
@@ -391,7 +391,7 @@ def add_middleware_once(
     Example:
         ```python
         from fastmiddleware import CORSMiddleware
-        from fastmiddleware.mw_core.factory import add_middleware_once
+        from fast_middleware.mw_core.factory import add_middleware_once
 
         # First call adds the middleware
         added = add_middleware_once(app, CORSMiddleware, allow_origins=["*"])
@@ -432,7 +432,7 @@ def quick_middleware(
 
     Example:
         ```python
-        from fastmiddleware.mw_core.factory import quick_middleware
+        from fast_middleware.mw_core.factory import quick_middleware
 
         # Add timing header
         TimingMiddleware = quick_middleware(

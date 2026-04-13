@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -45,7 +46,7 @@ class HoneypotConfig:
     block_duration: int = 3600  # 1 hour
     log_access: bool = True
     fake_delay: float = 2.0  # Delay to waste attacker time
-    logger_name: str = "honeypot"
+    logger_name: str = LOGGER_HONEYPOT
 
 
 class HoneypotMiddleware(FastMVCMiddleware):
@@ -126,7 +127,7 @@ class HoneypotMiddleware(FastMVCMiddleware):
             "ip": self.get_client_ip(request),
             "path": request.url.path,
             "method": request.method,
-            "user_agent": request.headers.get("User-Agent", ""),
+            "user_agent": request.headers.get(HEADER_USER_AGENT, ""),
         }
         self._access_log.append(entry)
 
@@ -152,8 +153,8 @@ class HoneypotMiddleware(FastMVCMiddleware):
         # Check if IP is blocked
         if self._is_blocked(client_ip):
             return JSONResponse(
-                status_code=403,
-                content={"error": True, "message": "Access denied"},
+                status_code=HTTP_403_FORBIDDEN,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: MSG_ACCESS_DENIED},
             )
 
         # Check if this is a honeypot path
@@ -172,8 +173,8 @@ class HoneypotMiddleware(FastMVCMiddleware):
 
             # Return fake response
             return JSONResponse(
-                status_code=404,
-                content={"error": True, "message": "Not found"},
+                status_code=HTTP_404_NOT_FOUND,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: MSG_NOT_FOUND},
             )
 
         if self.should_skip(request):

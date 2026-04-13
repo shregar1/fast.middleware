@@ -8,6 +8,7 @@ from typing import Optional
 from starlette.middleware.base import BaseHTTPMiddleware, RequestResponseEndpoint
 from starlette.requests import Request
 from starlette.responses import Response
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -69,7 +70,7 @@ class SecurityHeadersMiddleware(BaseHTTPMiddleware):
             response.headers["X-Content-Type-Options"] = "nosniff"
 
         if c.x_frame_options:
-            response.headers["X-Frame-Options"] = c.x_frame_options
+            response.headers[HEADER_X_FRAME_OPTIONS] = c.x_frame_options
 
         if c.csp_frame_ancestors is not None:
             response.headers["Content-Security-Policy"] = (

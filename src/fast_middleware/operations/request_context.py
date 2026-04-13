@@ -12,11 +12,12 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 # Context variables for async-safe access to request data
-_request_id_var: ContextVar[str | None] = ContextVar("request_id", default=None)
+_request_id_var: ContextVar[str | None] = ContextVar(STATE_REQUEST_ID, default=None)
 _request_context_var: ContextVar[dict[str, Any] | None] = ContextVar(
     "request_context", default=None
 )
@@ -59,8 +60,8 @@ def get_request_context() -> dict[str, Any]:
 
         async def my_function():
             ctx = get_request_context()
-            client_ip = ctx.get("client_ip")
-            start_time = ctx.get("start_time")
+            client_ip = ctx.get(STATE_CLIENT_IP)
+            start_time = ctx.get(STATE_START_TIME)
         ```
 
     """
@@ -108,7 +109,7 @@ class RequestContextMiddleware(FastMVCMiddleware):
         async def root():
             # Access request ID from anywhere
             request_id = get_request_id()
-            return {"request_id": request_id}
+            return {STATE_REQUEST_ID: request_id}
 
         # In a service or utility function
         async def log_something():
@@ -123,7 +124,7 @@ class RequestContextMiddleware(FastMVCMiddleware):
         self,
         app,
         id_generator: Callable[[], str] | None = None,
-        request_id_header: str = "X-Request-ID",
+        request_id_header: str = HEADER_X_REQUEST_ID,
         process_time_header: str = "X-Process-Time",
         trust_incoming_id: bool = True,
         exclude_paths: set[str] | None = None,
@@ -175,9 +176,9 @@ class RequestContextMiddleware(FastMVCMiddleware):
 
         # Build context
         context = {
-            "request_id": request_id,
-            "start_time": start_time,
-            "client_ip": self.get_client_ip(request),
+            STATE_REQUEST_ID: request_id,
+            STATE_START_TIME: start_time,
+            STATE_CLIENT_IP: self.get_client_ip(request),
             "method": request.method,
             "path": request.url.path,
         }

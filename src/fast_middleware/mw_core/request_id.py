@@ -10,8 +10,9 @@ from starlette.requests import Request
 from starlette.responses import Response
 
 from core.utils.request_id_context import RequestIdContext
+from fast_middleware.constants import *
 
-DEFAULT_REQUEST_ID_HEADER = "X-Request-ID"
+DEFAULT_REQUEST_ID_HEADER = HEADER_X_REQUEST_ID
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):

@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 def parse_size(size: str | int) -> int:
@@ -164,7 +165,7 @@ class RequestLimitMiddleware(FastMVCMiddleware):
             return await call_next(request)
 
         # Check Content-Length header
-        content_length = request.headers.get("Content-Length")
+        content_length = request.headers.get(HEADER_CONTENT_LENGTH)
         if content_length:
             try:
                 size = int(content_length)
@@ -174,8 +175,8 @@ class RequestLimitMiddleware(FastMVCMiddleware):
                     return JSONResponse(
                         status_code=self.config.response_code,
                         content={
-                            "error": True,
-                            "message": self.config.error_message,
+                            FIELD_ERROR: True,
+                            FIELD_MESSAGE: self.config.error_message,
                             "max_size": self._format_size(limit),
                             "request_size": self._format_size(size),
                         },

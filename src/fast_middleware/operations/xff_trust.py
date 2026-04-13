@@ -9,7 +9,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -77,11 +78,11 @@ class XFFTrustMiddleware(FastMVCMiddleware):
 
     def _get_real_ip(self, request: Request) -> str:
         """Get real client IP from forwarded headers."""
-        xff = request.headers.get("X-Forwarded-For")
+        xff = request.headers.get(HEADER_X_FORWARDED_FOR)
 
         if not xff:
             client = request.scope.get("client")
-            return client[0] if client else "unknown"
+            return client[0] if client else DEFAULT_UNKNOWN
 
         ips = [ip.strip() for ip in xff.split(",")]
 

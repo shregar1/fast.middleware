@@ -12,7 +12,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -39,8 +40,8 @@ class QuotaConfig:
 
     """
 
-    default_quota: int = 1000
-    quota_period: int = 86400  # 1 day
+    default_quota: int = DEFAULT_MAX_ENTRIES
+    quota_period: int = ONE_DAY_SECONDS  # 1 day
     quotas: dict[str, int] = field(default_factory=dict)  # key -> quota
     key_func: Callable[[Request], str] | None = None
     header_name: str = "X-Quota-Remaining"
@@ -169,10 +170,10 @@ class QuotaMiddleware(FastMVCMiddleware):
 
         if not allowed:
             return JSONResponse(
-                status_code=429,
+                status_code=HTTP_429_TOO_MANY_REQUESTS,
                 content={
-                    "error": True,
-                    "message": "Quota exceeded",
+                    FIELD_ERROR: True,
+                    FIELD_MESSAGE: MSG_QUOTA_EXCEEDED,
                     "quota": self._get_quota(key),
                     "reset_at": reset_time,
                 },
@@ -180,7 +181,7 @@ class QuotaMiddleware(FastMVCMiddleware):
                     self.config.header_name: "0",
                     self.config.used_header: str(used),
                     self.config.reset_header: str(reset_time),
-                    "Retry-After": str(reset_time - int(time.time())),
+                    HEADER_RETRY_AFTER: str(reset_time - int(time.time())),
                 },
             )
 

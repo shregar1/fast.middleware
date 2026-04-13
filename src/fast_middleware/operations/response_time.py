@@ -11,7 +11,10 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
+
+
 
 
 @dataclass
@@ -45,7 +48,7 @@ class ResponseTimeConfig:
     log_slow: bool = True
     add_header: bool = True
     header_name: str = "X-Response-Time"
-    logger_name: str = "response_time"
+    logger_name: str = LOGGER_RESPONSE_TIME
 
 
 class ResponseTimeMiddleware(FastMVCMiddleware):

@@ -11,7 +11,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -42,7 +43,7 @@ class BasicAuthMiddleware(FastMVCMiddleware):
 
         app.add_middleware(
             BasicAuthMiddleware,
-            users={"admin": "secret123", "user": "password"},
+            users={"admin": "secret123", STATE_USER: "password"},
         )
         ```
 
@@ -108,28 +109,28 @@ class BasicAuthMiddleware(FastMVCMiddleware):
         if request.method in self.config.exclude_methods:
             return await call_next(request)
 
-        auth_header = request.headers.get("Authorization")
+        auth_header = request.headers.get(HEADER_AUTHORIZATION)
 
         if not auth_header:
             return Response(
-                status_code=401,
-                headers={"WWW-Authenticate": f'Basic realm="{self.config.realm}"'},
+                status_code=HTTP_401_UNAUTHORIZED,
+                headers={HEADER_WWW_AUTHENTICATE: f'Basic realm="{self.config.realm}"'},
             )
 
         credentials = self._parse_auth(auth_header)
 
         if not credentials:
             return Response(
-                status_code=401,
-                headers={"WWW-Authenticate": f'Basic realm="{self.config.realm}"'},
+                status_code=HTTP_401_UNAUTHORIZED,
+                headers={HEADER_WWW_AUTHENTICATE: f'Basic realm="{self.config.realm}"'},
             )
 
         username, password = credentials
 
         if not self._verify(username, password):
             return Response(
-                status_code=401,
-                headers={"WWW-Authenticate": f'Basic realm="{self.config.realm}"'},
+                status_code=HTTP_401_UNAUTHORIZED,
+                headers={HEADER_WWW_AUTHENTICATE: f'Basic realm="{self.config.realm}"'},
             )
 
         request.state.user = username

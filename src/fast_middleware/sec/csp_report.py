@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -31,8 +32,8 @@ class CSPReportConfig:
     report_uri: str = "/_csp-report"
     log_reports: bool = True
     store_reports: bool = False
-    max_stored: int = 100
-    logger_name: str = "csp_reports"
+    max_stored: int = DEFAULT_LIMIT_100
+    logger_name: str = LOGGER_CSP
 
 
 class CSPReportMiddleware(FastMVCMiddleware):
@@ -109,20 +110,20 @@ class CSPReportMiddleware(FastMVCMiddleware):
                 self._reports.append(
                     {
                         "violation": violation,
-                        "client_ip": self.get_client_ip(request),
-                        "user_agent": request.headers.get("User-Agent"),
+                        STATE_CLIENT_IP: self.get_client_ip(request),
+                        "user_agent": request.headers.get(HEADER_USER_AGENT),
                     }
                 )
 
                 if len(self._reports) > self.config.max_stored:
                     self._reports = self._reports[-self.config.max_stored :]
 
-            return Response(status_code=204)
+            return Response(status_code=HTTP_204_NO_CONTENT)
 
         except json.JSONDecodeError:
             return JSONResponse(
-                status_code=400,
-                content={"error": True, "message": "Invalid JSON"},
+                status_code=HTTP_400_BAD_REQUEST,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: MSG_INVALID_JSON},
             )
 
     async def dispatch(

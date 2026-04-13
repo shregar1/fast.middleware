@@ -12,7 +12,8 @@ from typing import Any
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 _ua_ctx: ContextVar[dict[str, Any] | None] = ContextVar("user_agent", default=None)
@@ -54,7 +55,7 @@ class UserAgentInfo:
             "is_mobile": self.is_mobile,
             "is_tablet": self.is_tablet,
             "is_desktop": self.is_desktop,
-            "is_bot": self.is_bot,
+            STATE_IS_BOT: self.is_bot,
         }
 
 
@@ -205,7 +206,7 @@ class UserAgentMiddleware(FastMVCMiddleware):
         if self.should_skip(request):
             return await call_next(request)
 
-        ua_string = request.headers.get("User-Agent", "")
+        ua_string = request.headers.get(HEADER_USER_AGENT, "")
         ua_info = self._parse_ua(ua_string)
 
         token = _ua_ctx.set(ua_info.to_dict())

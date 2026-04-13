@@ -10,10 +10,11 @@ from collections.abc import Awaitable, Callable
 from starlette.requests import Request
 from starlette.responses import Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
-logger = logging.getLogger("fastmvc.middleware")
+logger = logging.getLogger(LOGGER_FASTMVC)
 
 
 class LoggingMiddleware(FastMVCMiddleware):
@@ -125,17 +126,17 @@ class LoggingMiddleware(FastMVCMiddleware):
         client_ip = self.get_client_ip(request)
 
         # Get request ID if available
-        request_id = getattr(request.state, "request_id", None)
+        request_id = getattr(request.state, STATE_REQUEST_ID, None)
 
         # Build log context
         log_context = {
             "method": request.method,
             "path": request.url.path,
-            "client_ip": client_ip,
+            STATE_CLIENT_IP: client_ip,
         }
 
         if request_id:
-            log_context["request_id"] = request_id
+            log_context[STATE_REQUEST_ID] = request_id
 
         if request.url.query:
             log_context["query"] = str(request.url.query)
@@ -163,7 +164,7 @@ class LoggingMiddleware(FastMVCMiddleware):
             log_context["response_headers"] = dict(response.headers)
 
         # Log outgoing response
-        status_emoji = "✓" if response.status_code < 400 else "✗"
+        status_emoji = "✓" if response.status_code < HTTP_400_BAD_REQUEST else "✗"
         self._logger.log(
             self.log_level,
             f"← {status_emoji} {request.method} {request.url.path} [{response.status_code}] {process_time:.2f}ms",

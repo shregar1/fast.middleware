@@ -11,6 +11,7 @@ from typing import Any
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -237,7 +238,7 @@ class HealthCheckMiddleware(BaseHTTPMiddleware):
                 .isoformat()
                 .replace("+00:00", "Z"),
             },
-            status_code=200,
+            status_code=HTTP_200_OK,
         )
 
     async def dispatch(

@@ -10,7 +10,8 @@ from dataclasses import dataclass, field
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 _content_type_ctx: ContextVar[str | None] = ContextVar("negotiated_type", default=None)
@@ -34,13 +35,13 @@ class ContentNegotiationConfig:
 
     supported_types: list[str] = field(
         default_factory=lambda: [
-            "application/json",
-            "application/xml",
-            "text/html",
-            "text/plain",
+            CONTENT_TYPE_JSON,
+            CONTENT_TYPE_XML,
+            CONTENT_TYPE_HTML,
+            CONTENT_TYPE_PLAIN,
         ]
     )
-    default_type: str = "application/json"
+    default_type: str = CONTENT_TYPE_JSON
     strict: bool = False
 
 
@@ -56,13 +57,13 @@ class ContentNegotiationMiddleware(FastMVCMiddleware):
 
         app.add_middleware(
             ContentNegotiationMiddleware,
-            supported_types=["application/json", "application/xml"],
+            supported_types=[CONTENT_TYPE_JSON, CONTENT_TYPE_XML],
         )
 
         @app.get("/data")
         async def get_data():
             content_type = get_negotiated_type()
-            if content_type == "application/xml":
+            if content_type == CONTENT_TYPE_XML:
                 return xml_response()
             return json_response()
         ```
@@ -159,16 +160,16 @@ class ContentNegotiationMiddleware(FastMVCMiddleware):
         if self.should_skip(request):
             return await call_next(request)
 
-        accept = request.headers.get("Accept", "*/*")
+        accept = request.headers.get(HEADER_ACCEPT, "*/*")
         negotiated = self._negotiate(accept)
 
         if negotiated is None:
             if self.config.strict:
                 return JSONResponse(
-                    status_code=406,
+                    status_code=HTTP_406_NOT_ACCEPTABLE,
                     content={
-                        "error": True,
-                        "message": "Not Acceptable",
+                        FIELD_ERROR: True,
+                        FIELD_MESSAGE: MSG_NOT_ACCEPTABLE,
                         "supported_types": self.config.supported_types,
                     },
                 )
@@ -179,7 +180,7 @@ class ContentNegotiationMiddleware(FastMVCMiddleware):
 
         try:
             response = await call_next(request)
-            response.headers["Vary"] = "Accept"
+            response.headers[HEADER_VARY] = HEADER_ACCEPT
             return response
         finally:
             _content_type_ctx.reset(token)

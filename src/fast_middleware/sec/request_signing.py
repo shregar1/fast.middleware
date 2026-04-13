@@ -12,7 +12,8 @@ from dataclasses import dataclass
 from starlette.requests import Request
 from starlette.responses import JSONResponse, Response
 
-from fastmiddleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.mw_core.base import FastMVCMiddleware
+from fast_middleware.constants import *
 
 
 @dataclass
@@ -31,7 +32,7 @@ class RequestSigningConfig:
     secret_key: str = ""
     signature_header: str = "X-Signature"
     timestamp_header: str = "X-Timestamp"
-    algorithm: str = "sha256"
+    algorithm: str = ALGORITHM_SHA256
     max_age: int = 300
 
 
@@ -57,9 +58,9 @@ class RequestSigningMiddleware(FastMVCMiddleware):
     """
 
     ALGORITHMS = {
-        "sha256": hashlib.sha256,
-        "sha512": hashlib.sha512,
-        "sha1": hashlib.sha1,
+        ALGORITHM_SHA256: hashlib.sha256,
+        ALGORITHM_SHA512: hashlib.sha512,
+        ALGORITHM_SHA1: hashlib.sha1,
     }
 
     def __init__(
@@ -120,14 +121,14 @@ class RequestSigningMiddleware(FastMVCMiddleware):
 
         if not signature:
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Missing signature"},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Missing signature"},
             )
 
         if not timestamp:
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Missing timestamp"},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Missing timestamp"},
             )
 
         # Validate timestamp
@@ -135,14 +136,14 @@ class RequestSigningMiddleware(FastMVCMiddleware):
             ts = int(timestamp)
         except ValueError:
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Invalid timestamp"},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Invalid timestamp"},
             )
 
         if abs(time.time() - ts) > self.config.max_age:
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Request expired"},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Request expired"},
             )
 
         # Build payload for signature
@@ -154,8 +155,8 @@ class RequestSigningMiddleware(FastMVCMiddleware):
 
         if not hmac.compare_digest(signature, expected_sig):
             return JSONResponse(
-                status_code=401,
-                content={"error": True, "message": "Invalid signature"},
+                status_code=HTTP_401_UNAUTHORIZED,
+                content={FIELD_ERROR: True, FIELD_MESSAGE: "Invalid signature"},
             )
 
         return await call_next(request)
