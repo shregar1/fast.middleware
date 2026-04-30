@@ -1,0 +1,191 @@
+"""Redirect Middleware for FastMVC.
+
+Handles URL redirects and rewrites.
+"""
+
+import re
+from collections.abc import Awaitable, Callable
+from dataclasses import dataclass, field
+
+from starlette.requests import Request
+from starlette.responses import RedirectResponse, Response
+
+from fastx_middleware.mw_core.base import FastMVCMiddleware
+from fastx_middleware.constants import (
+    HTTP_301_MOVED_PERMANENTLY,
+    HTTP_302_FOUND,
+)
+
+
+@dataclass
+class RedirectRule:
+    """A redirect rule."""
+
+    source: str  # Path or pattern
+    destination: str  # Target URL
+    code: int = HTTP_301_MOVED_PERMANENTLY  # Redirect status code
+    is_regex: bool = False  # Whether source is a regex
+    preserve_query: bool = True  # Preserve query string
+
+
+@dataclass
+class RedirectConfig:
+    r"""Configuration for redirect middleware.
+
+    Attributes:
+        rules: List of redirect rules.
+        permanent_redirects: Simple path -> path permanent redirects.
+        temporary_redirects: Simple path -> path temporary redirects.
+
+    Example:
+        ```python
+        from fastmiddleware import RedirectConfig, RedirectRule
+
+        config = RedirectConfig(
+            rules=[
+                RedirectRule("/old-page", "/new-page"),
+                RedirectRule(r"/blog/(\\d+)", "/posts/\\1", is_regex=True),
+            ],
+            permanent_redirects={
+                "/about-us": "/about",
+            },
+        )
+        ```
+
+    """
+
+    rules: list[RedirectRule] = field(default_factory=list)
+    permanent_redirects: dict[str, str] = field(default_factory=dict)
+    temporary_redirects: dict[str, str] = field(default_factory=dict)
+
+
+class RedirectMiddleware(FastMVCMiddleware):
+    r"""Middleware that handles URL redirects.
+
+    Redirects requests based on configured rules, supporting
+    both simple path matching and regex patterns.
+
+    Features:
+        - Simple path redirects
+        - Regex-based redirects
+        - Permanent (301) and temporary (302) redirects
+        - Query string preservation
+        - Capture group substitution
+
+    Example:
+        ```python
+        from fastapi import FastAPI
+        from fastmiddleware import RedirectMiddleware, RedirectRule
+
+        app = FastAPI()
+
+        app.add_middleware(
+            RedirectMiddleware,
+            rules=[
+                # Simple redirect
+                RedirectRule("/old", "/new"),
+
+                # Regex with capture group
+                RedirectRule(
+                    r"/users/(\\d+)/profile",
+                    "/profiles/\\1",
+                    is_regex=True,
+                ),
+
+                # Temporary redirect
+                RedirectRule("/promo", "/sale", code=302),
+            ],
+        )
+        ```
+
+    """
+
+    def __init__(
+        self,
+        app,
+        config: RedirectConfig | None = None,
+        rules: list[RedirectRule] | None = None,
+        permanent_redirects: dict[str, str] | None = None,
+        exclude_paths: set[str] | None = None,
+    ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            rules: The rules parameter.
+            permanent_redirects: The permanent_redirects parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
+        super().__init__(app, exclude_paths=exclude_paths)
+        self.config = config or RedirectConfig()
+
+        if rules is not None:
+            self.config.rules = rules
+        if permanent_redirects is not None:
+            self.config.permanent_redirects = permanent_redirects
+
+        # Compile regex patterns
+        self._compiled_rules = []
+        for rule in self.config.rules:
+            if rule.is_regex:
+                self._compiled_rules.append((re.compile(rule.source), rule))
+            else:
+                self._compiled_rules.append((None, rule))
+
+    def _find_redirect(self, path: str) -> tuple[str, int] | None:
+        """Find redirect destination for path."""
+        # Check simple permanent redirects
+        if path in self.config.permanent_redirects:
+            return self.config.permanent_redirects[path], HTTP_301_MOVED_PERMANENTLY
+
+        # Check simple temporary redirects
+        if path in self.config.temporary_redirects:
+            return self.config.temporary_redirects[path], HTTP_302_FOUND
+
+        # Check rules
+        for pattern, rule in self._compiled_rules:
+            if pattern:  # Regex rule
+                match = pattern.match(path)
+                if match:
+                    # Substitute capture groups
+                    destination = rule.destination
+                    for i, group in enumerate(match.groups(), 1):
+                        destination = destination.replace(f"\\{i}", group or "")
+                    return destination, rule.code
+            elif path == rule.source:
+                return rule.destination, rule.code
+
+        return None
+
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
+        if self.should_skip(request):
+            return await call_next(request)
+
+        path = request.url.path
+        redirect = self._find_redirect(path)
+
+        if redirect:
+            destination, code = redirect
+
+            # Preserve query string
+            if request.url.query:
+                if "?" in destination:
+                    destination = f"{destination}&{request.url.query}"
+                else:
+                    destination = f"{destination}?{request.url.query}"
+
+            return RedirectResponse(url=destination, status_code=code)
+
+        return await call_next(request)

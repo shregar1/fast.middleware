@@ -44,7 +44,7 @@ class TestBaseMiddlewareCoverage:
             Returns:
                 The result of the operation.
             """
-            from fast_middleware.base import FastMVCMiddleware
+            from fastx_middleware.base import FastMVCMiddleware
 
             # Create a mock middleware to test get_client_ip
             class TestMiddleware(FastMVCMiddleware):
@@ -85,7 +85,7 @@ class TestBaseMiddlewareCoverage:
             Returns:
                 The result of the operation.
             """
-            from fast_middleware.base import FastMVCMiddleware
+            from fastx_middleware.base import FastMVCMiddleware
 
             class TestMid(FastMVCMiddleware):
                 """Represents the TestMid class."""
@@ -126,7 +126,7 @@ class TestBaseMiddlewareCoverage:
             Returns:
                 The result of the operation.
             """
-            from fast_middleware.base import FastMVCMiddleware
+            from fastx_middleware.base import FastMVCMiddleware
 
             class TestMid(FastMVCMiddleware):
                 """Represents the TestMid class."""

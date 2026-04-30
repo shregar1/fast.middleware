@@ -1,0 +1,155 @@
+"""Exception Handler Middleware for FastMVC.
+
+Catches and handles uncaught exceptions.
+"""
+
+import logging
+import traceback
+from collections.abc import Awaitable, Callable
+from dataclasses import dataclass
+from typing import Any
+
+from starlette.requests import Request
+from starlette.responses import JSONResponse, Response
+
+from fastx_middleware.mw_core.base import FastMVCMiddleware
+from fastx_middleware.constants import *
+
+
+@dataclass
+class ExceptionHandlerConfig:
+    """Configuration for exception handler middleware.
+
+    Attributes:
+        debug: Include traceback in response.
+        log_exceptions: Log exceptions.
+        default_status: Default error status code.
+        custom_handlers: Exception type to handler mapping.
+
+    """
+
+    debug: bool = False
+    log_exceptions: bool = True
+    default_status: int = DEFAULT_MIN_GZIP_SIZE
+    logger_name: str = LOGGER_EXCEPTIONS
+
+
+class ExceptionHandlerMiddleware(FastMVCMiddleware):
+    """Middleware that handles uncaught exceptions.
+
+    Catches all exceptions and returns appropriate
+    error responses.
+
+    Example:
+        ```python
+        from fastmiddleware import ExceptionHandlerMiddleware
+
+        handler = ExceptionHandlerMiddleware(
+            app,
+            debug=os.getenv("DEBUG") == "true",
+        )
+
+        @handler.register(ValueError)
+        def handle_value_error(exc):
+            return JSONResponse(
+                status_code=HTTP_400_BAD_REQUEST,
+                content={FIELD_ERROR: str(exc)},
+            )
+        ```
+
+    """
+
+    def __init__(
+        self,
+        app,
+        config: ExceptionHandlerConfig | None = None,
+        debug: bool = False,
+        exclude_paths: set[str] | None = None,
+    ) -> None:
+        """Execute __init__ operation.
+
+        Args:
+            app: The app parameter.
+            config: The config parameter.
+            debug: The debug parameter.
+            exclude_paths: The exclude_paths parameter.
+        """
+        super().__init__(app, exclude_paths=exclude_paths)
+        self.config = config or ExceptionHandlerConfig()
+
+        if debug:
+            self.config.debug = True
+
+        self._logger = logging.getLogger(self.config.logger_name)
+        self._handlers: dict[type[Exception], Callable] = {}
+
+    def register(self, exc_type: type[Exception]):
+        """Decorator to register exception handler."""
+
+        def decorator(func):
+            """Execute decorator operation.
+
+            Args:
+                func: The func parameter.
+
+            Returns:
+                The result of the operation.
+            """
+            self._handlers[exc_type] = func
+            return func
+
+        return decorator
+
+    def _find_handler(self, exc: Exception) -> Callable | None:
+        """Find handler for exception type."""
+        for exc_type, handler in self._handlers.items():
+            if isinstance(exc, exc_type):
+                return handler
+        return None
+
+    def _build_error_response(self, exc: Exception, request: Request) -> JSONResponse:
+        """Build error response."""
+        content: dict[str, Any] = {
+            FIELD_ERROR: True,
+            FIELD_MESSAGE: str(exc) if self.config.debug else "Internal server error",
+            "type": type(exc).__name__,
+        }
+
+        if self.config.debug:
+            content["traceback"] = traceback.format_exc()
+            content["path"] = request.url.path
+            content["method"] = request.method
+
+        return JSONResponse(
+            status_code=self.config.default_status,
+            content=content,
+        )
+
+    async def dispatch(
+        self, request: Request, call_next: Callable[[Request], Awaitable[Response]]
+    ) -> Response:
+        """Execute dispatch operation.
+
+        Args:
+            request: The request parameter.
+            call_next: The call_next parameter.
+
+        Returns:
+            The result of the operation.
+        """
+        try:
+            return await call_next(request)
+        except Exception as exc:
+            # Log exception
+            if self.config.log_exceptions:
+                self._logger.exception(
+                    f"Unhandled exception: {type(exc).__name__}: {exc}"
+                )
+
+            # Try custom handler
+            handler = self._find_handler(exc)
+            if handler:
+                return handler(exc)
+
+            # Default response
+            return self._build_error_response(exc, request)

@@ -17,10 +17,10 @@ exclude_lines = [
 
 [tool.setuptools]
 package-dir = { "" = "src" }
-packages = ["fast_middleware", "fast_middleware.mw_core", "fast_middleware.sec", "fast_middleware.operations"]
+packages = ["fastx_middleware", "fastx_middleware.mw_core", "fastx_middleware.sec", "fastx_middleware.operations"]
 
 [tool.setuptools.package-data]
-fast_middleware = ["py.typed"]
+fastx_middleware = ["py.typed"]
 
 [build-system]
 requires = ["setuptools>=61.0", "wheel"]
@@ -28,7 +28,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fastx-middleware"
-version = "1.6.0"
+version = "1.7.0"
 description = "HTTP middleware utilities (request ID, security headers, timing, CORS/body/IP/compression) for FastMVC / Starlette apps."
 readme = "README.md"
 license = { text = "MIT" }
@@ -70,9 +70,9 @@ Homepage = "https://github.com/shregar1/fastmvc"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["../fast_platform/src", "src"]
+pythonpath = ["../fastx_platform/src", "src"]
 addopts = "-v --tb=short"
-# Only the lightweight ``fast_middleware`` tests (other files target the optional ``fastmiddleware`` package).
+# Only the lightweight ``fastx_middleware`` tests (other files target the optional ``fastmiddleware`` package).
 python_files = [
     "test_request_id_middleware.py",
     "test_security_headers.py",
