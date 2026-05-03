@@ -183,6 +183,9 @@ local_config.py
 *.prof
 *.lprof
 
+# FastX local artifacts (recordings, cache)
+.fastx/
+
 # Archives
 *.zip
 *.tar.gz
