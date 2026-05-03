@@ -597,7 +597,7 @@ class TestTimingEdgeCases:
 
         response = client.get("/")
         assert response.status_code == 200
-        assert "X-Process-Time" in response.headers
+        assert "X-Response-Time" in response.headers
 
 
 class TestPathRewriteEdgeCases:

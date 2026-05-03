@@ -179,8 +179,15 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
             "status_code": status_code,
         }
 
-        # Add request ID if available
+        # Add request ID if available (state from RequestContext, or context from RequestID)
         request_id = getattr(request.state, STATE_REQUEST_ID, None)
+        if request_id is None:
+            try:
+                from core.utils.request_id_context import RequestIdContext
+
+                request_id = RequestIdContext.get()
+            except ImportError:
+                request_id = None
         if request_id:
             body[STATE_REQUEST_ID] = request_id
 
@@ -214,6 +221,13 @@ class ErrorHandlerMiddleware(FastMVCMiddleware):
             # Log the exception
             if self.config.log_exceptions:
                 request_id = getattr(request.state, STATE_REQUEST_ID, None)
+                if request_id is None:
+                    try:
+                        from core.utils.request_id_context import RequestIdContext
+
+                        request_id = RequestIdContext.get()
+                    except ImportError:
+                        pass
                 self._logger.log(
                     self.config.log_level,
                     f"Unhandled exception in {request.method} {request.url.path}",

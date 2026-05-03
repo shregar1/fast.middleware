@@ -139,8 +139,8 @@ class TestCompressionMiddleware:
         # Streaming responses should pass through
 
     def test_vary_header_always_added(self, compression_client: TestClient):
-        """Test that Vary header is added for cache correctness."""
-        response = compression_client.get("/small", headers={"Accept-Encoding": "gzip"})
+        """Starlette gzip adds ``Vary: Accept-Encoding`` when compression may apply."""
+        response = compression_client.get("/html", headers={"Accept-Encoding": "gzip"})
 
         assert response.headers.get("Vary") == "Accept-Encoding"
 

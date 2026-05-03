@@ -79,8 +79,8 @@ class TestRequestIDCustomGenerator:
         app = sample_routes
         app.add_middleware(
             RequestIDMiddleware,
-            generator=custom_generator,
-            trust_incoming=False,
+            id_factory=custom_generator,
+            accept_incoming=False,
         )
         return app
 

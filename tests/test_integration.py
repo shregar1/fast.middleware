@@ -188,7 +188,7 @@ class TestFullMiddlewareStack:
         response = full_stack_client.get("/metrics")
 
         assert response.status_code == 200
-        assert "fastmvc" in response.text
+        assert "fastx_" in response.text
 
     def test_cors_preflight_works(self, full_stack_client: TestClient):
         """Test that CORS preflight works."""
@@ -361,7 +361,7 @@ class TestRequestIdPropagation:
 
         app.add_middleware(LoggingMiddleware)
         app.add_middleware(TimingMiddleware)
-        app.add_middleware(RequestIDMiddleware, trust_incoming=True)
+        app.add_middleware(RequestIDMiddleware, accept_incoming=True)
         app.add_middleware(RequestContextMiddleware)
 
         @app.get("/")

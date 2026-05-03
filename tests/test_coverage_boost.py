@@ -1583,7 +1583,7 @@ class TestMetricsWithResponseSize:
         response = client.get("/metrics")
         assert response.status_code == 200
         # Check that histograms are present
-        assert "fastmvc" in response.text
+        assert "fastx_" in response.text
 
 
 class TestCacheBuildCacheControl:
