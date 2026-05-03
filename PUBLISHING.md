@@ -27,5 +27,5 @@ twine upload dist/*
 ```
 
 - **PyPI project name:** `fast-middleware`
-- **Typical import:** `fast_middleware`
+- **Typical import:** `fastx_middleware`
 - **Repository / homepage:** https://github.com/shregar1/fastmvc

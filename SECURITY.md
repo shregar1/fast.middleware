@@ -22,7 +22,7 @@ Security fixes are applied to maintained release lines; upgrade to the latest pa
 ## Dependency and supply chain
 
 - Keep this package and its dependencies updated (`pip list --outdated`, Dependabot, or your org’s process).
-- Do not commit secrets, API keys, or tokens; use environment variables or a secrets manager ([`fast_secrets`](../fast_secrets/README.md) integrates Vault / cloud backends in FastMVC apps).
+- Do not commit secrets, API keys, or tokens; use environment variables or a secrets manager ([`fastx_secrets`](../fastx_secrets/README.md) integrates Vault / cloud backends in FastMVC apps).
 - Review `pyproject.toml` and lock files in production deployments.
 
-In the FastMVC stack, the sibling package **fast_secrets** provides optional Vault / cloud secret backends for applications (see the monorepo [README](../README.md)).
+In the FastMVC stack, the sibling package **fastx_secrets** provides optional Vault / cloud secret backends for applications (see the monorepo [README](../README.md)).

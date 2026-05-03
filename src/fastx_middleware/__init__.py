@@ -30,6 +30,8 @@ from fastx_middleware.mw_core.timing import (
     DEFAULT_RESPONSE_TIME_HEADER,
     ResponseTimingMiddleware,
 )
+
+TimingMiddleware = ResponseTimingMiddleware
 from fastx_middleware.mw_core.body_limit import BodySizeLimitMiddleware
 from fastx_middleware.mw_core.client_ip import (
     STATE_CLIENT_IP,
@@ -158,7 +160,11 @@ from fastx_middleware.operations.request_id_propagation import (
 # ============================================================================
 # Response Handling
 # ============================================================================
-from fastx_middleware.mw_core.compression import CompressionPreset
+from fastx_middleware.mw_core.compression import (
+    CompressionConfig,
+    CompressionMiddleware,
+    CompressionPreset,
+)
 from fastx_middleware.operations.response_format import (
     ResponseFormatMiddleware,
     ResponseFormatConfig,
@@ -452,6 +458,7 @@ __all__ = [
     "LoggingMiddleware",
     "DEFAULT_RESPONSE_TIME_HEADER",
     "ResponseTimingMiddleware",
+    "TimingMiddleware",
     "BodySizeLimitMiddleware",
     "STATE_CLIENT_IP",
     "ClientIPMiddleware",
@@ -542,6 +549,8 @@ __all__ = [
     "get_request_ids",
     "get_trace_header",
     # Response Handling
+    "CompressionConfig",
+    "CompressionMiddleware",
     "CompressionPreset",
     "ResponseFormatMiddleware",
     "ResponseFormatConfig",

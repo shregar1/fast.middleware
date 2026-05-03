@@ -34,11 +34,11 @@ app.add_middleware(MetricsMiddleware)
 
 | Metric | Type | Description |
 | -------- | ------ | ------------- |
-| `fast_http_requests_total` | Counter | Total requests |
-| `fast_http_request_duration_seconds` | Histogram | Request latency |
-| `fast_http_response_size_bytes` | Summary | Response size |
-| `fast_http_errors_total` | Counter | 5xx errors |
-| `fast_uptime_seconds` | Gauge | Service uptime |
+| `fastx_http_requests_total` | Counter | Total requests |
+| `fastx_http_request_duration_seconds` | Histogram | Request latency |
+| `fastx_http_response_size_bytes` | Summary | Response size |
+| `fastx_http_errors_total` | Counter | 5xx errors |
+| `fastx_uptime_seconds` | Gauge | Service uptime |
 
 ## Examples
 
@@ -87,12 +87,12 @@ scrape_configs:
 ```promql
 
 # Request rate
-rate(fast_http_requests_total[5m])
+rate(fastx_http_requests_total[5m])
 
 # Error rate
-rate(fast_http_requests_total{status=~"5.."}[5m])
+rate(fastx_http_requests_total{status=~"5.."}[5m])
 
 # P95 latency
-histogram_quantile(0.95, rate(fast_http_request_duration_seconds_bucket[5m]))
+histogram_quantile(0.95, rate(fastx_http_request_duration_seconds_bucket[5m]))
 
 ```

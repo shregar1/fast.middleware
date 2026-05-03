@@ -7,6 +7,7 @@ from typing import Final
 # HTTP status codes
 HTTP_200_OK: Final[int] = 200
 HTTP_204_NO_CONTENT: Final[int] = 204
+HTTP_300_MULTIPLE_CHOICES: Final[int] = 300
 HTTP_301_MOVED_PERMANENTLY: Final[int] = 301
 HTTP_302_FOUND: Final[int] = 302
 HTTP_304_NOT_MODIFIED: Final[int] = 304

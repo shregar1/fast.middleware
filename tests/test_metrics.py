@@ -87,7 +87,7 @@ class TestMetricsMiddleware:
         """Test that metrics include uptime."""
         response = metrics_client.get("/metrics")
 
-        assert "fast_uptime_seconds" in response.text
+        assert "fastx_uptime_seconds" in response.text
 
     def test_request_counted(self, metrics_client: TestClient):
         """Test that requests are counted in metrics."""
@@ -99,7 +99,7 @@ class TestMetricsMiddleware:
         # Check metrics
         response = metrics_client.get("/metrics")
 
-        assert "fast_http_requests_total" in response.text
+        assert "fastx_http_requests_total" in response.text
 
     def test_different_methods_tracked(self, metrics_client: TestClient):
         """Test that different methods are tracked separately."""
@@ -193,8 +193,8 @@ class TestMetricsCollector:
 
         metrics = collector.get_metrics()
 
-        assert "# HELP fast_uptime_seconds" in metrics
-        assert "# TYPE fast_uptime_seconds gauge" in metrics
+        assert "# HELP fastx_uptime_seconds" in metrics
+        assert "# TYPE fastx_uptime_seconds gauge" in metrics
 
     def test_prometheus_format_requests(self):
         """Test requests metric in Prometheus format."""
@@ -205,7 +205,7 @@ class TestMetricsCollector:
 
         metrics = collector.get_metrics()
 
-        assert "# TYPE fast_http_requests_total counter" in metrics
+        assert "# TYPE fastx_http_requests_total counter" in metrics
 
 
 class TestMetricsConfig:
@@ -283,7 +283,7 @@ class TestCustomMetricsPath:
         response = custom_path_client.get("/prometheus")
 
         assert response.status_code == 200
-        assert "fast_uptime_seconds" in response.text
+        assert "fastx_uptime_seconds" in response.text
 
     def test_default_path_not_available(self, custom_path_client: TestClient):
         """Test that default path is not available."""

@@ -17,7 +17,13 @@ exclude_lines = [
 
 [tool.setuptools]
 package-dir = { "" = "src" }
-packages = ["fastx_middleware", "fastx_middleware.mw_core", "fastx_middleware.sec", "fastx_middleware.operations"]
+packages = [
+    "fastmiddleware",
+    "fastx_middleware",
+    "fastx_middleware.mw_core",
+    "fastx_middleware.sec",
+    "fastx_middleware.operations",
+]
 
 [tool.setuptools.package-data]
 fastx_middleware = ["py.typed"]
@@ -72,17 +78,4 @@ Homepage = "https://github.com/shregar1/fastmvc"
 testpaths = ["tests"]
 pythonpath = ["../fastx_platform/src", "src"]
 addopts = "-v --tb=short"
-# Only the lightweight ``fastx_middleware`` tests (other files target the optional ``fastmiddleware`` package).
-python_files = [
-    "test_request_id_middleware.py",
-    "test_security_headers.py",
-    "test_timing.py",
-    "test_cors_preset.py",
-    "test_body_limit.py",
-    "test_client_ip.py",
-    "test_compression_preset.py",
-    "test_jwt_bearer_auth.py",
-    "test_build_immutable_dns.py",
-    "test_edge_performance_tiers.py",
-]
 

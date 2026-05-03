@@ -25,7 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Pytest is scoped to `fast_middleware` test files only; legacy `fastmiddleware`-based tests are not collected unless you adjust `python_files` in `pyproject.toml`.
+- Pytest is scoped to `fastx_middleware` test files only; legacy `fastmiddleware`-based tests are not collected unless you adjust `python_files` in `pyproject.toml`.
 
 ## [0.5.0] - 2026-01-18
 

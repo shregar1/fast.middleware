@@ -1014,8 +1014,8 @@ class TestMetricsFullCoverage:
         # Get metrics
         response = client.get("/metrics")
         assert response.status_code == 200
-        assert "fast_http_requests_total" in response.text
-        assert "fast_http_request_duration_seconds" in response.text
+        assert "fastx_http_requests_total" in response.text
+        assert "fastx_http_request_duration_seconds" in response.text
 
 
 class TestCompressionEdgeCases:
@@ -1389,7 +1389,7 @@ class TestMetricsCollectorDirectly:
         response = client.get("/metrics")
 
         assert response.status_code == 200
-        assert "fast_http_requests_total" in response.text
+        assert "fastx_http_requests_total" in response.text
 
     def test_empty_latencies_bucket(self):
         """Test format with empty latencies."""
@@ -1405,7 +1405,7 @@ class TestMetricsCollectorDirectly:
 
         # Just get metrics without any other requests
         response = client.get("/metrics")
-        assert "fast_uptime_seconds" in response.text
+        assert "fastx_uptime_seconds" in response.text
 
 
 class TestIdempotencyExpiration:
@@ -1749,7 +1749,7 @@ class TestMetricsCollectorWithVariousData:
         assert response.status_code == 200
         # Should have error count
         text = response.text
-        assert "fast_http_requests_total" in text
+        assert "fastx_http_requests_total" in text
 
 
 class TestCacheVaryHeaders:

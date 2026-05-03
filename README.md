@@ -1,8 +1,8 @@
-# fast_middleware
+# fastx_middleware
 
-**HTTP middleware for FastAPI / Starlette** in the FastMVC monorepo. The installable package is **`fastmiddleware`** (import `from fastmiddleware import …`); PyPI name is **`fast-middleware`**. It ships **90+** ASGI middlewares—request correlation IDs (via `fast_platform`), security headers, rate limiting, sessions, caching, i18n, routing helpers, **build/version headers**, **immutable static asset caching**, **DNS prefetch control**, and more. This package is **not** the same as **`fast_tenancy`** (tenant resolution) or **`fast_platform`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
+**HTTP middleware for FastAPI / Starlette** in the FastMVC monorepo. The installable package is **`fastmiddleware`** (import `from fastmiddleware import …`); PyPI name is **`fast-middleware`**. It ships **90+** ASGI middlewares—request correlation IDs (via `fastx_platform`), security headers, rate limiting, sessions, caching, i18n, routing helpers, **build/version headers**, **immutable static asset caching**, **DNS prefetch control**, and more. This package is **not** the same as **`fastx_tenancy`** (tenant resolution) or **`fastx_platform`** (configuration DTOs); it focuses on **cross-cutting ASGI behavior** you mount on your FastAPI app.
 
-The `tests/` directory also contains legacy suites that target an optional **`fastmiddleware`** package (not installed by default). The default pytest configuration only runs the lightweight **`fast_middleware`** tests—see `python_files` in [pyproject.toml](pyproject.toml).
+The `tests/` directory also contains legacy suites that target an optional **`fastmiddleware`** package (not installed by default). The default pytest configuration only runs the lightweight **`fastx_middleware`** tests—see `python_files` in [pyproject.toml](pyproject.toml).
 
 ## Layout
 
@@ -21,7 +21,7 @@ See [src/taxonomy.py](src/taxonomy.py) for the section map.
 From the monorepo (if your project vendors this tree):
 
 ```bash
-pip install -e ./fast_middleware
+pip install -e ./fastx_middleware
 ```
 
 ## Usage
@@ -165,8 +165,8 @@ Use these when you need a small custom middleware without a new module file.
 
 ## Related packages
 
-- **`fast_tenancy`** — `TenantMiddleware` and tenant context (different concern).
-- **`fast_platform`** — app config; not HTTP middleware.
+- **`fastx_tenancy`** — `TenantMiddleware` and tenant context (different concern).
+- **`fastx_platform`** — app config; not HTTP middleware.
 - Monorepo: [../README.md](../README.md).
 
 ## Tooling
