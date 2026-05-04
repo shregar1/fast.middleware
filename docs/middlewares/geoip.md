@@ -5,7 +5,7 @@ Extract GeoIP data from CDN headers.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

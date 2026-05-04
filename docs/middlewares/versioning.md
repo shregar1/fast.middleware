@@ -9,7 +9,7 @@ API versioning middleware supporting header, query, and path-based versions.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

@@ -9,7 +9,7 @@ IP-based access control with whitelist and blacklist support.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

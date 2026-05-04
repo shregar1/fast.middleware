@@ -5,7 +5,7 @@ Rewrite request paths without redirecting.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Shed load during high traffic to maintain system stability.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

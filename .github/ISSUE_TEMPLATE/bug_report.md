@@ -55,7 +55,7 @@ Paste error message here
 - OS: [e.g., Ubuntu 22.04, macOS 14.0]
 - Python version: [e.g., 3.11.5]
 - FastAPI version: [e.g., 0.109.0]
-- fast-middleware version: [e.g., 0.5.0]
+- fastx-middleware version: [e.g., 0.5.0]
 
 ## Additional Context
 

@@ -5,7 +5,7 @@ Shared async-safe request context for storing and retrieving values.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

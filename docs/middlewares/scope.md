@@ -5,7 +5,7 @@ OAuth scope validation for routes.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

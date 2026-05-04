@@ -5,7 +5,7 @@ Limit request and response payload sizes.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

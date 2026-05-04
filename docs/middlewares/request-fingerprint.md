@@ -5,7 +5,7 @@ Generate unique fingerprints for requests.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

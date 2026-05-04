@@ -5,7 +5,7 @@ Add Retry-After headers for rate-limited responses.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

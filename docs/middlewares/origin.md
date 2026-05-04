@@ -5,7 +5,7 @@ Validate Origin header for cross-origin requests.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

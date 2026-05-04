@@ -9,7 +9,7 @@ Circuit breaker pattern implementation for resilience.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

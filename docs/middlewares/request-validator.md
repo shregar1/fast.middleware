@@ -5,7 +5,7 @@ Validate request structure and content.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

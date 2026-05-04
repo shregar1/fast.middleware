@@ -9,7 +9,7 @@ Server-Timing header for browser devtools integration.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

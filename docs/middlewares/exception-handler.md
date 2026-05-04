@@ -5,7 +5,7 @@ Custom exception handling with registered handlers.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

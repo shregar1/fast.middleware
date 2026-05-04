@@ -1,4 +1,4 @@
-# Security policy — fast-middleware
+# Security policy — fastx-middleware
 
 ## Reporting a vulnerability
 

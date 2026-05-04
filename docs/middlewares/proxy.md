@@ -4,15 +4,15 @@ Reverse proxy middleware for routing requests to other services.
 
 ## Prerequisites
 
-🌐 Requires httpx: `pip install fast-middleware[proxy]`
+🌐 Requires httpx: `pip install fastx-middleware[proxy]`
 
 ## Installation
 
 ```bash
-pip install fast-middleware[proxy]
+pip install fastx-middleware[proxy]
 
 # or
-pip install fast-middleware[all]
+pip install fastx-middleware[all]
 
 ```
 

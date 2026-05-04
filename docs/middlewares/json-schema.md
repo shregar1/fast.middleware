@@ -9,7 +9,7 @@ JSON Schema validation middleware for request bodies.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

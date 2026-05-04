@@ -5,7 +5,7 @@ Handle trailing slashes in URLs.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

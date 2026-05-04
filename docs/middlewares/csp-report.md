@@ -5,7 +5,7 @@ Handle Content Security Policy violation reports.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

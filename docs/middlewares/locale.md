@@ -5,7 +5,7 @@ Detect and manage user locale for internationalization.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

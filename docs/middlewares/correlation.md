@@ -9,7 +9,7 @@ Correlation ID middleware for distributed tracing.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

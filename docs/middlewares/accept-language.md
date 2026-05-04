@@ -5,7 +5,7 @@ Parse and negotiate Accept-Language headers for internationalization.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

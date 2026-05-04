@@ -5,7 +5,7 @@ Sign responses for client verification.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

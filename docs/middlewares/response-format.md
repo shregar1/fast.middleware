@@ -5,7 +5,7 @@ Standardize response format across all endpoints.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

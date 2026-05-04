@@ -9,7 +9,7 @@ User-Agent parsing and device detection middleware.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

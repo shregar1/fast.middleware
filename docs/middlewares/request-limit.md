@@ -5,7 +5,7 @@ Limit request body size.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

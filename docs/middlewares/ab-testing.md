@@ -9,7 +9,7 @@ A/B testing middleware for experiments.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

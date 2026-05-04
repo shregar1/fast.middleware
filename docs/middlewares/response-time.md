@@ -5,7 +5,7 @@ Monitor response times against SLAs.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

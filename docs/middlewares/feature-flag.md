@@ -9,7 +9,7 @@ Feature flag management middleware.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

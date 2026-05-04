@@ -5,7 +5,7 @@ Throttle response bandwidth to control download speeds.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Validate and enforce Content-Type headers on requests.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

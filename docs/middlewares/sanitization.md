@@ -5,7 +5,7 @@ Sanitize input to prevent XSS and injection attacks.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

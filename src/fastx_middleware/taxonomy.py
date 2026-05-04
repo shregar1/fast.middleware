@@ -1,7 +1,7 @@
 """Section layout for :mod:`fastmiddleware` (aligned with ``fastx_platform.taxonomy``).
 
 - **mw_core** — factory, CORS, logging, timing, body limits, client IP, request id, compression
-  (named ``mw_core`` to avoid clashing with ``core.*`` from ``fast-platform`` on ``PYTHONPATH``).
+  (named ``mw_core`` to avoid clashing with ``core.*`` from ``fastx-platform`` on ``PYTHONPATH``).
 - **sec** — security headers, CSRF, auth backends, JWT bearer, webhooks, etc.
 - **operations** — rate limits, metrics, health, sessions, caching, i18n, routing helpers,
   build/version headers, immutable static ``Cache-Control``, DNS prefetch control,

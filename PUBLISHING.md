@@ -1,4 +1,4 @@
-# Publishing **fast-middleware** to PyPI
+# Publishing **fastx-middleware** to PyPI
 
 ## Prerequisites
 
@@ -26,6 +26,6 @@ export TWINE_PASSWORD=<pypi-token>
 twine upload dist/*
 ```
 
-- **PyPI project name:** `fast-middleware`
+- **PyPI project name:** `fastx-middleware`
 - **Typical import:** `fastx_middleware`
 - **Repository / homepage:** https://github.com/shregar1/fastmvc

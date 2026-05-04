@@ -5,7 +5,7 @@ Validate HMAC request signatures.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

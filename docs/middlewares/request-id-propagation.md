@@ -5,7 +5,7 @@ Propagate request IDs across service boundaries.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

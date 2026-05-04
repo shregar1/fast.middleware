@@ -9,7 +9,7 @@ Container warmup/readiness middleware for orchestration platforms.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

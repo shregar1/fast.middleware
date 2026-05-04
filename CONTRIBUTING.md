@@ -1,4 +1,4 @@
-# Contributing to fast-middleware
+# Contributing to fastx-middleware
 
 Thank you for your interest in contributing.
 
@@ -17,7 +17,7 @@ Standalone clone (if this package is its own git remote):
 
 ```bash
 git clone https://github.com/shregar1/fastmvc.git
-cd fast-middleware
+cd fastx_middleware
 python -m venv .venv
 source .venv/bin/activate   # Windows: .venv\\Scripts\\activate
 pip install -e ".[dev]" || pip install -e .

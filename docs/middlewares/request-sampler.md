@@ -5,7 +5,7 @@ Sample requests for analytics and logging.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

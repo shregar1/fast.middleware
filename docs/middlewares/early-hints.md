@@ -5,7 +5,7 @@ HTTP 103 Early Hints for preloading resources.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

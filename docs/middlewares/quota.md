@@ -5,7 +5,7 @@ Enforce usage quotas per user or API key.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

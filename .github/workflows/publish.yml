@@ -52,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: testpypi
-      url: https://test.pypi.org/project/fast-middleware/
+      url: https://test.pypi.org/project/fastx-middleware/
 
     permissions:
       id-token: write
@@ -76,7 +76,7 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: pypi
-      url: https://pypi.org/project/fast-middleware/
+      url: https://pypi.org/project/fastx-middleware/
 
     permissions:
       id-token: write

@@ -5,7 +5,7 @@ Support for HTTP Client Hints for adaptive content delivery.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

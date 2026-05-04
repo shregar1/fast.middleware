@@ -5,7 +5,7 @@ Deduplicate identical requests within a time window.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Handle X-Forwarded-For headers securely.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

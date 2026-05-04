@@ -5,7 +5,7 @@ Set Referrer-Policy header for privacy control.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

@@ -5,7 +5,7 @@ Add deprecation warnings to API endpoints.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

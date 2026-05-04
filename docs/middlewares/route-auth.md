@@ -5,7 +5,7 @@ Per-route authentication requirements.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

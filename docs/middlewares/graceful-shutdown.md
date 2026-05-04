@@ -9,7 +9,7 @@ Graceful shutdown with request draining.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

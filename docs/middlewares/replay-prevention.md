@@ -5,7 +5,7 @@ Prevent replay attacks using timestamps and nonces.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

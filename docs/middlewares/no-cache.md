@@ -5,7 +5,7 @@ Disable caching for specific paths or all responses.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 

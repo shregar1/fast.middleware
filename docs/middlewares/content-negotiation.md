@@ -5,7 +5,7 @@ Negotiate response content type based on Accept header.
 ## Installation
 
 ```bash
-pip install fast-middleware
+pip install fastx-middleware
 
 ```
 
